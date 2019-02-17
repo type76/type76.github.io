@@ -1,0 +1,177 @@
+body {
+background-color: #222; color: #eee; font-family: monospace;
+text-align: center; padding: 2em; font-size: 2em;
+width: 100vw; height: 100vh;
+overflow: hidden;
+}
+
+header p {
+text-align: left;
+width: 300px;
+height: 1em;
+display: block;
+margin: 0 auto;
+}
+
+button {background: transparent; border:none;
+outline: 0; cursor: pointer; color: #eee;}
+button:focus, button:hover {background: rgba(0,0,0,0.2) !important;
+cursor: pointer;}
+fieldset {border:none; outline: 0;}
+
+#container {
+display: block;
+width: 100%;
+position: fixed; top: 0; left: 0; display: block;
+width: 100vw; height: 100vh; 
+overflow: hidden; z-index: 1;
+}
+
+#container fieldset {
+border: none; outline: none;
+margin: 0; padding: 0;
+}
+
+#container #message { 
+position: absolute;
+bottom: 0;
+border: 0; outline: none;
+display: block; line-height: 40px; 
+background-color: rgba(0,0,0,0.1);
+width: 100vw;
+color: #fff; 
+font-size: 0.8em;
+font-weight: lighter;
+font-family: monospace; 
+text-indent: 45px; 
+}
+
+#container #message:hover, #container #message:active
+#container #message:focus, #container #message.active,
+#container .spkbut:hover {
+background-color: rgba(0,0,0,0.3);
+}
+
+
+
+
+#container .spkbut {
+font-family: monospace;
+position: absolute; bottom: 0; left:0;  
+line-height: 40px; 
+height: 40px; 
+width: 40px; 
+font-size: 80%;
+z-index: 99;
+}
+
+
+#audiobtn {
+position: absolute;
+bottom: 0;
+right:0;
+width: 40px;
+height: 40px;
+z-index: 999;
+/*background: transparent !important;*/
+}
+
+
+#audiobtn svg { 
+display: block;
+width: 40px;
+height: 40px;
+position: absolute;
+transform: scale(0.7);
+top:0;
+left: 0;
+}
+
+#audiobtn svg.adon {display: none;} 
+
+#audiobtn.on svg.adon {display: block;} 
+#audiobtn.on svg.adoff {display: none;} 
+
+#audiobtn:before {
+content: 'audio off';
+font-family: monospace;
+display: block;
+width: 100px;
+height: 40px;
+position: absolute;
+bottom: 0px;
+line-height: 40px;
+left: -110px;
+text-align: right;
+animation: noteout 0.2s forwards ease-in-out;
+animation-delay: 250ms;
+transform-origin: bottom;
+opacity: 0.4;
+color: #eee;
+}
+
+#audiobtn.on:before {
+content: 'audio on';
+animation: notein 0.2s forwards ease-in-out;
+animation-delay: 250ms;
+}
+
+
+@keyframes noteout {
+0% { visibility: visible;}
+100% {  
+opacity: 0;
+visibility: hidden;}
+}
+
+@keyframes notein {
+0% { visibility: visible;}
+100% { 
+opacity: 0;
+visibility: hidden;}
+}
+
+
+#settings {
+display: block;
+position: absolute;
+top: 0;
+right: 0;
+padding: 12px;
+z-index: 99;
+top: 0;
+background: #000;
+}
+
+#settings input {display: block;}
+
+#settings.off {
+transform: translateX(100%);
+visibility: hidden;
+}
+
+
+#pitch:after, #rate:after {position: absolute; left: 150px;}
+#pitch:after {content: 'pitch';}
+#rate:after {content: 'rate'; }
+
+#settingsbtn {
+position: absolute;
+top: 0;
+right: 0;
+display: block;			
+width: 50px;
+height: 50px;
+transform-origin: center;
+background: transparent;
+outline: none;
+border: none;
+cursor: pointer;
+z-index: 999;
+}
+
+#settingsbtn.on {background: #000 !important;}
+
+#settingsbtn svg, #settings {transition: all 0.2s ease-in-out;}
+
+#settingsbtn.on svg {transform: rotate(45deg);}
