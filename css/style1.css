@@ -1,9 +1,23 @@
 body {
 background-color: #222; color: #eee; font-family: monospace;
-text-align: center; padding: 2em; font-size: 2em;
+text-align: center; padding: 2em; font-size: 1em;
 width: 100vw; height: 100vh;
 overflow: hidden;
 }
+
+
+.nav {
+position: absolute;
+z-index: 999999;
+top: 12px; left: 12px;
+margin: 0; padding: 0;
+}
+
+.nav li {
+list-style-type: none;
+display: inline;}
+
+.nav a {text-decoration: none; color: #eee;}
 
 header p {
 text-align: left;
@@ -11,6 +25,7 @@ width: 300px;
 height: 1em;
 display: block;
 margin: 0 auto;
+font-size: 2em;
 }
 
 button {background: transparent; border:none;
@@ -137,13 +152,16 @@ display: block;
 position: absolute;
 top: 0;
 right: 0;
-padding: 12px;
+padding: 20px 12px;
 z-index: 99;
 top: 0;
 background: #000;
 }
 
-#settings input {display: block;}
+#settings select,
+#settings input {
+display: block;
+margin-top: 10px;}
 
 #settings.off {
 transform: translateX(100%);

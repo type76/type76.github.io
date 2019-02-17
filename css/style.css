@@ -1,9 +1,24 @@
 body {
 background-color: #222; color: #eee; font-family: monospace;
-text-align: center; padding: 2em; font-size: 2em;
+text-align: center; padding: 2em; 
+/*font-size: 2em;*/
 width: 100vw; height: 100vh;
 overflow: hidden;
 }
+
+.nav {
+position: absolute;
+z-index: 999999;
+top: 12px; left: 12px;
+margin: 0; padding: 0;
+}
+
+.nav li {
+list-style-type: none;
+display: inline;}
+
+.nav a {text-decoration: none; color: #eee;}
+
 
 header {text-align: left;
 position: absolute;
@@ -19,9 +34,10 @@ width: 300px;
 min-height: 1em;
 line-height: 1em;
 display: block;
-/*background: #333;*/
 margin: 1em;
-/*padding: 6px 12px;*/
+position: absolute;
+top: 30px;
+font-size: 2em;
 }
 
 button {background: transparent; border:none;
@@ -51,7 +67,7 @@ display: block; line-height: 40px;
 background-color: rgba(0,0,0,0.1);
 width: 100vw;
 color: #fff; 
-font-size: 0.8em;
+font-size: 1em;
 font-weight: lighter;
 font-family: monospace; 
 text-indent: 45px; 
@@ -232,11 +248,9 @@ z-index: 999;
 
 
 #botface {
-font-size: 0.5em;
 display: block;
 height: auto;
 width: 70px;
-/*height: 70px;*/
 text-align: center; 
 z-index: 999;
 user-select: none;
@@ -245,7 +259,6 @@ transform-origin: bottom;
 position: absolute;
 top: 10px;
 left: 10px;
-/*background: #000;*/
 transform: scale(2);
 }
 
