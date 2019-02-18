@@ -53,7 +53,7 @@ function settingsonoff() {
       if (!mute) {spk('off');}
      } else {
       settings.classList = 'on';
-      if (!mute) {spk('settings');}
+      if (!mute) {spk('settings')}
   }
 }
 
@@ -111,17 +111,17 @@ if (numb!=null) {
   var xnumb=num2str(numb);
   numb = xnumb;
   // replace??
-  var res = text.replace(numb, xnumb);
+  // var res = text.replace(numb, xnumb);
   // console.log(text+' '+numb);
   // this is wrong <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  mouthshape(text+' '+numb)
+  // mouthshape(text+' '+numb)
 }
 
   output = '';
   output = text;
   typereset();
   setTimeout(function() { typeWriter(); }, 100);
-  if (ifnum != true) { mouthshape(text); }
+  // if (ifnum != true) { mouthshape(text); }
 command(text);
 } catch (e) {
   alert("Something went horribly wrong:\n" + e);
@@ -129,8 +129,30 @@ command(text);
 };
 
 
+//
+function sendNumber() {
+try {
+var f0    = 80;
+var speed = 0.3;
+var text  = document.getElementById("message").value; 
+text=num2str(text);
+// var seconds = text.length;
+// var waveBytes = SAMPLE_FREQUENCY * 2 * 2 * seconds;
+// var buf = new Int16Array(new ArrayBuffer(waveBytes));
+spk(text)
+
+// SynthSpeech(buf, text, f0, speed, 0);
+// playAudioBuffer(buf); 
+} catch (e) {
+alert("Something went horribly wrong:\n" + e);
+}
+};
+
+
 // speak text
 function spk(text) {
+console.log(text)
+mouthshape(text);
   // console.log(text)
   var utterThis = new SpeechSynthesisUtterance(text);
   var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');

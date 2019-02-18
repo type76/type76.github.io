@@ -4,6 +4,7 @@ text-align: center; padding: 2em;
 /*font-size: 2em;*/
 width: 100vw; height: 100vh;
 overflow: hidden;
+margin: 0; padding: 0;
 }
 
 .nav {
@@ -36,7 +37,7 @@ line-height: 1em;
 display: block;
 margin: 1em;
 position: absolute;
-top: 30px;
+top: 0px;
 font-size: 2em;
 }
 
