@@ -116,7 +116,7 @@ if (numb!=null) {
   numb = xnumb;
 // replace??
 var res = text.replace(numb, xnumb);
-mouthshape('. '+numb)
+if (!mute) { mouthshape('. '+numb);}
 }
 
 if (!mute) { command(text); spk(text); botoutput(text);}
