@@ -7,7 +7,7 @@ var settings = document.getElementById('settings');
 var settingsbtn = document.getElementById('settingsbtn');
 settingsbtn.setAttribute("onclick", 'settingsonoff()');
 var synth = window.speechSynthesis;
-var voiceSelect = document.querySelector('select');
+var voiceSelect = document.getElementById('voices');
 var voices = [];
 var pitch = document.querySelector('#pitch');
 var rate = document.querySelector('#rate');
