@@ -18,14 +18,17 @@ var eyeL = document.getElementById('botLeye');
 var eyeR = document.getElementById('botReye');
 var oldeye = eyeL.innerHTML;
 
+var txtregex = /[^a-z 0-9 ?@!.,+*]/gi;
+var textfield = document.getElementById('message');
+
 // set character in center
 onWindowResize();
 window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize() {
-var ww = window.innerWidth;
-var wh = window.innerHeight;
-botface.style.left = (ww/2)-(botface.clientWidth)+'px';
-botface.style.top = (wh/2)-(botface.clientHeight)+'px';
+  var ww = window.innerWidth;
+  var wh = window.innerHeight;
+  botface.style.left = (ww/2)-(botface.clientWidth)+'px';
+  botface.style.top = (wh/2)-(botface.clientHeight)+'px';
 // output.style.left = (ww/2)-(output.clientWidth)+'px';
 }
 
@@ -37,11 +40,11 @@ output = 'hello';
 function audioonoff() {
   audiobtn.classList.toggle('on');
   if (audiobtn.classList != "on") {
-      mute=true;
-      spk('off');
-     } else {
-      mute=false;
-      if (!mute) {spk('audio');}
+    mute=true;
+    spk('off');
+  } else {
+    mute=false;
+    if (!mute) {spk('audio');}
   }
 }
 
@@ -49,18 +52,18 @@ function audioonoff() {
 function settingsonoff() {
   settingsbtn.classList.toggle('on');
   if (settingsbtn.classList != "on") {
-      settings.classList = 'off';
-      if (!mute) {spk('off');}
-     } else {
-      settings.classList = 'on';
-      if (!mute) {spk('settings')}
+    settings.classList = 'off';
+    if (!mute) {spk('off');}
+  } else {
+    settings.classList = 'on';
+    if (!mute) {spk('settings')}
   }
 }
 
 
 // starting text
-  typereset();
-  setTimeout(function() {
+typereset();
+setTimeout(function() {
 // document.getElementById("output").style.width = 'auto';
 typeWriter();}, 800);
 
@@ -86,9 +89,6 @@ function typeWriter() {
 
 // bot input
 // field regex cleanup
-var txtregex = /[^a-z 0-9 ?@!.,+*]/gi;
-var textfield = document.getElementById('message');
-
 function cleanbf(){
   if(textfield.value.search(txtregex) > -1) {
     textfield.value = textfield.value.replace(txtregex, "");
@@ -98,62 +98,46 @@ function cleanbf(){
 
 // bot output
 function sendMessage() {
-try {
-var text  = document.getElementById("message").value; 
-if (!mute) {spk(text);}
-
-var ifnum = !isNaN(parseFloat(text)) && isFinite(text);
-if (ifnum == true) { sendNumber();  return;}
-// check if it includes a number and replace it with word
-var numb = text.match(/\d/g);
+  try {
+    var text  = textfield.value; 
+// check text is only a number
+    var ifnum = !isNaN(parseFloat(text)) && isFinite(text);
+    if (ifnum == true) { 
+      text=num2str(text);
+      if (!mute) { command(text); spk(text); botoutput(text);} 
+      else {command(text); botoutput(text);}
+      return;
+    }
+// check text includes a number, replace number with word
+var numb = text.match(/\d+/g);
 if (numb!=null) {
   numb = numb.join("");
   var xnumb=num2str(numb);
   numb = xnumb;
-  // replace??
-  // var res = text.replace(numb, xnumb);
-  // console.log(text+' '+numb);
-  // this is wrong <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  // mouthshape(text+' '+numb)
+// replace??
+var res = text.replace(numb, xnumb);
+mouthshape('. '+numb)
 }
 
-  output = '';
-  output = text;
-  typereset();
-  setTimeout(function() { typeWriter(); }, 100);
-  // if (ifnum != true) { mouthshape(text); }
-command(text);
+if (!mute) { command(text); spk(text); botoutput(text);}
+else {command(text);   botoutput(text);}
 } catch (e) {
   alert("Something went horribly wrong:\n" + e);
 }
 };
 
 
-//
-function sendNumber() {
-try {
-var f0    = 80;
-var speed = 0.3;
-var text  = document.getElementById("message").value; 
-text=num2str(text);
-// var seconds = text.length;
-// var waveBytes = SAMPLE_FREQUENCY * 2 * 2 * seconds;
-// var buf = new Int16Array(new ArrayBuffer(waveBytes));
-spk(text)
-
-// SynthSpeech(buf, text, f0, speed, 0);
-// playAudioBuffer(buf); 
-} catch (e) {
-alert("Something went horribly wrong:\n" + e);
+// bot text command / output
+function botoutput(text) {
+output = '';
+output = text;
+typereset();
+setTimeout(function() { typeWriter(); }, 100);
 }
-};
-
 
 // speak text
 function spk(text) {
-console.log(text)
-mouthshape(text);
-  // console.log(text)
+  mouthshape(text);
   var utterThis = new SpeechSynthesisUtterance(text);
   var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
   for(i = 0; i < voices.length ; i++) {
@@ -168,7 +152,7 @@ mouthshape(text);
 
 // wait for voices to be loaded before fetching list
 window.speechSynthesis.onvoiceschanged = function() {
-    var xvoices = window.speechSynthesis.getVoices();
+  var xvoices = window.speechSynthesis.getVoices();
 };
 
 
@@ -179,7 +163,7 @@ function populateVoiceList() {
   for(i = 0; i < voices.length ; i++) {
     var option = document.createElement('option');
     option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
-    
+
     if(voices[i].default) {
       option.textContent += ' -- DEFAULT';
     }
@@ -199,8 +183,8 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
 // botspeak
 // close console
 function consoleClose() {
-console.log('close');
-esctoggle();
+  console.log('close');
+  esctoggle();
 }
 
 
@@ -225,7 +209,7 @@ botface.classList = 'speaking';
 setTimeout(function() { 
   textfield.classList = '';
   botface.classList = '';
-  blink();
+  // blink();
 }, text.length*100);
 }
 
@@ -261,31 +245,31 @@ function lipsync(arg) {
   if (arg == 'y') { mouth.innerHTML = 'D';}
   if (arg == 'z') { mouth.innerHTML = '/';}
 
-  // console.log(arg)
+// console.log(arg)
 }
 
 
 // edit bot faces
 function editface(ev) {
-  // console.log(ev.value)
-  if (ev.value=='cat') {
-    botLeye.innerHTML = '^';
-    botLeye.style.left = '20px';
-    botReye.style.right = '20px';
-    botReye.innerHTML = '^';
-    botLside.innerHTML = '(=';
-    botRside.innerHTML = '=)';
-    oldeye = botLeye.innerHTML;
-    return;
-  }
-  
-  botLeye.innerHTML = ev.value;
-  botReye.innerHTML = ev.value;
+// console.log(ev.value)
+if (ev.value=='cat') {
+  botLeye.innerHTML = '^';
+  botLeye.style.left = '20px';
+  botReye.style.right = '20px';
+  botReye.innerHTML = '^';
+  botLside.innerHTML = '(=';
+  botRside.innerHTML = '=)';
   oldeye = botLeye.innerHTML;
-  botLside.innerHTML = '(';
-  botRside.innerHTML = ')';
-  botLeye.style.left = '12px';
-  botReye.style.right = '12px';
+  return;
+}
+
+botLeye.innerHTML = ev.value;
+botReye.innerHTML = ev.value;
+oldeye = botLeye.innerHTML;
+botLside.innerHTML = '(';
+botRside.innerHTML = ')';
+botLeye.style.left = '12px';
+botReye.style.right = '12px';
 }
 
 

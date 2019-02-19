@@ -30,8 +30,8 @@ display: block;
 
 #output {
 text-align: left;
-width: auto;
-width: 300px;
+width: 100vw;
+/*width: 300px;*/
 min-height: 1em;
 line-height: 1em;
 display: block;
