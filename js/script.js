@@ -132,7 +132,9 @@ function botoutput(text) {
 output = '';
 output = text;
 typereset();
-setTimeout(function() { typeWriter(); }, 100);
+setTimeout(function() { typeWriter();
+textfield.value = '';
+ }, 100);
 }
 
 // speak text
