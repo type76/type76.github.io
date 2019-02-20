@@ -41,9 +41,12 @@ top: 0px;
 font-size: 2em;
 }
 
-button {background: transparent; border:none;
+#container button,
+#controls button {background: transparent; border:none;
 outline: 0; cursor: pointer; color: #eee;}
-button:focus, button:hover {background: rgba(0,0,0,0.2) !important;
+ 
+#controls button:focus, #controls button:hover {
+	background: rgba(0,0,0,0.2) !important;
 cursor: pointer;}
 fieldset {border:none; outline: 0;}
 
@@ -74,16 +77,18 @@ font-family: monospace;
 text-indent: 45px; 
 }
 
+
+
+
 #container #message:hover, #container #message:active
-#container #message:focus, #container #message.active,
-#container .spkbut:hover {
+#container #message:focus, #container #message.active {
 background-color: rgba(0,0,0,0.3);
 }
 
 
 
 
-#container .spkbut {
+#container #spkbut {
 font-family: monospace;
 position: absolute; bottom: 0; left:0;  
 line-height: 40px; 
@@ -166,7 +171,7 @@ position: absolute;
 top: 0;
 right: 0;
 padding: 20px;
-z-index: 99;
+z-index: 999;
 top: 0;
 background: #000;
 }
@@ -187,7 +192,8 @@ visibility: hidden;
 }
 
 #pitch:before, #rate:before,
-.select-wrapper:before {
+.select-wrapper:before, #bgcolour:before,
+#brightness:before {
 font-family: monospace;
 position: absolute; 
 left: 8px;
@@ -200,7 +206,10 @@ font-size: 10px;
 #rate:before {content: 'rate'; }
 #voices:before {content: 'voices'; }
 #faces:before {content: 'faces';}
-
+#bgcolour:before {content: 'colour';
+line-height: 10px;
+}
+#brightness:before {content: 'light'}
 
 .select-wrapper {
 display: block;
@@ -252,14 +261,15 @@ z-index: 999;
 display: block;
 height: auto;
 width: 70px;
+height: 1em;
 text-align: center; 
 z-index: 999;
 user-select: none;
 font-family: monospace;
 transform-origin: bottom;
 position: absolute;
-top: 10px;
-left: 10px;
+top: 0px;
+left: 0px;
 transform: scale(2);
 }
 
@@ -271,32 +281,70 @@ display: block;
 margin: 0 auto;
 width: 20px; height: 20px; 
 line-height: 20px;
-/*font-size: 20px;*/
 font-weight: lighter;
 transform-origin: center;
 transform: rotate(90deg); 
 text-align: center;
 position: absolute;
-top: 10px;
+top: 0px;
 left: 40%;
 }
 
-#botLeye, #botReye {
+
+#botLeye, #botReye,
+#botLside, #botRside {
 position: absolute;
-top: 8px;
-/*font-size: 0.9em;*/
 }
 
 #botLeye {left: 12px;}
 #botReye {right: 12px;}
 
-
-#botLside, #botRside {
-position: absolute;
-top: 8px;
-/*font-size: 2em;*/
-}
-
 #botLside {left: 0;}
 #botRside {right: 0;}
+
+
+
+#picker {
+background: transparent !important;
+display: block;
+position: relative;
+z-index: 1;
+width: 400px;
+position: absolute;
+transform: translateX(-100%);
+/*display: none;*/
+transition: all 0.2s ease-in-out;
+}
+
+#picker.visible {
+transform: translateX(0);
+/*display: block;*/
+}
+
+
+#picker #col {
+display: block;
+width: 400px;
+height: 400px;
+}
+
+
+#bgcolour {
+display: block;
+width: 40px; height: 40px;
+border-radius: 40px;
+border:#eee 1px solid;
+margin-top: 10px;
+margin-left: 30px;
+cursor: pointer;
+outline: none;
+}
+
+#bgcolour:hover {background: none;
+border:#ccc 1px solid;
+}
+
+
+
+
 
