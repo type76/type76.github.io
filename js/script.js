@@ -18,8 +18,17 @@ var eyeL = document.getElementById('botLeye');
 var eyeR = document.getElementById('botReye');
 var oldeye = eyeL.innerHTML;
 
+// cleanup regex
 var txtregex = /[^a-z 0-9 ?@!.,+*]/gi;
 var textfield = document.getElementById('message');
+
+//picker
+var j = document.getElementById('brightness');
+var bgcol = document.getElementById('bgcolour');
+var b = document.getElementById('picker');
+var c = document.getElementById('col');
+var a = c.getContext('2d');
+document.body.clientWidth;
 
 // set character in center
 onWindowResize();
@@ -27,13 +36,14 @@ window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize() {
   var ww = window.innerWidth;
   var wh = window.innerHeight;
-  botface.style.left = (ww/2)-(botface.clientWidth)+'px';
-  botface.style.top = (wh/2)-(botface.clientHeight)+'px';
+  botface.style.left = (ww/2)-(botface.clientWidth/2)+'px';
+  botface.style.top = (wh/2)-(botface.clientHeight/2)+'px';
 // output.style.left = (ww/2)-(output.clientWidth)+'px';
 }
 
 // starting text on page load
 output = 'hello';
+textfield.focus();
 
 
 // audio on/off
@@ -54,6 +64,9 @@ function settingsonoff() {
   if (settingsbtn.classList != "on") {
     settings.classList = 'off';
     if (!mute) {spk('off');}
+    picker.classList = 'hidden';
+    picker.setAttribute('aria-hidden', 'true');
+    bgcol.classList = '';
   } else {
     settings.classList = 'on';
     if (!mute) {spk('settings')}
@@ -342,3 +355,23 @@ function command(argument) {
   if (argument=="blink") {blink();}
 
 }
+
+// bg colour
+function setbgcol() {
+  bgcol.classList.toggle('on');
+  if (bgcol.classList != "on") {
+    if (!mute) {spk('off');}
+    picker.setAttribute('aria-hidden', 'true');
+    picker.classList='hidden';
+
+  } else {
+    if (!mute) {spk('colour');}
+    picker.setAttribute('aria-hidden', 'false');
+    picker.classList='visible';  
+  }
+}
+
+
+
+
+
