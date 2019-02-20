@@ -23,7 +23,7 @@
 <section id="container">
 <form onsubmit="sendMessage();return false" id="inform">
   <fieldset>
-    <button type="submit" value="Send" class="spkbut">></button title="send">
+    <button type="submit" value="Send" id="spkbut" >></button title="send">
     <input type="text" size="70" name="message" id="message"  autocomplete="off"  onkeyup="cleanbf()" onkeydown="cleanbf()" tabindex="1" >
   </fieldset>
 </form>
@@ -35,7 +35,7 @@
 <input type="range" min="0.5" max="2" value="1" step="0.1" id="rate" title="edit rate">
 
 <div class="select-wrapper">
-<select id="voices" selected="Fred" onchange="console.log(this.value);" title="edit voices"></select>
+<select id="voices" selected="Fred" title="edit voices"></select>
 </div><!-- select wrapper -->
 
 <div class="select-wrapper faces">
@@ -56,9 +56,15 @@
   <option value="cat">(=^_^=)</option>
 </select>
 </div><!-- select wrapper -->
-
-</div>
+<button id="bgcolour" onclick="setbgcol();"></button>
+<input type="range" min="0" max="10" value="2" step="1" id="brightness" title="edit brightness">
+</div><!-- settings -->
     
+
+<div id="picker" aria-hidden="true" class="hidden">
+<canvas id="col"></canvas>
+</div>
+
 
 
 <section id="controls">
@@ -218,7 +224,10 @@ L 74 72.2 Z"/>
 </button>
 </section>
 
+
+
 <script src="js/script.js"></script>
+<script src="js/colour.js"></script>
 
 </body>
 </html>
