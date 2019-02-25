@@ -1,0 +1,21 @@
+{
+  "dir": "ltr",
+  "lang": "en",
+  "name": "offline",
+  "scope": "/offline/",
+  "display": "browser",
+  "start_url": "https://type76.com",
+  "short_name": "offline",
+  "theme_color": "transparent",
+  "description": "",
+  "orientation": "any",
+  "background_color": "transparent",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+     "src": "icon-144.png",
+      "sizes": "144x144"
+    }
+  ]
+}
