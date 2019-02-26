@@ -1,2 +1,2 @@
 # type76.github.io
-github site
+chatbot user interface
