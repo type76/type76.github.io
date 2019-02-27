@@ -10,17 +10,10 @@
 </head>
 <body>
 
-<header>
+<header id="xheader">
 	<p id="output"></p>
 </header>
 
-<div id="botface">
-  <div id="botLside">(</div>
-  <div id="botLeye">o</div>
-  <div id="botmouth">)</div>
-  <div id="botReye">o</div>
-  <div id="botRside">)</div>
-</div><!-- face  -->
 
 <section id="container">
 <form onsubmit="sendMessage();return false" id="inform">
@@ -227,7 +220,7 @@ L 74 72.2 Z"/>
 </section>
 
 
-<script>
+<!-- <script>
 if (navigator.serviceWorker.controller) {
   console.log('registered')
 } else {
@@ -237,7 +230,7 @@ if (navigator.serviceWorker.controller) {
     console.log('Service worker has been registered for scope:'+ reg.scope);
   });
 }
-</script>
+</script> -->
 
 <script src="js/script.js"></script>
 
