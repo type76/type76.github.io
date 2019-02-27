@@ -1,44 +1,81 @@
-// global vars/settings
-var tyspeed = 80;
-var mute = false;
-var audiobtn = document.getElementById('audiobtn');
+// global consts/settings
+const tyspeed = 80;
+let mute = false;
+const audiobtn = document.getElementById('audiobtn');
 audiobtn.setAttribute("onclick", 'audioonoff()');
-var settings = document.getElementById('settings');
-var settingsbtn = document.getElementById('settingsbtn');
+const settings = document.getElementById('settings');
+const settingsbtn = document.getElementById('settingsbtn');
 settingsbtn.setAttribute("onclick", 'settingsonoff()');
-var synth = window.speechSynthesis;
-var voiceSelect = document.getElementById('voices');
-var voices = [];
-var pitch = document.querySelector('#pitch');
-var rate = document.querySelector('#rate');
-var botface = document.getElementById('botface');
-var mouth = document.getElementById('botmouth');
-var oldmouth = mouth.innerHTML;
-var eyeL = document.getElementById('botLeye');
-var eyeR = document.getElementById('botReye');
-var oldeye = eyeL.innerHTML;
+const synth = window.speechSynthesis;
+const voiceSelect = document.getElementById('voices');
+const voices = [];
+const pitch = document.querySelector('#pitch');
+const rate = document.querySelector('#rate');
+
+// create botface
+document.body.onload = addFace;
+
+
+function addFace () { 
+  const xheader = document.getElementById('xheader');
+  botface = document.createElement("div"); 
+  botface.id = 'botface';
+  botface.style.left = (window.innerWidth/2)-(botface.clientWidth/2)+'px';
+  botface.style.top = (window.innerHeight/2)-(botface.clientHeight/2)+'px';
+
+  const botLside = document.createElement("div");
+  botLside.id = 'botLside';
+  botLside.innerHTML = '(';
+  botface.appendChild(botLside);  
+
+  botLeye = document.createElement("div");
+  botLeye.id = 'botLeye';
+  botLeye.innerHTML = 'o';
+  botface.appendChild(botLeye);  
+
+  botmouth = document.createElement("div");
+  botmouth.id = 'botmouth';
+  botmouth.innerHTML = ')';
+  botface.appendChild(botmouth);  
+
+  botReye = document.createElement("div");
+  botReye.id = 'botReye';
+  botReye.innerHTML = 'o';
+  botface.appendChild(botReye);  
+
+  botRside = document.createElement("div");
+  botRside.id = 'botRside';
+  botRside.innerHTML = ')';
+  botface.appendChild(botRside);  
+
+  // add botface
+  document.body.insertBefore(botface, xheader); 
+
+  oldmouth = botmouth.innerHTML;
+  oldeye = botLeye.innerHTML;
+}// end addFace
+
 
 // cleanup regex
-var txtregex = /[^a-z 0-9 ?@!.,+*]/gi;
-var textfield = document.getElementById('message');
+const txtregex = /[^a-z 0-9 ?@!.,+*]/gi;
+const textfield = document.getElementById('message');
 
 //picker
-var j = document.getElementById('brightness');
-var bgcol = document.getElementById('bgcolour');
-var b = document.getElementById('picker');
-var c = document.getElementById('col');
-var a = c.getContext('2d');
+const j = document.getElementById('brightness');
+const bgcol = document.getElementById('bgcolour');
+const b = document.getElementById('picker');
+const c = document.getElementById('col');
+const a = c.getContext('2d');
 document.body.clientWidth;
 
 // set character in center
-onWindowResize();
 window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize() {
-  var ww = window.innerWidth;
-  var wh = window.innerHeight;
+  const ww = window.innerWidth;
+  const wh = window.innerHeight;
   botface.style.left = (ww/2)-(botface.clientWidth/2)+'px';
   botface.style.top = (wh/2)-(botface.clientHeight/2)+'px';
-// output.style.left = (ww/2)-(output.clientWidth)+'px';
+output.style.left = (ww/2)-(output.clientWidth)+'px';
 }
 
 // starting text on page load
@@ -112,9 +149,9 @@ function cleanbf(){
 // bot output
 function sendMessage() {
   try {
-    var text  = textfield.value; 
+    const text  = textfield.value; 
 // check text is only a number
-    var ifnum = !isNaN(parseFloat(text)) && isFinite(text);
+    const ifnum = !isNaN(parseFloat(text)) && isFinite(text);
     if (ifnum == true) { 
       text=num2str(text);
       if (!mute) { command(text); spk(text); botoutput(text);} 
@@ -122,13 +159,13 @@ function sendMessage() {
       return;
     }
 // check text includes a number, replace number with word
-var numb = text.match(/\d+/g);
+const numb = text.match(/\d+/g);
 if (numb!=null) {
   numb = numb.join("");
-  var xnumb=num2str(numb);
+  const xnumb=num2str(numb);
   numb = xnumb;
 // replace??
-var res = text.replace(numb, xnumb);
+const res = text.replace(numb, xnumb);
 if (!mute) { mouthshape('. '+numb);}
 }
 
@@ -153,8 +190,8 @@ textfield.value = '';
 // speak text
 function spk(text) {
   mouthshape(text);
-  var utterThis = new SpeechSynthesisUtterance(text);
-  var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+  const utterThis = new SpeechSynthesisUtterance(text);
+  const selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
   for(i = 0; i < voices.length ; i++) {
     if(voices[i].name === selectedOption) {
       utterThis.voice = voices[i];
@@ -167,16 +204,16 @@ function spk(text) {
 
 // wait for voices to be loaded before fetching list
 window.speechSynthesis.onvoiceschanged = function() {
-  var xvoices = window.speechSynthesis.getVoices();
+  const xvoices = window.speechSynthesis.getVoices();
 };
 
 
 // get voices
 function populateVoiceList() {
-  voices = synth.getVoices();
+  let voices = synth.getVoices();
 
   for(i = 0; i < voices.length ; i++) {
-    var option = document.createElement('option');
+    const option = document.createElement('option');
     option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
 
     if(voices[i].default) {
@@ -205,7 +242,7 @@ function consoleClose() {
 
 // lip sync 
 function mouthshape(text) {
-  for (var i = 0, len = text.length; i < len; i++) {
+  for (let i = 0, len = text.length; i < len; i++) {
     setTimeout( (function( i ) {
       return function() {
         lipsync(text[i]);
@@ -213,52 +250,42 @@ function mouthshape(text) {
     }( i )), (80 * i) );
 } //for
 
-
-setTimeout(function() { document.getElementById('botmouth').innerHTML = oldmouth;
-}, text.length*90);
-
-// set class on start speaking
-textfield.classList = 'speaking';
-botface.classList = 'speaking';
-// remove class on stop speaking
 setTimeout(function() { 
-  textfield.classList = '';
-  botface.classList = '';
-  // blink();
-}, text.length*100);
-}
+document.getElementById('botmouth').innerHTML = oldmouth;
+}, text.length*90);
+} // end mouthshape
 
 
 
 
 function lipsync(arg) {
-  if (arg == ' ' || arg == '.') { mouth.innerHTML = oldmouth;}
-  if (arg == 'a') { mouth.innerHTML = 'D';}
-  if (arg == 'b') { mouth.innerHTML = '|';}
-  if (arg == 'c') { mouth.innerHTML = 'D';}
-  if (arg == 'd') { mouth.innerHTML = '|';}
-  if (arg == 'e') { mouth.innerHTML = 'D';}
-  if (arg == 'f') { mouth.innerHTML = '|';}
-  if (arg == 'g') { mouth.innerHTML = '|';}
-  if (arg == 'h') { mouth.innerHTML = '|';}
-  if (arg == 'i') { mouth.innerHTML = 'D';}
-  if (arg == 'j') { mouth.innerHTML = 'I';}
-  if (arg == 'k') { mouth.innerHTML = 'I';}
-  if (arg == 'l') { mouth.innerHTML = 'P';}
-  if (arg == 'm') { mouth.innerHTML = '(';}
-  if (arg == 'n') { mouth.innerHTML = ')';}
-  if (arg == 'o') { mouth.innerHTML = 'o';}
-  if (arg == 'p') { mouth.innerHTML = '|';}
-  if (arg == 'q') { mouth.innerHTML = 'D';}
-  if (arg == 'r') { mouth.innerHTML = 'o';}
-  if (arg == 's') { mouth.innerHTML = ')';}
-  if (arg == 't') { mouth.innerHTML = '|';}
-  if (arg == 'u') { mouth.innerHTML = 'o';}
-  if (arg == 'v') { mouth.innerHTML = '/';}
-  if (arg == 'w') { mouth.innerHTML = 'o';}
-  if (arg == 'x') { mouth.innerHTML = 'x';}
-  if (arg == 'y') { mouth.innerHTML = 'D';}
-  if (arg == 'z') { mouth.innerHTML = '/';}
+  if (arg == ' ' || arg == '.') { botmouth.innerHTML = oldmouth;}
+  if (arg == 'a') { botmouth.innerHTML = 'D';}
+  if (arg == 'b') { botmouth.innerHTML = '|';}
+  if (arg == 'c') { botmouth.innerHTML = 'D';}
+  if (arg == 'd') { botmouth.innerHTML = '|';}
+  if (arg == 'e') { botmouth.innerHTML = 'D';}
+  if (arg == 'f') { botmouth.innerHTML = '|';}
+  if (arg == 'g') { botmouth.innerHTML = '|';}
+  if (arg == 'h') { botmouth.innerHTML = '|';}
+  if (arg == 'i') { botmouth.innerHTML = 'D';}
+  if (arg == 'j') { botmouth.innerHTML = 'I';}
+  if (arg == 'k') { botmouth.innerHTML = 'I';}
+  if (arg == 'l') { botmouth.innerHTML = 'P';}
+  if (arg == 'm') { botmouth.innerHTML = '(';}
+  if (arg == 'n') { botmouth.innerHTML = ')';}
+  if (arg == 'o') { botmouth.innerHTML = 'o';}
+  if (arg == 'p') { botmouth.innerHTML = '|';}
+  if (arg == 'q') { botmouth.innerHTML = 'D';}
+  if (arg == 'r') { botmouth.innerHTML = 'o';}
+  if (arg == 's') { botmouth.innerHTML = ')';}
+  if (arg == 't') { botmouth.innerHTML = '|';}
+  if (arg == 'u') { botmouth.innerHTML = 'o';}
+  if (arg == 'v') { botmouth.innerHTML = '/';}
+  if (arg == 'w') { botmouth.innerHTML = 'o';}
+  if (arg == 'x') { botmouth.innerHTML = 'x';}
+  if (arg == 'y') { botmouth.innerHTML = 'D';}
+  if (arg == 'z') { botmouth.innerHTML = '/';}
 
 // console.log(arg)
 }
@@ -371,16 +398,22 @@ function setbgcol() {
   }
 }
 
-function m(d) {
-    f = d.pageX - c.offsetLeft - n || f;
-    e = d.pageY - c.offsetTop - n || e;
-    d = s(e, f), t = f * f + e * e;
-    t > w && (f = g * l.cos(d), e = g * l.sin(d), d = s(e, f), t = f * f + e * e);
-    // chang bg col >>
 
-    // b.style.background = A((d + u) / B, C(t) / g, j.value / D)[3];
-    document.body.style.background = A((d + u) / B, C(t) / g, j.value / D)[3];
-    bgcol.style.background = A((d + u) / B, C(t) / g, j.value / D)[3];
+function m(item) {
+  f = item.pageX - c.offsetLeft - n || f;
+  e = item.pageY - c.offsetTop - n || e;
+  item = s(e, f);
+  t = f * f + e * e;
+  if (t > w) {
+    f = g * l.cos(item);
+    e = g * l.sin(item);
+    item = s(e, f);
+    t = f * f + e * e;
+  }
+
+document.body.style.background = A((item + u) / B, C(t) / g, j.value / D)[3];
+bgcol.style.background = A((item + u) / B, C(t) / g, j.value / D)[3];
+
     a.putImageData(E, 0, 0);
     a.beginPath();
     a.arc(f + n, e + n, 5, 0, 2 * Math.PI);
@@ -391,40 +424,44 @@ function m(d) {
     a.stroke();
 }
 
-function A(d, e, h) {
-    var d = 6 * d,
-        f = ~~d,
-        g = d - f,
-        d = h * (1 - e),
-        i = h * (1 - g * e),
-        e = h * (1 - (1 - g) * e),
-        j = f % 6,
-        f = [h, i, d, d, e, h][j] * o,
-        g = [e, h, h, i, d, d][j] * o,
-        h = [d, d, e, h, h, i][j] * o;
-    return [f, g, h, "rgb(" + ~~f + "," + ~~g + "," + ~~h + ")"]
+
+function A(xa, xb, xc) {
+  xa = 6 * xa;
+  var widthHalf = ~~xa;
+  var x2 = xa - widthHalf;
+  xa = xc * (1 - xb);
+  var pdfdfd = xc * (1 - x2 * xb);
+  xb = xc * (1 - (1 - x2) * xb);
+  var mod = widthHalf % 6;
+  widthHalf = [xc, pdfdfd, xa, xa, xb, xc][mod] * o;
+  x2 = [xb, xc, xc, pdfdfd, xa, xa][mod] * o;
+  xc = [xa, xa, xb, xc, xc, pdfdfd][mod] * o;
+  return [widthHalf, x2, xc, "rgb(" + ~~widthHalf + "," + ~~x2 + "," + ~~xc + ")"];
 }
-k = document;
-k.c = k.createElement;
+
+kx = document;
+kx.c = kx.createElement;
 b.a = b.appendChild;
-p = c.width = c.height = 400, z = b.a(k.c("p")), E = a.createImageData(p, p), q = E.data, D = j.value = j.max = 10, g = 190, n = 200, w = g * g, o = 255, e = D, f = -e, r = 16040, l = Math, u = l.PI, B = 2 * u, C = l.sqrt, s = l.atan2;
+p = c.width = c.height = 400, z = b.a(kx.c("p")), E = a.createImageData(p, p), q = E.data, D = j.value = j.max = 10, g = 190, n = 200, w = g * g, o = 255, e = D, f = -e, r = 16040, l = Math, u = l.PI, B = 2 * u, C = l.sqrt, s = l.atan2;
 b.style.textAlign = "center";
-z.style.font = "1em monospace";
+z.style.font = "2em courier";
 j.value = 2;
-for (y = j.min = 0; y < p; y++)
-    for (x = 0; x < p; x++) {
-        i = x - g, v = y - g, F = i * i + v * v, i = A((s(v, i) + u) / B, C(F) / g, 1);
-        q[r++] = i[0];
-        q[r++] = i[1];
-        q[r++] = i[2];
-        q[r++] = F > w ? 0 : o
-    }
+y = j.min = 0;
+for (; y < p; y++) {
+  x = 0;
+  for (; x < p; x++) {
+    i = x - g;
+    v = y - g;
+    F = i * i + v * v;
+    i = A((s(v, i) + u) / B, C(F) / g, 1);
+    q[r++] = i[0];
+    q[r++] = i[1];
+    q[r++] = i[2];
+    q[r++] = F > w ? 0 : o;
+  }
+}
 j.onchange = m;
-c.onmousedown = k.onmouseup = function(d) {
-    k.onmousemove =
-        /p/.test(d.type) ? 0 : (m(d), m)
+c.onmousedown = kx.onmouseup = function(e) {
+  k.onmousemove = /p/.test(e.type) ? 0 : (m(e), m);
 };
-m(0)
-
-
-
+m(0);
