@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>baobab</title>
+</head>
+
+<style type="text/css">
+
+</style>
+<body>
+
+
+<script src="../js/three.min.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+
+<script type="text/javascript">
+// three.js
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+      var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      document.body.appendChild( renderer.domElement );
+
+      var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+      var material = new THREE.MeshBasicMaterial( { color: 0x00ff00
+        // , transparent:true,  opacity:0.1 
+  } );
+      var Lcube = new THREE.Mesh( geometry, material );
+      Lcube.position.set(0,-0.1,0);
+      Lcube.rotation.set(0,0,Math.PI/4);
+      scene.add( Lcube );
+      var Rcube = new THREE.Mesh( geometry, material );
+      Rcube.position.set(0,0.1,0);
+      Rcube.rotation.set(0,0,Math.PI/4);
+      scene.add( Rcube );
+
+      camera.position.z = 2;
+
+      var animate = function () {
+        requestAnimationFrame( animate );
+        renderer.render(scene, camera);
+      };
+
+      animate();
+
+</script>
+</body>
+</html>
