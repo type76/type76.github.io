@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>type76</title>
+<link rel="stylesheet" type="text/css" href="css/type1.css">
+
+</head>
+<body>
+<div id="interface">
+<label class="switch">
+  <input id="switchValue" type="checkbox" checked oninput="invert()">
+  <span class="slider round"></span>
+</label>
+</div><!-- interface -->
+
+<div class="header">
+  <header class="name">Type76</header>
+</div><!-- header -->
+
+<div class="container">
+<header class="name">Projects</header>
+
+<ul class="projects">
+<li><a href="projects/tent/">tent
+<!-- <img src="template/1.jpg" width="600" height="300" alt="pic one"> -->
+</a></li>
+<li><a href="projects/drive/">drive
+<!-- <img src="template/2.jpg" width="600" height="300" alt="pic one"> -->
+</a></li>
+<li><a href="projects/baobab/">baobab
+<!-- <img src="template/3.jpg" width="600" height="300" alt="pic one"> -->
+</a></li>
+</ul>
+
+
+<!-- <ul class="projects">
+<li><a href="#">baobab
+<img src="template/1.jpg" width="600" height="300" alt="pic one">
+</a></li>
+
+<li><a href="#">drive
+<img src="template/2.jpg" width="600" height="300" alt="pic one">
+</a></li>
+
+
+<li><a href="#">3D chatbot
+<img src="template/3.jpg" width="600" height="300" alt="pic one">
+</a></li>
+
+<li><a href="#">2D chatbot
+<img src="template/1.jpg" width="600" height="300" alt="pic one">
+</a></li>
+
+<li><a href="#">loop
+<img src="template/2.jpg" width="600" height="300" alt="pic one">
+</a></li>
+
+<li><a href="#">globe
+<img src="template/3.jpg" width="600" height="300" alt="pic one">
+</a></li>
+</ul> -->
+
+</div><!-- container -->
+
+<script>
+// button
+function invert() {
+ document.getElementById("switchValue").classList.toggle('on');
+  if (document.getElementById("switchValue").classList != "on") {
+    document.body.classList = '';
+  } else {
+    document.body.classList = 'dark';
+    }
+
+  }
+
+</script>
+
+</body>
+</html>
