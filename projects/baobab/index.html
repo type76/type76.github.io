@@ -4,46 +4,556 @@
 	<title>baobab</title>
 </head>
 
-<style type="text/css">
+<link rel="stylesheet" type="text/css" href="../../css/type1.css">
+<style>
+* {margin:0; padding: 0;}
+body {
+  font-family: Monospace;
+  background: #eee;
+  margin: 0px;
+  overflow: hidden;
+}
 
+
+#hud {
+  position: absolute;
+  display: block;
+  width: 100vw;
+  z-index: 2;
+  bottom: 0;
+  color: #fff;
+}
+
+#hud p {
+display: block;
+width: 300px;
+}
+
+.lside .xslider,
+.rside .xslider {
+  display: block;
+  width: 300px;
+}
+
+.lside, .rside {
+ position: absolute;
+ bottom: 20px; 
+}
+.lside {left: 14px;}
+.rside {right: 14px;}
+
+#hud p.vol {text-align: center; margin: 0 auto 15px auto;}
+p.vol span {display: block; margin-bottom: 10px;}
+canvas {position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+z-index: -1;}
+</style></style>
 </style>
 <body>
+<div id="interface">
+<label class="switch">
+  <input id="switchValue" type="checkbox" checked oninput="invert()">
+  <span class="slider round"></span>
+</label>
 
+  </div><!-- interface -->
+
+
+<div id="hud">
+<p class="lside">
+  <input class="xslider" id="carrier" type="range" value="100" min="1" max="2800" step="1" oninput="handleCarrierChange(value)" />
+  <!-- <br>   Carrier Frequency: <span id="carrierLabel">100</span> -->
+</p>
+
+<p class="rside">
+  <input class="xslider" id="beat" type="range" value="3" min="0" max="50" step="1" oninput="handleBeatChange(value)" />
+  <!-- <br>Binaural Beat Frequency: <span id="beatLabel">3</span> -->
+</p>
+
+<p class="vol"><span>Volume</span>
+  <input class="xslider" id="beat" type="range" value="50" min="0" max="100" step="1" oninput="handleVolumeChange(value)" />
+  <!-- <br> -->
+   <!-- <span id="volumeLabel">50</span> -->
+</p>
+
+</div><!-- hud -->
 
 <script src="../js/three.min.js"></script>
 <script src="../js/OrbitControls.min.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+<script src="../js/GLTFLoader.js"></script>
+<script src="../js/Reflector.js"></script>
 
 <script type="text/javascript">
-// three.js
-
-      var scene = new THREE.Scene();
+var meshes = [];
+var cnt = 0;
+var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
       var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
       renderer.setSize( window.innerWidth, window.innerHeight );
       document.body.appendChild( renderer.domElement );
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.maxDistance = 10;
+        controls.minDistance = 1;
+        controls.maxPolarAngle = Math.PI * 0.50;
+        controls.enablePan = false;
+      camera.position.z = 5;
 
-      var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-      var material = new THREE.MeshBasicMaterial( { color: 0x00ff00
-        // , transparent:true,  opacity:0.1 
-  } );
-      var Lcube = new THREE.Mesh( geometry, material );
-      Lcube.position.set(0,-0.1,0);
-      Lcube.rotation.set(0,0,Math.PI/4);
-      scene.add( Lcube );
-      var Rcube = new THREE.Mesh( geometry, material );
-      Rcube.position.set(0,0.1,0);
-      Rcube.rotation.set(0,0,Math.PI/4);
-      scene.add( Rcube );
+light = new THREE.PointLight( 0xffffff, 1, 90 );
+light.position.set( 40, 40, 20 );
+scene.add( light );
 
-      camera.position.z = 2;
+
+//
+treegroup = new THREE.Group();
+treegroup.scale.set(1, 1, 1);
+treegroup.position.set( 0, -0.5, 0 );
+treegroup.name = "treegroup"
+scene.add( treegroup );
+
+leafgroup = new THREE.Group();
+leafgroup.scale.set( 0.1, 0.1, 0.1 );
+leafgroup.position.set(0.5, 1, 0);
+leafgroup.name = "leafgroup"
+treegroup.add( leafgroup );
+
+bg = new THREE.Group();
+treegroup.add(bg)
+
+
+mzingagroup = new THREE.Group();
+mzingagroup.scale.set( 1, 1, 1 );
+mzingagroup.position.set(1.68, 1.77, -0.59);
+mzingagroup.name = "mzingagroup"
+treegroup.add( mzingagroup );
+
+
+// log
+var loader = new THREE.BufferGeometryLoader();
+
+loader.load(
+  'log-geometry.json',
+  function ( geometry ) {
+    var material = new THREE.MeshLambertMaterial( { color : 0x333333 } );
+    var object = new THREE.Mesh( geometry, material );
+    mzingagroup.add( object );
+  },
+  function ( xhr ) {
+  },
+  function ( xhr ) {
+    console.log( 'An error happened' );
+  }
+  );
+
+// rope
+var loader = new THREE.BufferGeometryLoader();
+
+loader.load(
+  'rope-geometry.json',
+  function ( geometry ) {
+    var material = new THREE.MeshBasicMaterial( { color: 0x000000
+ } );
+    var object = new THREE.Mesh( geometry, material );
+    mzingagroup.add( object );
+  },
+  function ( xhr ) {
+  },
+  function ( xhr ) {
+    console.log( 'An error happened' );
+  }
+  );
+
+
+// sky night
+var loader = new THREE.TextureLoader();
+loader.load( 'wgrad.png', function ( texture ) {
+  var skygeometry = new THREE.SphereGeometry(501, 32, 32)
+  var skymaterial = new THREE.MeshBasicMaterial( { map: texture, side : THREE.BackSide
+  ,transparent: true, opacity: 0.8
+   } );
+  var skyn = new THREE.Mesh( skygeometry, skymaterial );
+  skyn.name = "skynight";
+  scene.add(skyn);
+} );
+
+
+//butterfly
+var loader = new THREE.JSONLoader();
+
+loader.load( "butterfly2.json", function( geometry, materials ) {
+var material = new THREE.MeshBasicMaterial( {color: 0xffffff } );
+mesh = new THREE.Mesh( geometry, material );
+mesh.position.set(0, -0.5 , 1.4);
+mesh.scale.set(0.1, 0.1, 0.1);
+
+mesh.rotation.set(0, 190 , 0);
+bg.add( mesh );
+} );
+
+
+// mirror
+// var geometry = new THREE.PlaneBufferGeometry( 500, 500 );
+var geometry = new THREE.CircleBufferGeometry( 500, 32 );
+
+var verticalMirror = new THREE.Reflector( geometry, {
+  clipBias: 0.003,
+  textureWidth: window.innerWidth * window.devicePixelRatio,
+  textureHeight: window.innerHeight * window.devicePixelRatio
+  // ,recursion: 1
+} );
+
+verticalMirror.scale.set(0.05,0.05,0.05);
+verticalMirror.rotation.set(-Math.PI*0.5, 0, 0);
+verticalMirror.position.y = -0.5;
+scene.add( verticalMirror );
+
+var wmaterial = new THREE.MeshLambertMaterial( {
+  color:  0xcccccc
+  , transparent: true, opacity: 0.8
+} );
+var watersurf = new THREE.Mesh( geometry, wmaterial );
+watersurf.position.set(0,-0.49,0)
+// watersurf.scale.set(0.01,0.01,0.01)
+watersurf.rotation.set(-Math.PI*0.5, 0, 0);
+watersurf.scale.set(0.05,0.05,0.05);
+scene.add( watersurf );
+
+
+var loader = new THREE.GLTFLoader();
+
+// tree
+var filepath = "tt.glb";
+loader.load(filepath, function (gltf) {
+
+  gltf.scene.traverse(function (node) {
+      if (node.isMesh) mesh = node;
+  });
+
+mesh.material = new THREE.MeshLambertMaterial( {
+color: 0x333333
+} ) ;
+
+mesh.position.set(0.5,0,0);
+treegroup.add(mesh);
+
+}); // tree gltf
+
+//
+
+
+makeleaves();
+// leaves
+function makeleaves() {
+  counter = 0;
+var sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
+
+
+var sphmaterial = new THREE.MeshBasicMaterial( {
+  color:  0xffffff
+} );
+
+
+// if (document.getElementById("switchValue").classList != "on") {
+// var sphmaterial = new THREE.MeshLambertMaterial( {
+//   color:  0x666666 
+//   // , transparent: true, opacity: 0.1
+// } );
+// }
+
+sphere1 = new THREE.Mesh( sphere, sphmaterial );
+sphere1.position.set(14.75,11,-5.17);
+sphere1.name = "cloneparent";
+sphere1.visible = false;
+
+// leafgroup.add(sphere1);
+
+// lighgbulb clones
+var clone1 = sphere1.clone();
+clone1.position.set(13.75,12.5,-5.17);
+clone1.scale.set(1.3,1.3,1.3);
+leafgroup.add(clone1);
+
+var clone3 = sphere1.clone();
+clone3.position.set(11.64,12.4,-5.83);
+leafgroup.add(clone3);
+
+var clone4 = sphere1.clone();
+clone4.position.set(10,12.4,-2.7);
+leafgroup.add(clone4);
+
+var clone5 = sphere1.clone();
+clone5.position.set(11.6,9,-6.32);
+leafgroup.add(clone5);
+
+var clone6 = sphere1.clone();
+clone6.position.set(13.51,7.8,-8.37);
+leafgroup.add(clone6);
+
+var clone7 = sphere1.clone();
+clone7.scale.set(1.2,1.2,1.2);
+clone7.position.set(11.39,7.38,-8.27);
+leafgroup.add(clone7);
+
+var clone8 = sphere1.clone();
+clone8.position.set(7.31,8.8,-7.94);
+leafgroup.add(clone8);
+
+var clone9 = sphere1.clone();
+clone9.position.set(5.73,8.95,-6.27);
+leafgroup.add(clone9);
+
+var clone10 = sphere1.clone();
+clone10.position.set(-1.83,8.2,3.4);
+leafgroup.add(clone10);
+
+var clone11 = sphere1.clone();
+clone11.position.set(-4.71,7.3,3.19);
+clone11.scale.set(0.8,0.8,0.8);
+leafgroup.add(clone11);
+
+var clone12 = sphere1.clone();
+clone12.position.set(-2.86,7.6,3.6);
+clone12.scale.set(0.7,0.7,0.7);
+leafgroup.add(clone12);
+
+var clone13 = sphere1.clone();
+clone13.position.set(-6.94,5.9,4.81);
+clone13.scale.set(1.5,1.5,1.5);
+leafgroup.add(clone13);
+
+var clone14 = sphere1.clone();
+clone14.position.set(-4.61,6.2,5.85);
+clone14.scale.set(0.9,0.9,0.9);
+leafgroup.add(clone14);
+
+
+
+  leafgroup.traverse( function ( object ) {
+    if ( object.name == 'cloneparent' ) {
+      for ( var i = 0; i < 4; i ++ ) {
+        geometry = new THREE.SphereGeometry( Math.random(), 16, 8 );
+
+        mesh = new THREE.Mesh(geometry, sphmaterial);
+        mesh.scale.x = mesh.scale.y = mesh.scale.z = 2 * ( Math.random() + 0.5);
+        mesh.position.x = object.position.x * (1 - Math.random() + 0.5);
+        mesh.position.y = (object.position.y-1.25) + (1 + (Math.random()/2) );
+        mesh.position.z = object.position.z * (1 - Math.random() + 0.5);
+        mesh.name = "leaves";
+        mesh.updateMatrix();
+        leafgroup.add(mesh);
+        meshes[ cnt ] = mesh;
+        cnt += 1;
+      }
+
+    } } );
+  }
+
+makerocks();
+
+function makerocks() {
+for ( var i = 0; i < 19; i ++ ) {
+      var material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+      var geometry = new THREE.SphereGeometry( 0.1, 2, 1, 0, 3 );
+      var mesh = new THREE.Mesh( geometry, material );
+          mesh.rotation.x = -Math.PI/2;
+          mesh.rotation.z = Math.PI*Math.random();
+          var sc = Math.random()*0.7;
+          mesh.scale.set(sc, sc, sc);
+
+          mesh.position.x = ( Math.random() - 0.5 ) * 4;
+          mesh.position.z = ( Math.random() - 0.5 ) * 4;
+          mesh.updateMatrix();
+          mesh.matrixAutoUpdate = false;
+          bg.add( mesh );
+
+        }
+}// make rocks
+//
 
       var animate = function () {
         requestAnimationFrame( animate );
         renderer.render(scene, camera);
+        updateleaves()
       };
 
       animate();
+      window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+    }
+
+
+// button
+function invert() {
+switchleaves();
+ document.getElementById("switchValue").classList.toggle('on');
+  if (document.getElementById("switchValue").classList != "on") {
+    document.body.classList = '';
+  right_osc.stop();
+
+  setTimeout(function () {
+      left_osc.stop();
+  }, 50);
+
+  setTimeout(function () {
+      isPlaying = false;
+  }, 100);
+// light.intensity = 0.8;
+  } else {
+
+// light.intensity = 2;
+  document.body.classList = 'dark';
+  left_osc = cntx.createOscillator();
+  right_osc = cntx.createOscillator();
+  setFreqs();
+  right_osc.connect(merger, 0, 0);
+  left_osc.connect(merger, 0, 1);
+  left_osc.start();
+
+  setTimeout(function () {
+      right_osc.start();
+  }, 50);
+
+  setTimeout(function () {
+      isPlaying = true;
+  }, 100);
+      }
+
+  }
+
+
+function switchleaves() {
+leafgroup.visible = false;
+for (var i = leafgroup.children.length - 1; i >= 0; i--) {
+    leafgroup.remove(leafgroup.children[i]);
+}
+makeleaves();
+
+for (var i = bg.children.length - 1; i >= 0; i--) {
+    bg.remove(bg.children[i]);
+}
+makerocks();
+ 
+  setTimeout(function () {
+      leafgroup.visible = true;
+  }, 2);
+
+// bg.visible = true;
+}
+
+
+
+
+
+var carrier_freq = 100;
+var beat_freq = 3;
+var isPlaying = false;
+var left_osc, right_osc;
+var volume = .5;
+
+var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+var cntx = new AudioContext();
+
+var merger = cntx.createChannelMerger(2);
+
+volumeNode = cntx.createGain();
+volumeNode.gain.value = volume;
+
+merger.connect(volumeNode);
+volumeNode.connect(cntx.destination);
+
+function toggleSound() {
+if (isPlaying) {
+      bg = false;
+  document.body.classList = '';
+  right_osc.stop();
+
+  setTimeout(function () {
+      left_osc.stop();
+  }, 50);
+
+  setTimeout(function () {
+      isPlaying = false;
+  }, 100);
+
+    } else {
+  document.body.classList = 'on';
+  left_osc = cntx.createOscillator();
+  right_osc = cntx.createOscillator();
+  setFreqs();
+  right_osc.connect(merger, 0, 0);
+  left_osc.connect(merger, 0, 1);
+  left_osc.start();
+
+  setTimeout(function () {
+      right_osc.start();
+  }, 50);
+
+  setTimeout(function () {
+      isPlaying = true;
+      bg = true;
+  }, 100);
+
+    }// if else
+}// func
+
+function setFreqs() {
+   if (typeof right_osc != "undefined") {
+     right_osc.frequency.value = carrier_freq;
+     left_osc.frequency.value = carrier_freq + beat_freq;
+   }
+}
+
+function handleVolumeChange(val) {
+  var element = document.getElementById("volumeLabel");
+  volume = Number(val)/100;
+  volumeNode.gain.value = volume;
+}
+
+function handleCarrierChange(val) {
+  var element = document.getElementById("carrierLabel");
+  carrier_freq = Number(val);
+  setFreqs();
+}
+
+function handleBeatChange(val) {
+  var element = document.getElementById("beatLabel");
+  beat_freq = Number(val);
+  setFreqs();
+}
+
+var counter = 0;
+function updateleaves() {
+counter++;
+mzingagroup.rotation.x = Math.PI*Math.cos(counter/50)/50;
+mzingagroup.rotation.y = Math.PI*Math.cos(counter/50)/50;
+  leafgroup.traverse( function ( object ) {
+    if ( object.name == 'leaves' ) {
+        var num = (carrier_freq/100 + Math.cos(counter/50));
+        object.scale.x = object.scale.y = object.scale.z = num;
+  // if (num<0.0001) { doit();   }
+    } } );
+}
+
+
+// do the switch?
+var doing = false;
+function doit() {
+if (!doing) {
+  doing = true;
+  switchleaves();
+
+  setTimeout(function () {
+    doing = false;
+  }, 100);
+
+}// if
+}// func doit
+
 
 </script>
 </body>
