@@ -1,0 +1,2372 @@
+{
+  "0": {
+    "name": "0",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "1": {
+    "name": "Peru",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 32165485,
+      "military": 0,
+      "gdp":201809      
+  }
+  },
+  "2": {
+    "name": "Burkina Faso",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 19193382,
+      "military": 0,
+      "gdp":12756      
+  }
+  },
+  "3": {
+    "name": "France",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 64979548,
+      "military": 0,
+      "gdp":2465453      
+  }
+  },
+  "4": {
+    "name": "Libya",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 6374616,
+      "military": 0,
+      "gdp":41319      
+  }
+  },
+  "5": {
+    "name": "Belarus",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":9468338      
+  }
+  },
+  "6": {
+    "name": "Pakistan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 197015955,
+      "military": 0,
+      "gdp":251255      
+  }
+  },
+  "7": {
+    "name": "Indonesia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 263991379,
+      "military": 0,
+      "gdp":932259      
+  }
+  },
+  "8": {
+    "name": "Yemen",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 28250420,
+      "military": 0,
+      "gdp":37131      
+  }
+  },
+  "9": {
+    "name": "Madagascar",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 25570895,
+      "military": 0,
+      "gdp":10674      
+  }
+  },
+  "10": {
+    "name": "Bolivia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 11051600,
+      "military": 0,
+      "gdp":32996      
+  }
+  },
+  "11": {
+    "name": "Ivory Coast",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 24294750,
+      "military": 0,
+      "gdp":34254      
+  }
+  },
+  "12": {
+    "name": "Algeria",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 41318142,
+      "military": 0,
+      "gdp":213518      
+  }
+  },
+  "13": {
+    "name": "Switzerland",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 8476005,
+      "military": 0,
+      "gdp":668851      
+  }
+  },
+  "14": {
+    "name": "Cameroon",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 24053727,
+      "military": 0,
+      "gdp":32051      
+  }
+  },
+  "15": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "16": {
+    "name": "Botswana",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2291661,
+      "military": 0,
+      "gdp":15813      
+  }
+  },
+  "17": {
+    "name": "Ukraine",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 44222947,
+      "military": 0,
+      "gdp":131806      
+  }
+  },
+  "18": {
+    "name": "Kenya",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 49699862,
+      "military": 0,
+      "gdp":60936      
+  }
+  },
+  "19": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "20": {
+    "name": "Jordan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 9702353,
+      "military": 0,
+      "gdp":35827      
+  }
+  },
+  "21": {
+    "name": "Mexico",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 129163276,
+      "military": 0,
+      "gdp":1076914      
+  }
+  },
+  "22": {
+    "name": "United Arab Emirates",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 9400145,
+      "military": 0,
+      "gdp":399451      
+  }
+  },
+  "23": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "24": {
+    "name": "Brazil",
+    "stats": {
+      "hp": 4,
+      "resources": 6,
+      "population": 209288278,
+      "military":2,
+      "gdp":1795925      
+  }
+  },
+  "25": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "26": {
+    "name": "Mali",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 18541980,
+      "military": 0,
+      "gdp":11979      
+  }
+  },
+  "27": {
+    "name": "Democratic Republic of the Congo",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 81339988,
+      "military": 0,
+      "gdp":35909      
+  }
+  },
+  "28": {
+    "name": "Italy",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 59359900,
+      "military": 0,
+      "gdp":1858913      
+  }
+  },
+  "29": {
+    "name": "Somalia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 14742523,
+      "military": 0,
+      "gdp":1375      
+  }
+  },
+  "30": {
+    "name": "Afghanistan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 35530081,
+      "military": 0,
+      "gdp":21122      
+  }
+  },
+  "31": {
+    "name": "Bangladesh",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 164669751,
+      "military": 0,
+      "gdp":173062      
+  }
+  },
+  "32": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "33": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "34": {
+    "name": "Ghana",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 28833629,
+      "military": 0,
+      "gdp":37177      
+  }
+  },
+  "35": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "36": {
+    "name": "Sweden",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 9910701,
+      "military": 0,
+      "gdp":514475      
+  }
+  },
+  "37": {
+    "name": "Turkey",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 80745020,
+      "military": 0,
+      "gdp":863711      
+  }
+  },
+  "38": {
+    "name": "Uganda",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 42862958,
+      "military": 0,
+      "gdp":27465      
+  }
+  },
+  "39": {
+    "name": "Mozambique",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 29668834,
+      "military": 0,
+      "gdp":17081      
+  }
+  },
+  "40": {
+    "name": "Japan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 127484450,
+      "military": 0,
+      "gdp":4936211      
+  }
+  },
+  "41": {
+    "name": "New Zealand",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4705818,
+      "military": 0,
+      "gdp":198652      
+  }
+  },
+  "42": {
+    "name": "Cuba",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 11484636,
+      "military": 0,
+      "gdp":89689      
+  }
+  },
+  "43": {
+    "name": "Venezuela",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 31977065,
+      "military": 0,
+      "gdp":291376      
+  }
+  },
+  "44": {
+    "name": "Portugal",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 10329506,
+      "military": 0,
+      "gdp":230117      
+  }
+  },
+  "45": {
+    "name": "Colombia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 49065615,
+      "military": 0,
+      "gdp":377740      
+  }
+  },
+  "46": {
+    "name": "Mauritania",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4420184,
+      "military": 0,
+      "gdp":5092      
+  }
+  },
+  "47": {
+    "name": "Angola",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 29784193,
+      "military": 0,
+      "gdp":146676      
+  }
+  },
+  "48": {
+    "name": "Germany",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 82114224,
+      "military": 0,
+      "gdp":3477796      
+  }
+  },
+  "49": {
+    "name": "Sudan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 40533330,
+      "military": 0,
+      "gdp":81894      
+  }
+  },
+  "50": {
+    "name": "Thailand",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 69037513,
+      "military": 0,
+      "gdp":407026      
+  }
+  },
+  "51": {
+    "name": "Australia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 24450561,
+      "military": 0,
+      "gdp":1304463      
+  }
+  },
+  "52": {
+    "name": "Papua New Guinea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 8251162,
+      "military": 0,
+      "gdp":16576      
+  }
+  },
+  "53": {
+    "name": "Iraq",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 38274618,
+      "military": 0,
+      "gdp":225422      
+  }
+  },
+  "54": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "55": {
+    "name": "Greenland",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 56480,
+      "military": 0,
+      "gdp":2441      
+  }
+  },
+  "56": {
+    "name": "Niger",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 21477348,
+      "military": 0,
+      "gdp":8169      
+  }
+  },
+  "57": {
+    "name": "Denmark",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 5733551,
+      "military": 0,
+      "gdp":346119      
+  }
+  },
+  "58": {
+    "name": "Latvia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 1949670,
+      "military": 0,
+      "gdp":31286      
+  }
+  },
+  "59": {
+    "name": "Romania",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 19679306,
+      "military": 0,
+      "gdp":199045      
+  }
+  },
+  "60": {
+    "name": "Zambia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 17094130  ,
+      "military": 0,
+      "gdp":26963      
+  }
+  },
+  "61": {
+    "name": "Iran",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 81162788,
+      "military": 0,
+      "gdp":425402      
+  }
+  },
+  "62": {
+    "name": "Myanmar",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 53370609,
+      "military": 0,
+      "gdp":66478      
+  }
+  },
+  "63": {
+    "name": "Ethiopia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 104957438,
+      "military": 0,
+      "gdp":53638      
+  }
+  },
+  "64": {
+    "name": "Guatemala",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 16913503,
+      "military": 0,
+      "gdp":58827      
+  }
+  },
+  "65": {
+    "name": "Suriname",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 563402,
+      "military": 0,
+      "gdp":5210      
+  }
+  },
+  "66": {
+    "name": "Western Sahara",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 552628,
+      "military": 0,
+      "gdp":1589      
+  }
+  },
+  "67": {
+    "name": "Czech Republic",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 10618303,
+      "military": 0,
+      "gdp":205270      
+  }
+  },
+  "68": {
+    "name": "Chad",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 14899994,
+      "military": 0,
+      "gdp":12791      
+  }
+  },
+  "69": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "70": {
+    "name": "Finland",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 5523231,
+      "military": 0,
+      "gdp":272217      
+  }
+  },
+  "71": {
+    "name": "Syria",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 18269868,
+      "military": 0,
+      "gdp":216036      
+  }
+  },
+  "72": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "73": {
+    "name": "Solomon Islands",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 611343,
+      "military": 0,
+      "gdp":1103      
+  }
+  },
+  "74": {
+    "name": "Oman",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4636262,
+      "military": 0,
+      "gdp":81797      
+  }
+  },
+  "75": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "76": {
+    "name": "Argentina",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 44271041,
+      "military": 0,
+      "gdp":545866      
+  }
+  },
+  "77": {
+    "name": "United Kingdom",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 66181585,
+      "military": 0,
+      "gdp":2647898      
+  }
+  },
+  "78": {
+    "name": "Costa Rica",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4905769,
+      "military": 0,
+      "gdp":49553      
+  }
+  },
+  "79": {
+    "name": "Paraguay",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 6811297,
+      "military": 0,
+      "gdp":30985      
+  }
+  },
+  "80": {
+    "name": "Guinea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 12717176,
+      "military": 0,
+      "gdp":6579      
+  }
+  },
+  "81": {
+    "name": "Ireland",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4761657,
+      "military": 0,
+      "gdp":250814      
+  }
+  },
+  "82": {
+    "name": "Nigeria",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 190886311,
+      "military": 0,
+      "gdp":404649      
+  }
+  },
+  "83": {
+    "name": "Tunisia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 11532127,
+      "military": 0,
+      "gdp":47423      
+  }
+  },
+  "84": {
+    "name": "Poland",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 38170712,
+      "military": 0,
+      "gdp":471402      
+  }
+  },
+  "85": {
+    "name": "Namibia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2533794,
+      "military": 0,
+      "gdp":13429      
+  }
+  },
+  "86": {
+    "name": "South Africa",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 56717156,
+      "military": 0,
+      "gdp":349819      
+  }
+  },
+  "87": {
+    "name": "Egypt",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 97553151,
+      "military": 0,
+      "gdp":282242      
+  }
+  },
+  "88": {
+    "name": "Tanzania",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 57310019,
+      "military": 0,
+      "gdp":48030      
+  }
+  },
+  "89": {
+    "name": "Georgia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 3912061,
+      "military": 0,
+      "gdp":16530      
+  }
+  },
+  "90": {
+    "name": "Saudi Arabia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 32938213,
+      "military": 0,
+      "gdp":639617      
+  }
+  },
+  "91": {
+    "name": "Vietnam",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 95540800,
+      "military": 0,
+      "gdp":186205      
+  }
+  },
+  "92": {
+    "name": "Russia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 146989754,
+      "military": 0,
+      "gdp":1246015      
+  }
+  },
+  "93": {
+    "name": "Haiti",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 10981229,
+      "military": 0,
+      "gdp":8599      
+  }
+  },
+  "94": {
+    "name": "Bosnia and Herzegovina",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 3507017,
+      "military": 0,
+      "gdp":18491      
+  }
+  },
+  "95": {
+    "name": "India",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 1339180127,
+      "military": 0,
+      "gdp":2259642      
+  }
+  },
+  "96": {
+    "name": "China",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 1409517397,
+      "military": 0,
+      "gdp":11218281      
+  }
+  },
+  "97": {
+    "name": "Canada",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 36624199,
+      "military": 0,
+      "gdp":1529760      
+  }
+  },
+  "98": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "99": {
+    "name": "Guyana",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 777859,
+      "military": 0,
+      "gdp":3086      
+  }
+  },
+  "100": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "101": {
+    "name": "Equatorial Guinea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 1267689,
+      "military": 0,
+      "gdp":16731      
+  }
+  },
+  "102": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "103": {
+    "name": "Bulgaria",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 7084571,
+      "military": 0,
+      "gdp":56718      
+  }
+  },
+  "104": {
+    "name": "Burundi",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 10864245,
+      "military": 0,
+      "gdp":2869      
+  }
+  },
+  "105": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "106": {
+    "name": "Azerbaijan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 9827589,
+      "military": 0,
+      "gdp":75193      
+  }
+  },
+  "107": {
+    "name": "Malaysia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 31624264,
+      "military": 0,
+      "gdp":326933      
+  }
+  },
+  "108": {
+    "name": "Philippines",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 104918090,
+      "military": 0,
+      "gdp":290896      
+  }
+  },
+  "109": {
+    "name": "Uruguay",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 3456750,
+      "military": 0,
+      "gdp":57471      
+  }
+  },
+  "110": {
+    "name": "Republic of the Congo",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 81339988,
+      "military": 0,
+      "gdp":35909      
+  }
+  },
+  "111": {
+    "name": "Serbia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 8790574,
+      "military": 0,
+      "gdp":43866      
+  }
+  },
+  "112": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "113": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "114": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "115": {
+    "name": "Armenia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2930450,
+      "military": 0,
+      "gdp":10889      
+  }
+  },
+  "116": {
+    "name": "Senegal",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 15850567,
+      "military": 0,
+      "gdp":15658      
+  }
+  },
+  "117": {
+    "name": "Togo",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 7797694,
+      "military": 0,
+      "gdp":4576      
+  }
+  },
+  "118": {
+    "name": "Spain",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 46354321,
+      "military": 0,
+      "gdp":1237255      
+  }
+  },
+  "119": {
+    "name": "Gabon",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2025137,
+      "military": 0,
+      "gdp":17412      
+  }
+  },
+  "120": {
+    "name": "Hungary",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 9721559,
+      "military": 0,
+      "gdp":138347      
+  }
+  },
+  "121": {
+    "name": "Malawi",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 18622104,
+      "military": 0,
+      "gdp":5720      
+  }
+  },
+  "122": {
+    "name": "Tajikistan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 8921343,
+      "military": 0,
+      "gdp":9242      
+  }
+  },
+  "123": {
+    "name": "Cambodia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 16005373,
+      "military": 0,
+      "gdp":16778      
+  }
+  },
+  "124": {
+    "name": "South Korea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 50982212,
+      "military": 0,
+      "gdp":1411245      
+  }
+  },
+  "125": {
+    "name": "Honduras",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 9265067,
+      "military": 0,
+      "gdp":19497      
+  }
+  },
+  "126": {
+    "name": "Iceland",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 335025,
+      "military": 0,
+      "gdp":17036      
+  }
+  },
+  "127": {
+    "name": "Nicaragua",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 6217581,
+      "military": 0,
+      "gdp":11806      
+  }
+  },
+  "128": {
+    "name": "Chile",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 18054726,
+      "military": 0,
+      "gdp":258062      
+  }
+  },
+  "129": {
+    "name": "Morocco",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 35739580,
+      "military": 0,
+      "gdp":110009      
+  }
+  },
+  "130": {
+    "name": "Liberia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4731906,
+      "military": 0,
+      "gdp":2122      
+  }
+  },
+  "131": {
+    "name": "Netherlands",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 17035938,
+      "military": 0,
+      "gdp":777227      
+  }
+  },
+  "132": {
+    "name": "Central African Republic",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4659080,
+      "military": 0,
+      "gdp":1838      
+  }
+  },
+  "133": {
+    "name": "Slovakia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 5447662,
+      "military": 0,
+      "gdp":100249      
+  }
+  },
+  "134": {
+    "name": "Lithuania",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2890297,
+      "military": 0,
+      "gdp":48392      
+  }
+  },
+  "135": {
+    "name": "Zimbabwe",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 16529904,
+      "military": 0,
+      "gdp":14719      
+  }
+  },
+  "136": {
+    "name": "Sri Lanka",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 20876917,
+      "military": 0,
+      "gdp":74941      
+  }
+  },
+  "137": {
+    "name": "Israel",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 8321570,
+      "military": 0,
+      "gdp":305673      
+  }
+  },
+  "138": {
+    "name": "Laos",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 6858160,
+      "military": 0,
+      "gdp":11749      
+  }
+  },
+  "139": {
+    "name": "North Korea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 25490965,
+      "military": 0,
+      "gdp":17396      
+  }
+  },
+  "140": {
+    "name": "Greece",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 11159773,
+      "military": 0,
+      "gdp":235574      
+  }
+  },
+  "141": {
+    "name": "Turkmenistan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 5758075,
+      "military": 0,
+      "gdp":47932      
+  }
+  },
+  "142": {
+    "name": "Ecuador",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 16624858,
+      "military": 0,
+      "gdp":100917      
+  }
+  },
+  "143": {
+    "name": "Benin",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 11175692,
+      "military": 0,
+      "gdp":9575      
+  }
+  },
+  "144": {
+    "name": "Slovenia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2079976,
+      "military": 0,
+      "gdp":49491      
+  }
+  },
+  "145": {
+    "name": "Norway",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 5305383,
+      "military": 0,
+      "gdp":371068      
+  }
+  },
+  "146": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "147": {
+    "name": "Lebanon",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 6082357,
+      "military": 0,
+      "gdp":49631      
+  }
+  },
+  "148": {
+    "name": "Nepal",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 29304998,
+      "military": 0,
+      "gdp":19489      
+  }
+  },
+  "149": {
+    "name": "Eritrea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 5068831,
+      "military": 0,
+      "gdp":3858      
+  }
+  },
+  "150": {
+    "name": "United States",
+    "stats": {
+      "hp": 5,
+      "resources": 7,
+      "population": 324459463,
+      "military": 7,
+      "gdp":18624475      
+  }
+  },
+  "151": {
+    "name": "Kazakhstan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 18204499,
+      "military": 0,
+      "gdp":216036      
+  }
+  },
+  "152": {
+    "name": "Antarctica",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "153": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "154": {
+    "name": "Uzbekistan",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 31910641,
+      "military": 0,
+      "gdp":63030      
+  }
+  },
+  "155": {
+    "name": "Mongolia",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 3075647,
+      "military": 0,
+      "gdp":12067      
+  }
+  },
+  "156": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "157": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "158": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "159": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "160": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "161": {
+    "name": "Bahamas",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 395361,
+      "military": 0,
+      "gdp":8510      
+  }
+  },
+  "162": {
+    "name": "Vanuatu",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 276244,
+      "military": 0,
+      "gdp":812      
+  }
+  },
+  "163": {
+    "name": "Falkland Islands",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2910,
+      "military": 0,
+      "gdp":202      
+  }
+  },
+  "164": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "165": {
+    "name": "fx",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "166": {
+    "name": "Jamaica",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 2890299,
+      "military": 0,
+      "gdp":13927      
+  }
+  },
+  "167": {
+    "name": "Cyprus",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 1179551,
+      "military": 0,
+      "gdp":23077      
+  }
+  },
+  "168": {
+    "name": "Puerto Rico",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 3663131,
+      "military": 0,
+      "gdp":103676      
+  }
+  },
+  "169": {
+    "name": "Palestine",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 4920724,
+      "military": 0,
+      "gdp":12766      
+  }
+  },
+  "170": {
+    "name": "Brunei",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 428697,
+      "military": 0,
+      "gdp":17104      
+  }
+  },
+  "171": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "172": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "173": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "174": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "175": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "176": {
+    "name": "Comoros",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":648      
+  }
+  },
+  "177": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "178": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "179": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "181": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "182": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "183": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "184": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "185": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "186": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "187": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "188": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "189": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "190": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "191": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "192": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "193": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "194": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "195": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "196": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "197": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "198": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "199": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "200": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "201": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "202": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "203": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "204": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "205": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "206": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "207": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "208": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "209": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "210": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "211": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "212": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "213": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "214": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "215": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "217": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "218": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "219": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "220": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "221": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "222": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "223": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "224": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "225": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "226": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "227": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "228": {
+    "name": "*",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "229": {
+    "name": "French Guiana",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":304      
+  }
+  },
+  "230": {
+    "name": "Arctic",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "240": {
+    "name": "Pacific Ocean",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "241": {
+    "name": "Atlantic Ocean",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "242": {
+    "name": "Indian Ocean",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "243": {
+    "name": "Caspian Sea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "244": {
+    "name": "Black Sea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "245": {
+    "name": "Mediterranian Sea",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "246": {
+    "name": "Arctic Ocean",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  },
+  "255": {
+    "name": "0",
+    "stats": {
+      "hp": 0,
+      "resources": 0,
+      "population": 0,
+      "military": 0,
+      "gdp":0      
+  }
+  }
+}

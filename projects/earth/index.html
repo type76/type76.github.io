@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>globe</title>
+    <style>
+    html, body {
+        background: #000;
+        margin: 0; padding: 0;}
+        body {
+            font-family: 'sans-serif', monospace;
+            text-transform: lowercase;
+            font-size: 15px; 
+            cursor: crosshair;
+            height:100%;
+            overflow: hidden;
+            color: #eee;
+        }
+
+        button:hover {cursor: pointer;}
+        #hud, #xcountry, #datehud {
+            position: absolute; top:0px; left:0px; color: #fff;
+            display: block;
+            padding: 10px;
+        }
+        #xcountry {display: block; top:0; width: auto; left:0px; text-shadow: 0 0 4px #000;
+        }
+        #xcountry span {display: block;}
+        #datehud {top:auto; bottom: 10px; left:10px; right: auto;}
+        #xcountry p {display: inline; margin: 0;}
+        button, span {display: inline-block;
+            background: transparent;
+            border: none; outline: none;
+            color: #fff; }
+            #spdhud {color: #fff;}
+            #hud {transform: scale(0.8); }
+            #addmrk {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 64px; 
+                height: 64px;  
+                padding: 0;
+                border: #666 2px solid; cursor: pointer; 
+                background: #000;
+                border-radius: 64px;}
+                #addmrk:focus {border: #fff 2px solid;}
+                #addmrk:hover {border: #ccc 2px solid;}
+
+                #fxhud, #myxhp {position: absolute; left: auto; right: 10px; bottom: 10px; color: #fff; text-shadow: 0 0 4px #000;}
+                #fxhud p {padding: 0; margin: 0;}
+                #fxhud span {display: block;}
+                #fxhud {
+                    display: block;
+                    border-bottom: #fff 1px solid;
+                    padding-bottom: 5px;
+                    text-align: right;
+                    width: 100px;
+                    transition: all 0.1s ease-in-out; 
+                    transform: translateX(110px);}
+                    #fxhud.on {
+                        transform: translateX(0px);}
+
+                    #myxhp {left: 20px; bottom:50px;}
+
+                    #markerlist {
+                        position: absolute;
+                        top: 80px;
+                        right: 1em;
+                    }
+                    #markerlist button {display: block;}
+                    /*#markerlist button:focus,*/
+                    #markerlist button:hover,
+                    #fxhud button:hover
+                     {color: red;}
+                    #markerlist button.active {color: yellow;}
+
+                    #cinfo {
+                        display: block;
+                        position: absolute; top:30px;
+                        left:10px; width: 100px; height: 80px;
+                    }
+
+                    #cinfo:before {
+                        content: '';
+                        display: block;
+                        width: 0px; height: 1px;
+                        background: #fff;
+                        transition: all 0.4s ease-in-out; 
+                    }
+
+                    #cinfo.on:before {
+                        width: 100px; 
+                    }
+
+
+                    #cinfo.off:before {
+                        width: 0px; 
+                    }
+
+                    #cinfo.off span, #cinfo.off div {
+                        color: transparent;
+                    }
+
+
+
+                    #cinfo span {
+                        font-size: 80%;
+                        display: block; width: 0px;
+                        color: #000;
+                        height: 1em; 
+                        background: #ccc; 
+                        padding: 2px 2px 3px 2px;
+                        margin-top: 3px; 
+                        margin-bottom: 1px; 
+                        overflow: hidden;
+                        transition: all 0.2s ease-in-out; 
+                        border-radius: 3px;
+                    }
+
+                    #cinfo div {
+                        font-size: 68%;
+                        line-height: 1.8em;
+                    }
+
+                    #cinfo span:hover {
+                        background: #666;}
+
+                    #cinfo span.i1 {width: 10% !important;}
+                    #cinfo span.i2 {width: 20% !important;}
+                    #cinfo span.i3 {width: 30% !important;}
+                    #cinfo span.i4 {width: 40% !important;}
+                    #cinfo span.i5 {width: 50% !important;}
+                    #cinfo span.i6 {width: 60% !important;}
+                    #cinfo span.i7 {width: 70% !important;}
+                    #cinfo span.i8 {width: 80% !important;}
+                    #cinfo span.i9 {width: 90% !important;}
+                    #cinfo span.i10 {width: 100% !important;}
+
+                    #controlhud {
+                        position: absolute;
+                        bottom:20px;
+                        left:100px;
+                    }
+                    #controlhud button.on {
+                        color: red;}
+
+#container {position: absolute; color: #fff;}
+
+#container div {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    color: #fff;   
+    display: block;
+}
+
+
+
+                </style>
+            </head>
+
+            <body>    
+                <div id="xcountry"></div>
+                <div id="cinfo"></div>
+
+                <p id="myxhp"></p>
+                <div id="datehud"></div>
+
+                <button onclick="createmarker()" id="addmrk" title="create marker">+</button>
+                <div id="markerlist"></div>
+                <div id="fxhud"></div>
+                <div id="controlhud">
+                    <button id="spd1" class="on">1</button>
+                    <button id="spd2">2</button>
+                    <button id="spd3">3</button>
+                    <button id="pauseme">pause</button>
+                    <button id="silent" onclick="noaudio()">silent</button>
+                </div>
+
+
+                <canvas id="2dcanvas" width="128" height="64" style="width:128px; height: 64px; position: absolute; top:40px; right:80px; transform: scale(2); display: none; " ></canvas>
+
+                <canvas id="fx" width="128" height="64" style="width:128px; height: 64px; position: absolute; top:175px; right:80px; transform: scale(2); display: none; background:rgba(255,255,255,1); "></canvas>
+
+    <div id="container"></div>
+
+                <script src="../js/three.min.js"></script>
+                <script src="../js/OrbitControls.js"></script>
+                <script src="../js/tss.js"></script>
+                <script src="../js/tween.min.js"></script>
+
+                <script>
+                " use strict ";
+// vars
+var myxhp = document.getElementById('myxhp');
+var spd1 = document.getElementById('spd1');
+var sdp2 = document.getElementById('sdp2');
+var spd3 = document.getElementById('spd3');
+var pauseme = document.getElementById('pauseme');
+var silentbtn = document.getElementById('silent');
+var health = 6;
+var fxol = document.getElementById('fx');
+var fcx = fxol.getContext('2d');
+var iamhere = 0;
+var xu = 32; //cursor 2D.x pos
+var xv = 32; //cursor 2D.y pos
+var radius = 15.21;
+var caneffect = true;
+var i = 0;
+var marknum = 0;
+var locations = [];
+var f0  = 200;
+var time = 0;
+var speed = 1;
+var years = 0;
+var days = 0;
+var iwashere = "";
+var pause = false;
+var textlabels = [];
+var silent = false;
+
+//GET JSON DATA
+var request = new XMLHttpRequest();
+request.open('GET', "locations.json");
+request.responseType = 'json';
+request.send(); 
+request.onload = function() {
+    locations = request.response;
+// edit values
+       locationvars(locations);
+} 
+
+// canvas
+var canvas = document.getElementById('2dcanvas'),
+ctx = canvas.getContext('2d');
+var img = new Image();
+img.src = 'lookup_128.png';
+
+
+function changeCanvas() {
+    ctx.drawImage(img, 0, 0);
+    texData = ctx.getImageData(0, 0, 128, 64);
+    ctx.fillStyle = "red";
+    ctx.drawImage(fxol,0,0);
+    ctx.fillRect(xu, xv, 1, 1);      
+
+}//end changecanvas
+
+
+// threejs
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 400);
+camera.position.z = 30;
+var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+renderer.setClearColor( 0xff0000, 0 );
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// controls
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.zoomSpeed = 1.2;
+controls.minDistance = 12;
+controls.maxDistance = 100;
+controls.enableZoom = true;
+controls.enablePan = false;
+
+//globe
+earthgroup = new THREE.Group();
+earthgroup.visible = false; 
+scene.add( earthgroup );
+
+//sun pivot
+sunpvt = new THREE.Object3D();
+sunpvt.position.set( 0, 0, 0 );
+scene.add( sunpvt );
+
+//on click pivot
+pvt = new THREE.Object3D();
+pvt.position.set( 0, 0, 0 );
+pvt.lookAt( 0, 300, 0 )
+scene.add( pvt );
+
+//cursor pivot
+cursorpvt = new THREE.Object3D();
+cursorpvt.position.set( 0, 0, 0 );
+cursorpvt.lookAt( 0, 300, 0 )
+scene.add( cursorpvt );
+
+//selection pivot
+selpvt = new THREE.Object3D();
+cursorpvt.lookAt( 0, 300, 0 )
+scene.add( selpvt );
+
+
+// camera pointer
+campoint = new THREE.Object3D();
+campoint.position.set(0,0,15);
+pvt.add( campoint );
+
+// markers
+markers = new THREE.Group();
+markers.name = "markers"
+scene.add( markers );
+
+
+// cursor pointer object
+var geometry = new THREE.BoxGeometry( 0.2, 0.2, 1.5 );
+var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+var cube = new THREE.Mesh( geometry, material );
+cube.name = 'pointer';
+cube.position.set(0,0,16.5);
+cursorpvt.add( cube );
+
+
+// lights
+var light = new THREE.PointLight( 0xffffff, 0.6, 10 );
+light.position.set( 0, 0, 20 );
+cursorpvt.add( light );
+
+var amlight = new THREE.AmbientLight( 0xffffff );
+scene.add( amlight );
+var am2light = new THREE.AmbientLight( 0xffffff );
+scene.add( am2light );
+
+// stars
+var stars = new THREE.Geometry();
+while (stars.vertices.length < 200) {
+    var lat = Math.PI * Math.random() - Math.PI/2;
+    var lon = 2*Math.PI * Math.random();
+
+    stars.vertices.push(new THREE.Vector3(
+        200 * Math.cos(lon) * Math.cos(lat),
+        200 * Math.sin(lon) * Math.cos(lat),
+        200 * Math.sin(lat)
+        ));
+}
+var star_stuff = new THREE.PointsMaterial({size: 1});
+var star_system = new THREE.Points(stars, star_stuff);
+scene.add(star_system);
+
+
+// raycaster
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2();
+var mesh = new THREE.Object3D();
+
+
+// earth 2D
+var d = {
+    radius: 15,
+    widthSegments: 30,
+    heightSegments: 30
+};
+texture = new THREE.Texture(canvas);
+texture.magFilter = THREE.NearestFilter;
+texture.minFilter = THREE.LinearMipMapLinearFilter;
+var geometry = new THREE.SphereGeometry(d.radius, d.widthSegments, d.heightSegments);
+var material = new THREE.MeshBasicMaterial({    map: texture    });
+var mesh = new THREE.Mesh(geometry, material);
+mesh.name = "earthgroup"   
+scene.add(mesh);
+
+
+// // sun
+// var surface = new THREE.MeshLambertMaterial({color: 0x666666});
+// var star = new THREE.SphereGeometry(6, 6, 6);
+// var sun = new THREE.Mesh(star, surface);
+// scene.add(sun);
+
+
+// ring
+var rgeometry = new THREE.RingBufferGeometry( 0.6, 1, 32 );
+var rmaterial = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+var rmesh = new THREE.Mesh( rgeometry, rmaterial );
+rmesh.position.set(0,0,15);
+rmesh.name = 'select';
+rmesh.visible = false;
+selpvt.add( rmesh );
+
+
+//RENDER
+function animate() {
+// if (textlabels.length>0) {
+// for(var i=0; i<this.textlabels.length; i++) {
+// this.textlabels[i].updatePosition();
+// }
+// }
+
+
+    changeCanvas();
+    controls.update();
+    TWEEN.update();
+    texture.needsUpdate = true;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+
+    if (pause) return;
+// calc days/years passing
+time = time + speed;
+var e_angle = time * 0.1;
+// sun.position.set(200* Math.cos(e_angle), 0, 200* Math.sin(e_angle));
+var years = e_angle/(2*Math.PI);
+days = Math.round(years * 360);
+datehud.innerHTML = 'y: '+Math.round(years)+'<br>d: '+days;
+
+
+ 
+
+};  //END RENDER
+
+animate();
+
+
+// on resize listener
+window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}, false);
+
+
+
+//on doc mousedown
+window.addEventListener('mousedown', function(event) {
+    clientClickX = event.clientX;
+    clientClickY = event.clientY;
+}, false);
+
+window.addEventListener("touchstart", ttt, false);
+
+
+//on doc mouseup - cast ray, check location, move cursors, show data
+window.addEventListener('mouseup', function (ev){
+    ttt(ev)
+}, false);
+//mouseup
+
+
+function ttt (ev) {
+
+if (ev.target == renderer.domElement) {
+        var x = ev.clientX;
+        var y = ev.clientY;
+            myxhp.innerHTML = 'x:'+x+' y:'+y;
+        // if( x != clientClickX || y != clientClickY ) return;
+
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+
+        raycaster.setFromCamera( mouse, camera );
+        var intersects = raycaster.intersectObject( mesh );
+
+        if (intersects.length > 0) {
+
+
+// intersect point
+point = intersects[0].point;
+pvt.lookAt( intersects[0].point );
+
+// point on 2d map
+xu = Math.floor(intersects[0].uv.x*128);
+xv = -(Math.floor(intersects[0].uv.y*64)-63);
+var index = (Math.floor(xv) * 128 + Math.floor(xu)) * 4;
+// colour of point on lookup map
+var r = texData.data[index];
+iamhere = locations[r].name;
+cnum = r;
+// myxhp.innerHTML = cnum;
+
+// if (r>=240) {return;}
+// make country name
+// if new country - say/write name
+if (iwashere === locations[r].name) {
+} else {
+    // if (!silent){
+    //     speakMsg(locations[r].name)
+    // }
+    var myP = document.createElement('p');    
+    myP.textContent = locations[r].name;
+    typeit(xcountry, locations[r].name);
+    cntinfo(r);
+} //show country
+
+iwashere = locations[r].name;
+// rotate cursor pivot
+cursorpvt.rotation.set(pvt.rotation.x, pvt.rotation.y, pvt.rotation.z);
+// change canvas
+fcxData = fcx.getImageData(xu, xv, 1, 1);
+checkfx(fcxData.data[0]);
+// console.log(fcxData.data[0])
+} 
+
+}
+}
+
+
+// country info box
+function cntinfo(r) {
+    cinfo.innerHTML = '';
+    cinfo.classList = 'off';
+
+    var xhp = document.createElement('span');
+    xhp.textContent = locations[r].stats.hp;
+    xhp.setAttribute('title', 'hp')
+
+    var xpn = document.createElement('div');
+    xpn.textContent = 'pop:'+locations[r].stats.population;
+    xpn.setAttribute('title', 'population')
+
+    var xmil = document.createElement('span');
+    xmil.textContent = locations[r].stats.military;
+    xmil.setAttribute('title', 'military')
+
+    var xres = document.createElement('span');
+    xres.textContent = locations[r].stats.resources;
+    xres.setAttribute('title', 'resources')
+
+    var xgdp = document.createElement('div');
+    xgdp.textContent = 'gdp:'+locations[r].stats.gdp;
+    xgdp.setAttribute('title', 'gdp')
+
+    cinfo.appendChild(xgdp);   
+    cinfo.appendChild(xpn);
+
+    cinfo.appendChild(xhp);   
+    cinfo.appendChild(xmil);   
+    cinfo.appendChild(xres);   
+
+    setTimeout(function() { 
+        xhp.className = 'i'+locations[r].stats.hp;
+        xmil.className = 'i'+locations[r].stats.military;
+        xpn.className = 'i'+locations[r].stats.population;
+        xres.className = 'i'+locations[r].stats.resources;
+        xgdp.className = 'xi';
+        cinfo.classList = 'on';
+    }, 300);
+}
+
+
+// check fx lookup table for effect
+function checkfx(r) {
+    if (r===165) {
+// if xy pos of marker = cursor, show data
+for (var vv=0; vv < playermrks.length; vv++) {
+    if (playermrks[vv].cx === xu && playermrks[vv].cy === xv) {
+        xinfo(vv);  
+        // hilight relevant list item       
+        for (var cc=0; cc < markerlist.children.length; cc++) {
+            var item = markerlist.children[vv];
+            item.classList = 'active';
+            setTimeout(function() {  
+                item.classList = '';
+            }, 600);
+        } //for
+hilight(vv, 600);
+    } //if
+}//for
+} else {
+    fxhud.innerHTML =  '';
+    fxhud.classList =  '';
+}
+};
+
+
+// hilight and animate marker
+function hilight(vv, vvtime) {
+    var sel = scene.getObjectByProperty( 'name', 'select', true );
+    selpvt.lookAt( playermrks[vv].point );
+    sel.scale.set(0.1,0.1,0.1);
+    sel.visible = true;
+    var tw = new TWEEN.Tween(sel.scale)
+    .to( {x:1, y:1, z:1}, 100 )
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .start();
+    setTimeout(function() {  
+    var tw = new TWEEN.Tween(sel.scale)
+    .to( {x:0.1, y:0.1, z:0.1}, 100 )
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .onComplete(function() { 
+        sel.visible = false;
+    })
+    .start();
+    }, vvtime);
+}
+
+// show marker info box
+function xinfo(number) {
+        fxhud.classList =  '';
+    fxhud.innerHTML =  '';
+    var myP = document.createElement('p');
+    myP.innerHTML = playermrks[number].name;
+    fxhud.appendChild(myP);
+    var myhpx = document.createElement('span');
+    myhpx.textContent = 'hp:'+playermrks[number].hp;
+    fxhud.appendChild(myhpx); 
+
+    var mytime = document.createElement('span');
+    mytime.textContent = 't:'+playermrks[number].time;
+    fxhud.appendChild(mytime); 
+
+    var mybutton = document.createElement('button');
+    mybutton.textContent = 'mine';
+    mybutton.setAttribute('data-num', number)
+    mybutton.setAttribute('onclick', "mine(event)")
+    fxhud.appendChild(mybutton); 
+
+    setTimeout(function() { 
+    fxhud.classList =  'on';
+    }, 700);  
+}
+
+// show marker list
+function showfxlist() {
+    markerlist.innerHTML = '';
+
+    for (var i=0; i < playermrks.length; i++) {
+        var mybtn = document.createElement('button');
+        mybtn.innerHTML = playermrks[i].name;
+        mybtn.setAttribute("onclick", "mrkclk(event)");
+        mybtn.setAttribute("data-num", playermrks[i].num);
+        markerlist.appendChild(mybtn);
+    }
+};
+
+
+var markertype = "rain";
+
+// create 3D marker under cursor
+function createmarker(){
+            if (pause) return;
+
+    var vector = new THREE.Vector3();
+    vector.setFromMatrixPosition( campoint.matrixWorld );
+    var  worldPosition = vector ;
+    var x = worldPosition.x; 
+    var y = worldPosition.y; 
+    var z = worldPosition.z;
+    var xcnt = iamhere;
+    fcxData = fcx.getImageData(xu, xv, 1, 1);
+    // locData = ctx.getImageData(xu, xv, 1, 1);
+
+    // console.log(locData.data[0])
+    if (fcxData.data[0] != 0) { caneffect = false; return; } else { 
+        caneffect = true; 
+        var rand10 = Math.floor(Math.random() * 10) + 1   ;
+        var today = days+0; 
+// set marker variables
+playermrks.addElem({
+    num: marknum,
+    hp: rand10, type: markertype,
+    name:'marker'+marknum,
+    cx:xu, cy:xv, point:point,
+    time: today, country:xcnt,
+    coutrynum: cnum
+});
+
+
+
+createclone(markertype,x,y,z,xu,xv,rand10,marknum);
+xinfo(marknum);               
+hilight(marknum, 600);
+showfxlist();
+
+//lbl
+// var label = this._createTextLabel(x,z,y);
+// label.setHTML('m'+marknum);
+// var fxname = 'fx'+marknum;
+// var fxsel = scene.getObjectByProperty( 'name', fxname, true );
+// label.setParent(fxsel);
+// this.textlabels.push(label);
+// this.container.appendChild(label.element);
+marknum += 1;
+// console.log(playermrks)
+}
+}
+
+
+
+
+// label
+function _createTextLabel(posx,posz,posy) {
+
+    var div = document.createElement('div');
+    div.style.top = -1000;
+    div.style.left = -1000;
+    var _this = this;
+
+    return {
+        element: div,
+        parent: false,
+        position: new THREE.Vector3(0,0,0),
+        setHTML: function(html) {
+            this.element.innerHTML = html;
+        },
+        setParent: function(threejsobj) {
+            this.parent = threejsobj;
+        },
+        updatePosition: function() {
+            if(parent) {
+                this.position.copy(this.parent.position);
+            }
+
+            var coords2d = this.get2DCoords(this.position, _this.camera);
+            this.element.style.left = coords2d.x + 'px';
+            this.element.style.top = coords2d.y + 'px';
+        },
+        get2DCoords: function(position, camera) {
+            var vector = position.project(camera);
+            vector.x = (vector.x + 1)/2 * window.innerWidth;
+            vector.y = -(vector.y - 1)/2 * window.innerHeight;
+            return vector;
+        },
+         location: {
+            x:posx,
+            y:posy,
+            z:posz
+        }
+    };
+};
+
+
+//playermrks fx array
+var playermrks = {
+    length: 0,
+    addElem: function addElem(elem) {
+        [].push.call(this, elem);
+    }
+};
+
+//create 2D marker pixel / 3D marker
+function createclone(r,x,y,z,cx,cy,xxhp,mn){
+    if (caneffect === false) {return;}
+    if (pause) return;
+
+var geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.5 );
+var material = new THREE.MeshBasicMaterial({color: 0xff00000 });
+var fxclone = new THREE.Mesh(geometry, material);
+fxclone.name = 'fx'+mn;
+    // var fxclone = mrkr.clone();
+    fxclone.position.set (x, y, z);
+    fcx.fillStyle = "brown";
+    fxclone.material.color.r=1;
+    fxclone.material.color.g=0;
+// fxclone.scale.z = xxhp;
+markers.add( fxclone );
+fcx.fillRect(cx, cy, 1, 1);
+fxclone.lookAt(scene.position);
+};
+
+
+// remove all markers
+function removefx() {
+    for (var i = markers.children.length - 1; i >= 0; i--) {
+        markers.remove(markers.children[i]);
+    }
+    fcx.clearRect(0,0,128,64);
+}
+
+
+
+// click marker list
+function mrkclk(ev) {
+    var thisnum = ev.target.getAttribute('data-num');
+    var camDistance = this.camera.position.length();
+    var xxx = (playermrks[thisnum].point).normalize().multiplyScalar(camDistance);
+    panCam(xxx.x,xxx.y,xxx.z,1000);
+    controls.update();
+    xinfo(thisnum);   
+    hilight(thisnum, 1100);
+}
+
+
+//type it
+var txtlength = 0;
+var typespeed = 70;
+
+
+function typeit(dd, lc) {
+    dd.innerHTML= ''; 
+    txtlength = 0;
+    txt = lc;
+    dd.innerHTML= ''; 
+    typeWriter();
+
+    function typeWriter() {
+        if (txtlength < txt.length+1) {
+            dd.innerHTML += txt.charAt(txtlength);
+            txtlength++;
+            timer = setTimeout(typeWriter, typespeed);
+        }
+    }
+}
+
+
+
+// speak text
+var seconds = 0;
+function speakMsg(text) {
+    try {
+        var f1 = f0;
+        var speed = 0.3;
+
+        var seconds = text.length;
+        var waveBytes = SAMPLE_FREQUENCY * 2 * 2 * seconds;
+        var buf = new Int16Array(new ArrayBuffer(waveBytes));
+        SynthSpeech(buf, text, f1, speed, 0);
+        playAudioBuffer(buf); 
+    } catch (e) {
+        alert("Something went horribly wrong:\n" + e);
+    }
+};
+
+//play spktxt
+function playAudioBuffer(buf) {
+    var maxAmp = 22000;
+    var audioString = "";
+
+    for (var i=0; i<buf.length; i++) {
+        var y = buf[i] / maxAmp * 0x7800;
+        audioString += String.fromCharCode(y & 255, (y >> 8) & 255);
+    }
+    var audio = new Audio("data:audio/wav;base64,"+btoa(atob("UklGRti/UABXQVZFZm10IBAAAAABAAIARKwAABCxAgAEABAAZGF0YbS/UAA") + audioString));
+    audio.play();
+}
+
+
+
+var xTarget=0;
+var yTarget=0;
+var zTarget=0;
+var tweenDuration=0;
+
+function panCam(xTarget,yTarget,zTarget,tweenDuration){
+    var camNewPosition= { x : xTarget, y : yTarget, z : zTarget};
+    var targetNewPos = {x : 0, y : 0, z : 0};
+
+    var camTween = new TWEEN.Tween(camera.position).to(camNewPosition, tweenDuration).easing(TWEEN.Easing.Quadratic.InOut).start();
+    var targetTween = new TWEEN.Tween(controls.target).to(targetNewPos, tweenDuration).easing(TWEEN.Easing.Quadratic.InOut).start();
+
+}
+
+// game loop
+gameloop();
+function gameloop() {
+    myxhp.innerHTML = health;
+
+}
+
+
+
+// control buttons
+//speed1
+spd1.addEventListener('click',function(){
+    spd1.classList.toggle('on');
+    if (spd1.classList != "on") {
+        spd1.classList = "";
+    } else {
+        allspdoff();
+        spd1.classList = "on";
+        speed = 1;
+    }
+},false);
+
+//speed2
+spd2.addEventListener('click',function(){
+    spd2.classList.toggle('on');
+    if (spd2.classList != "on") {
+        spd2.classList = "";
+    } else {
+        allspdoff();
+        spd2.classList = "on";
+        speed = 10;
+    }
+},false);
+
+//speed3
+spd3.addEventListener('click',function(){
+    spd3.classList.toggle('on');
+    if (spd3.classList != "on") {
+        spd3.classList = "";
+    } else {
+        allspdoff();
+        spd3.classList = "on";
+        speed = 50;
+    }
+},false);
+
+//pause
+pauseme.addEventListener('click',function(){
+    pauseme.classList.toggle('on');
+    if (pauseme.classList != "on") {
+        pauseme.classList = "";
+        pause = false;
+    } else {
+        pauseme.classList = "on";
+        pause = !pause;
+    }
+},false);
+
+//switch speed off
+function allspdoff() {
+    spd1.classList = "";
+    spd2.classList = "";
+    spd3.classList = "";
+}
+
+
+
+//silent
+function noaudio() {
+    silentbtn.classList.toggle('on');
+    if (silentbtn.classList != "on") {
+        silentbtn.classList = "";
+        silent = false;
+    } else {
+        silentbtn.classList = "on";
+        silent = true;
+    }
+}
+
+
+function locationvars(xloc){
+var xMax = 10;
+var xMin = 1;
+var yMax = 10000;
+var yMin = 0;
+var pMax = 1000000;
+
+// edit values to random
+  Object.keys(locations).forEach(function(key){ 
+var xgdp = locations[key].stats.gdp;
+var percent = (xgdp - yMin) / (yMax - yMin);
+var outputX = percent * (xMax - xMin) + xMin;
+locations[key].stats.gdp = Math.floor(outputX);
+locations[key].stats.hp = Math.floor(Math.random() * 8) + 2;
+locations[key].stats.military = Math.floor(Math.random() * 8) + 2;
+locations[key].stats.resources = Math.floor(Math.random() * 8) + 2;
+});
+         return locations;
+}
+
+ // min and max random number
+function random(min,max){
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+//mine
+// click marker list
+function mine(ev) {
+var thisnum = ev.target.getAttribute('data-num');
+
+var here = ctx.getImageData(xu, xv, 1, 1);
+var north = ctx.getImageData(xu, xv-1, 1, 1);
+var ne = ctx.getImageData(xu+1, xv-1, 1, 1);
+var nw = ctx.getImageData(xu-1, xv-1, 1, 1);
+var east = ctx.getImageData(xu+1, xv, 1, 1);
+var south = ctx.getImageData(xu, xv+1, 1, 1);
+var se = ctx.getImageData(xu+1, xv+1, 1, 1);
+var sw = ctx.getImageData(xu-1, xv+1, 1, 1);
+var west = ctx.getImageData(xu-1, xv, 1, 1);
+
+var huko = here.data[0];
+// var huko = locations[playermrks[thisnum].coutrynum].name;
+var tonorth = locations[north.data[0]].name;
+var tone = locations[ne.data[0]].name;
+var tonw = locations[nw.data[0]].name;
+var toeast = locations[east.data[0]].name;
+var tosouth = locations[south.data[0]].name;
+var tose = locations[se.data[0]].name;
+var tosw = locations[sw.data[0]].name;
+var towest = locations[west.data[0]].name;
+
+console.log(playermrks[thisnum].coutrynum)
+console.log(locations[playermrks[thisnum].coutrynum].name)
+
+// output bordering countries around cursor
+console.log(
+    'here:'+playermrks[thisnum].coutrynum+
+    ' north:'+north.data[0]+
+    ' ne:'+ne.data[0] +
+    ' east:'+east.data[0]+
+    ' se:'+se.data[0]+
+    ' south:'+south.data[0]+
+    ' sw:'+sw.data[0]+
+    ' west:'+west.data[0]+
+    ' nw:'+nw.data[0])
+}
+
+</script>
+
+</body>
+
+</html>	
