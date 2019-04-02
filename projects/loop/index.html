@@ -158,7 +158,13 @@ font-size: 1em;
 
 </style>
 <body>
-
+<div id="interface">
+<label class="switch">
+  <input id="switchValue" type="checkbox" checked oninput="invert()">
+  <span class="slider round"></span>
+</label>
+</div><!-- interface -->
+	
 <button id="go" type="submit" value="Send"  onclick="press();" style="display: none;">
 <div id="botface">
 <div id="botLeye">o</div>
