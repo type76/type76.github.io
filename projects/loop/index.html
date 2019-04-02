@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>word cloud + audio loop</title>
+</head>
+<link rel="stylesheet" type="text/css" href="css/type1.css">
+
+<style type="text/css">
+@font-face {
+  font-family: 'novecento';
+  src: url('novecento-bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+* {margin: 0; padding: 0;}
+html {
+  font-family: 'novecento';
+  background-color: #333;
+}
+body {
+  font-family: 'novecento';
+  overflow: hidden;
+  text-align: center;
+  margin: 0 ;
+}
+
+#xcanvas {
+  display: block;
+  max-width: 100%;
+  width: 100%; 
+  height: auto;
+  margin: 0 auto;
+}
+
+.container { 
+  height: 100vh;
+  position: relative; 
+  z-index: 2;
+}
+#underlay {
+  display: block;
+ width: 100vw;
+ height: 100vh;
+position: absolute;
+top:0;
+left:0;
+/*background-color: red;*/
+z-index: 1;
+}
+
+#underlay:before,
+#underlay:after {
+ content: '';
+ display: block;
+ width: 100vw;
+ height: 100vh;
+ background-color: rgba(0,0,0,0.1);
+ position: absolute;
+ z-index: 2; 
+ opacity: 0;
+ /*transition: all 0.1s ease;*/
+}
+
+.beat #underlay:before {
+  opacity: 1;
+}
+
+#underlay:after {
+  background: url(cracked_mud.min.jpg) no-repeat;
+  background-size: cover;
+  opacity: 1;
+  z-index: 1; 
+}
+
+.vertical-center {
+  display: block;
+  width: 100%; 
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+
+button#go {display: block;
+  outline: none; position: absolute; z-index: 22;
+  background-color: transparent; color: #fff;
+  margin: 0; border:0; cursor: pointer;
+  bottom:16px; right:16px;
+/*transition: all 0.1s ease-in;*/
+}
+
+#botface {
+display: block; 
+text-align: center; 
+width: 70px; 
+height: 60px; 
+margin: 0 auto; 
+padding: 10px 0 0 0;
+font-family: 'novecento'; 
+transition: all 0.1s ease-in;
+position: relative;
+z-index: 3;
+}
+
+
+
+#go:before {
+content: '';
+display: block;
+background-color: #000;
+width: 70px;
+height: 70px;
+position: absolute;
+top: 0;
+z-index: 1;
+transform-origin: center bottom;
+transition: all 0.1s ease-in;
+}
+
+.beat #go:before {
+  transform: scaleY(0.95) scaleX(1.05);
+  border-radius: 8% / 100%;
+}
+.beat #botface {
+  transform: translateY(2px);  
+}
+
+/*.beat #go {
+  transform: translateY(-2px);  
+}*/
+
+
+/*#botface:hover {background-color: #ff0050;}*/
+
+#botface.speaking {
+  transform: translateY(-2px);
+}
+
+#botface div {display: inline; }
+
+#botmouth {display: inline-block !important; margin: 0 auto; 
+  width: 1em; height: 1em; 
+  /*transform-origin: center;*/
+  transform: rotate(90deg) translateY(-0.18em) translateX(0.7em); 
+  text-align: center;
+  font-family: sans-serif;
+    font-family: 'novecento'; 
+font-size: 1em;
+  }
+
+#botLeye, #botReye {
+  width: 1em; height: 1em; 
+  margin: 0; 
+}
+
+</style>
+<body>
+
+<button id="go" type="submit" value="Send"  onclick="press();" style="display: none;">
+<div id="botface">
+<div id="botLeye">o</div>
+<div id="botmouth">)</div>
+<div id="botReye">o</div>
+</div><!-- face  -->
+</button>
+
+  <div class="container">
+    <div class="vertical-center">
+      <canvas id="xcanvas" ></canvas>
+    </div><!-- vert -->
+  </div><!-- container -->
+
+<div id="underlay"></div>
+
+  <!-- scripts -->
+  <script src="../../js/type1.js"></script>
+  <script src="../js/wordcloud2.js"></script>
+  <script src="../js/rant.min.js"></script>
+
+  <script type="text/javascript">
+// interjections.json
+var textcol = '#fff';
+var canvas = document.getElementById('xcanvas');
+var ctx = canvas.getContext('2d');
+
+var exp = document.getElementById('go');
+exp.style.display = 'block';
+exp.style.color = textcol;
+
+//audio
+var audioplaying = false;
+var pause = false;
+var halfstep = false;
+var num = 0;
+var lng = 0;
+var lastTime = 0;
+var arraypos = 0;
+var audioLength = 0;
+var multiplier = 4;
+var bpm = 580;
+
+// bot
+var mouth = document.getElementById('botmouth');
+var oldmouth = mouth.innerHTML;
+var eyeL = document.getElementById('botLeye');
+var eyeR = document.getElementById('botReye');
+var oldeye = eyeL.innerHTML;
+
+var english = [
+["eight",80],
+["seven",70],
+["six",60],
+["five",50],
+["four",45],
+["three",40],
+["two",35],
+["one",30],
+];
+
+
+var options = { 
+	list: english, 
+	fontFamily: 'novecento',
+	color: textcol,
+ rotateRatio: 0.5,
+ rotationSteps:2,
+ wait:260*multiplier,
+ minSize:'30',
+ weightFactor: 1.5,
+ backgroundColor: 'transparent',
+  	click: (item) => { callbackFn(item); },
+   center: [0, 0],
+   clearCanvas: false,
+    click: function(item) { 
+  if(audioplaying) return;
+  pause=false;
+  playloop(1);
+  num = 0;
+  selectword(item[0]);
+  }
+}
+
+var altoptions = { 
+  list: english, 
+  fontFamily: 'novecento',
+  color: textcol,
+ rotateRatio: 0.5,
+ rotationSteps:2,
+ wait:50,
+ minSize:'30',
+ weightFactor: 1.5,
+ backgroundColor: 'transparent',
+    click: (item) => { callbackFn(item); },
+   center: [0, 0],
+   clearCanvas: false,
+    click: function(item) { 
+    selectword(item[0]);
+  }
+}
+
+
+function selectword(xword) {
+// make all words>50 set to 40
+  for (var i=0; i < english.length; i++) {
+   if (english[i][1]>99) {
+    var xnum = Math.floor(Math.random() * 80) + 30;
+    english[i][1] = 40;
+  }
+}
+
+
+// find word in array and set to 50
+for (var i=0; i < english.length; i++) {
+	if (english[i][0]==xword) {
+		english[i][1] = 100;
+		draw();
+	}
+}//for
+
+
+}
+
+  // draw();
+  function draw() {
+    smile();
+    ctx.canvas.width  = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
+    WordCloud(canvas, options);
+  }
+
+
+// handle window resize
+window.addEventListener('resize', function(){
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+WordCloud(canvas, altoptions);
+}, false);
+
+
+
+// rant
+function press() {
+  if(audioplaying) return;
+  blink();
+  pause=false;
+  playloop(0);
+  num = 0;
+
+for (var i=0; i < english.length; i++) {
+	var xnum = 100-(10+i*7);
+	english[i][1] = xnum;
+}
+// make all words set to rants
+for (var i=0; i < english.length; i++) {
+	var rant = require("rant");
+	var rx = randx();	
+	var introsentence=rant(rx);
+	english[i][0] = introsentence;
+}//for
+draw();
+}
+
+
+function randx(items) {
+  return rants[~~(rants.length * Math.random())];
+}
+
+var rants = [
+"<preposition>","<firstname>","<abstract>","<activity>","<adv>","<color>","<conj>","<country>","<emo>","<em>","<face>","<firstname>","<greet>","<surname>","<nonsense>","<noun>","<sound>","<title>","<place>","<prefix>","<prepos>","<pron>","<quality>","<rel>","<sconj>","<substance>","<timeadv>","<timenoun>","<unit>","<verbimg>","<say>","<verb>","<vocal>","<preposition>","<yn>","<adj>","<adj.nsfw>","<adj.nsfw>","<noun.food>","<noun.body>"];
+
+
+//audio
+function playloop(xn) {
+  audioplaying=true;
+
+  var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  source = audioCtx.createBufferSource();
+  request = new XMLHttpRequest();
+
+var wavname = xn+'loop.wav'
+    request.open('GET', wavname, true);
+
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+
+    var audioData = request.response;
+
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+      myBuffer = buffer;
+      songLength = buffer.duration;
+      source.buffer = myBuffer;
+      source.playbackRate.value = 1;
+      source.loop = true;
+      audioLength = buffer.duration*1000;
+
+      var gainNode = audioCtx.createGain()
+      gainNode.gain.value = 0.1 // 10% volume
+      gainNode.connect(audioCtx.destination)
+      source.connect(gainNode)
+
+source.start(xn);
+render(xn); 
+// make body react
+// console.log(audioLength); 
+// make it loop baby
+// if (xn==0){ lng = audioLength*multiplier; } 
+// else if (xn==1){ lng = audioLength*multiplier; }
+
+lng = audioLength*multiplier;
+
+// stop at end of loop
+setTimeout(function () {
+  source.playbackRate.value = 0;
+  source.stop(xn);
+  audioplaying = false;
+  arraypos = 0;
+  // pause = true;
+  // arraypos = 0;
+        blink();
+
+}, lng);
+
+// prevent last beat
+setTimeout(function () {
+  pause = true;
+  arraypos = 0;
+}, lng-(bpm/multiplier));
+
+},
+function(e){"Error with decoding audio data" + e.error});
+  }
+  request.send();
+}
+
+
+
+// render
+function render(currentTime) {
+  if(pause) return;
+  num ++;
+  if (currentTime >= lastTime + bpm)  {
+    if (audioplaying) {
+      // switchbeat
+      document.body.classList.toggle('beat');
+    }
+
+    lastTime = currentTime;
+  }
+  requestAnimationFrame(render);
+}
+
+
+function smile() {
+mouth.innerHTML = 'D';
+setTimeout(function () { mouth.innerHTML = oldmouth;  }, 500);
+setTimeout(function () { blink(); }, 800);
+}
+
+function blink() {
+eyeR.innerHTML = '-'; eyeL.innerHTML = '-';
+  setTimeout(function () {
+    eyeR.innerHTML = oldeye; eyeL.innerHTML = oldeye;
+  }, 200);
+}
+
+
+
+</script>
+</body>
+</html>
