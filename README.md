@@ -1,2 +1,2 @@
 # type76.github.io
-chatbot user interface
+A collection of projects and concepts made with javascript
