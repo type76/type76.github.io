@@ -16,36 +16,29 @@ a {text-decoration: none; background:#ccc;
     
 body {font-family: monospace; 
 margin: 20px auto 20px auto;
-background: #eee; color: #333;
+color: #333;
 width: 500px;
+background:#eee url(css/76logo.png) 0 0 no-repeat;
 }
 body.dark {  
   animation-delay: 0.4s;
   animation: inv 0.4s forwards;
 }
-
-@keyframes inv {
-  from {color: #333;
-  background: #eee;}
-  to {color: #eee;
-    background: #333;}
-}
-    
-body.dark a {color: orange; background:#000;}
-
-    body.dark header {  
+body.dark header {  
 color: #eee;
 }
 
-    
+@keyframes inv {
+  from {color: #333;
+  background-color: #eee;}
+  to {color: #eee;
+    background-color: #333;}
+}
+body.dark a {color: orange; background-color:#000;}
+
 .header {
 margin: 1em 0 1em 0;
 font-size: 2em;
-display: block;
-width: 480px;
-height: 480px;
-padding: 10px;
-background: url(css/76logo.png) center center no-repeat;
 color: #333;
 }
 
