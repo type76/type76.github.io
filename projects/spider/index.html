@@ -1,0 +1,228 @@
+<html>
+	<head>
+		<title>spider walk</title>
+		<style>
+			body { margin: 0; 
+				background: #000; 
+				color: #fff;
+        font-family: monospace;
+			}
+			canvas { width: 100%; height: 100% }
+			button { background: transparent; border:none; outline:none; cursor: pointer; font-family: monospace; font-size: 4em; color: #fff;}
+			#hud {position: absolute; top:0px; left:0px; width: 100vw;}
+			#go {left: 1em; display: none;}
+			#go.show {left: 1em; display: block;}
+			button.on {color: red;}
+			.slidecontainer {width: 90%; display: block; margin: 20px auto; padding:10px;}
+			#rotate {font-size: 1em; position: fixed; bottom:20px; right: 20px;}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2px;
+  background: rgba(200,200,200,0.2);
+  outline: none;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slidecontainer{
+  margin: 40px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background: url('spider.svg') top left no-repeat;
+  background-size: 70px;
+  cursor: pointer;
+  border-radius: 50%;
+  transform: rotate(90deg) translateX(5px);
+}
+
+.slider::-moz-range-thumb {
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background: url('spider.svg') top left no-repeat;
+  background-size: 70px;
+  transform: rotate(90deg) translateX(5px);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.note {position: absolute; right: 20px;}
+		</style>
+	</head>
+	<body>
+	
+<div id="hud">
+<p class="note">move the white spider to control speed</p>
+<button id="rotate" >rotate</button>
+<div class="slidecontainer">
+  <input class="slider" id="carrier" type="range" value="0.0001" min="0.000001" max="0.0015" step="0.00001" oninput="handleCarrierChange(value)" />
+</div>
+
+</div>
+
+
+<script src="../js/three.min.js"></script>
+<script src="../js/GLTFLoader.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+<script src="../js/Reflector.js"></script>
+
+
+<script>
+var xval = 0.0001;
+var mixer;
+var prevTime = Date.now();
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.8, 1000 );
+var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+renderer.setSize( window.innerWidth, window.innerHeight );
+// renderer.localClippingEnabled = true;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+document.body.appendChild( renderer.domElement );
+scene.position.set(0,-1,0);
+
+// lights
+var light = new THREE.PointLight( 0xffffff, 1, 40 );
+light.position.set( 10, 10, 10 );
+scene.add( light );
+
+camera.position.x = 5;
+camera.position.y = 1;
+camera.position.z = 0;
+
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI*0.51;
+controls.enableDamping = true;
+controls.dampingFactor = 0.4;
+controls.maxDistance = 25;
+controls.minDistance = 6;
+controls.enablePan = false;
+
+
+//spider light
+var splight = new THREE.SpotLight( 0xffffff, 0.2 );
+splight.position.set( 0, 600, 0 );
+splight.castShadow = true;
+splight.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 5, 1, 200, 1000 ) );
+splight.shadow.mapSize.width = 512;
+splight.shadow.mapSize.height = 512;
+splight.name = 'splight';
+scene.add( splight );
+
+// ambient
+var light = new THREE.AmbientLight( 0x666666 );
+light.intensity = 0.3;
+scene.add( light );
+
+
+
+// floor texture
+var geometry =  new THREE.CircleBufferGeometry( 7, 30 );
+var material = new THREE.MeshLambertMaterial( {color: 0x333333} );
+var ground = new THREE.Mesh( geometry, material );
+ground.receiveShadow = true;
+ground.rotation.set (-Math.PI/2,0,0);
+scene.add( ground );
+
+
+// shadowground
+var txloader = new THREE.TextureLoader();
+var groundtex = txloader.load( 'tex.png' );
+groundtex.magFilter = THREE.NearestFilter;
+groundtex.minFilter = THREE.LinearMipMapLinearFilter;
+groundtex.wrapS = groundtex.wrapT = THREE.RepeatWrapping;
+var material = new THREE.MeshBasicMaterial( {color: 0xffffff
+,transparent : true, opacity:0.5
+,map:groundtex 
+} );
+var shadowground = new THREE.Mesh( geometry, material );
+shadowground.position.set (0,0.1,0);
+shadowground.rotation.set (-Math.PI/2,0,0);
+scene.add( shadowground );
+
+
+// spider model and texture                            
+    var objs = [];
+    var loader = new THREE.GLTFLoader();
+    loader.load("spiderwalk4.glb", gltf => {
+gltf.scene.children[0].material = new THREE.MeshPhongMaterial( {
+color: 0xff0000,
+side  : THREE.DoubleSide,
+morphTargets: true
+} ) ;
+
+// hide eye
+gltf.scene.children[3].visible = false;
+// animations
+        mixer = new THREE.AnimationMixer(gltf.scene);
+
+        for (const anim of gltf.animations) {
+            mixer.clipAction(anim).play();
+        }
+
+        gltf.scene.scale.set(0.02, 0.02, 0.02);     
+        gltf.scene.children[0].castShadow = true;
+        gltf.scene.name = 'spscene';
+        scene.add(gltf.scene);
+
+    });
+
+
+// resize
+window.addEventListener( 'resize', onWindowResize, false );
+function onWindowResize() {
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+// animate loop
+var animate = function () {
+requestAnimationFrame( animate );
+renderer.render(scene, camera);
+controls.update();
+if ( mixer ) {
+	var time = Date.now();
+	mixer.update( ( time - prevTime ) * xval );
+	groundtex.offset.y -= xval*3;
+	prevTime = time;
+}
+};
+
+animate();
+
+
+
+
+// rotate
+document.getElementById("rotate").addEventListener("click",rotx, false );
+
+
+function rotx() {
+	rotate.classList.toggle('on');
+	if (rotate.classList != "on") {
+		controls.autoRotate = false;
+	} else {
+		controls.autoRotate = true;
+		controls.autoRotateSpeed = 2.0;
+	}
+
+}
+
+
+
+function handleCarrierChange(value) {
+xval = value;
+}
+
+		</script>
+	</body>
+</html>
