@@ -1,0 +1,762 @@
+<html>
+	<head>
+		<title>all 3</title>
+		<style>
+			body { margin: 0; 
+				/*background: #d80000; */
+				background: #000; 
+				color: #fff;
+			}
+			canvas { width: 100%; height: 100% }
+			#hud { position: absolute; width: 100%; text-align: center; bottom: 0;}
+			#hud button { background: transparent; border:none; outline:none; cursor: pointer; font-family: monospace; font-size: 3em; padding: 0.5em; color: #fff;}
+			#go {left: 1em; display: none;}
+			#go.show {left: 1em; display: block;}
+			.on {background: #fff; color: red !important;}
+			.hideall {position: absolute; left: 12px;}
+		</style>
+	</head>
+	<body>
+
+<div id="hud">
+	<button onclick="hideallgroups()" class="hideall" >-</button>
+	<button id="but1" >1</button>
+	<button id="but2" >2</button>
+	<button id="but3" >3</button>
+</div>
+
+<script src="../js/three.min.js"></script>
+<script src="../js/GLTFLoader.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+<script src="../js/tween.min.js"></script>
+<script src="../js/VolumetricFire.js"></script>
+<script src="../js/Reflector.js"></script>
+
+<script>
+var but1 = document.getElementById("but1");
+but1.addEventListener("click",fbut1, false );
+
+var but2 = document.getElementById("but2");
+but2.addEventListener("click",fbut2, false );
+
+var but3 = document.getElementById("but3");
+but3.addEventListener("click",fbut3, false );
+
+var stopwarp = true;
+var blobs = [];
+var mt1;
+var number = 0;
+var bgcol = bgcol;
+var clock = new THREE.Clock();
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.localClippingEnabled = true;
+window.addEventListener( 'resize', onWindowResize, false );
+document.body.appendChild( renderer.domElement );
+
+
+
+//main group
+container = new THREE.Group();
+// container.position.set(0,-1,0);
+scene.add( container );
+
+// groups
+stbasil = new THREE.Group();
+container.add( stbasil );
+
+parliament = new THREE.Group();
+container.add( parliament );
+parliament.visible = false;
+
+whitehouse = new THREE.Group();
+container.add( whitehouse );
+whitehouse.visible = false;
+// effects group
+var fxgroup = new THREE.Object3D();
+scene.add( fxgroup );
+fxgroup.rotation.set (0,0,Math.PI);
+fxgroup.position.set (0,5,0);
+fxgroup.visible = false;
+
+bubbles = new THREE.Group();
+bubbles.name = "bubbles"
+container.add( bubbles );
+
+// lights
+var alight = new THREE.AmbientLight( 0xffffff );
+alight.intensity = 0.9;
+scene.add( alight );
+
+var light = new THREE.PointLight( 0xffffff, 1, 40 );
+light.intensity = 0.9;
+light.position.set( 0, 20, 0 );
+scene.add( light );
+
+camera.position.x = 10;
+camera.position.y = 3;
+camera.position.z = 0;
+
+
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+// controls.maxPolarAngle = Math.PI*0.6;
+controls.enableDamping = true;
+controls.dampingFactor = 0.9;
+// controls.maxDistance = 25;
+// controls.minDistance = 7;
+controls.enablePan = false;
+controls.target.set( 0, 2, 0 );
+
+
+/// ground
+// var geometry = new THREE.PlaneBufferGeometry( 100, 100, 1 );
+var geometry = new THREE.CircleBufferGeometry( 100, 32 );
+
+var material = new THREE.MeshPhongMaterial( {color: 0x000000 } );
+var flag = new THREE.Mesh( geometry, material );
+flag.rotation.set (-Math.PI/2,0,Math.PI/2);
+flag.position.set (0,-0.3,0);
+scene.add( flag );
+//
+
+var clipbox = new THREE.Plane( new THREE.Vector3( 0, 5, 0 ), -3 );
+
+
+// wireframe material
+var wireframemat = new THREE.MeshLambertMaterial( {
+	color: 0x333333, 
+	wireframe : true
+	} );
+
+
+// floor grid
+var radius = 11.3;
+var radials = 1;
+var circles = 1;
+var divisions = 60;
+
+var cbase = new THREE.PolarGridHelper( radius, radials, circles, divisions );
+cbase.rotation.y = -Math.PI/2;
+container.add( cbase );
+
+var curve = new THREE.EllipseCurve(
+	0,  0,            // ax, aY
+	1, 1,           // xRadius, yRadius
+	0,  2 * Math.PI,  // aStartAngle, aEndAngle
+	false,            // aClockwise
+	0                 // aRotation
+);
+
+var points = curve.getPoints( 60 );
+var geometry = new THREE.BufferGeometry().setFromPoints( points );
+var material = new THREE.LineBasicMaterial( { color : 0x333333
+ } );
+
+
+
+var loader = new THREE.GLTFLoader();
+// st basils
+loader.load(
+'assets/stbasil.glb',
+function ( gltf ) {
+gltf.scene.children[2].children[1].material = new THREE.MeshLambertMaterial( {
+	color: 0xcccccc, 
+	side  : THREE.DoubleSide,
+	clippingPlanes: [ clipbox ]
+	} );
+
+gltf.scene.children[2].children[0].material = new THREE.MeshLambertMaterial( {
+	color: 0xaaaaaa, 
+	side  : THREE.DoubleSide,
+	clippingPlanes: [ clipbox ]
+	} );
+
+gltf.scene.scale.set(0.041, 0.041, 0.041);
+stbasil.add( gltf.scene );
+		},
+		function ( xhr ) {		},
+		function ( error ) {}
+	);
+
+// stb2
+loader.load(
+		'assets/stbasil.glb',
+		function ( gltf ) {
+		stbasil.add( gltf.scene );
+gltf.scene.scale.set(0.041, 0.041, 0.041);
+gltf.scene.name = 'bwire';
+gltf.scene.visible = false;
+
+gltf.scene.children[2].children[0].material = wireframemat;
+
+gltf.scene.children[2].children[1].material = wireframemat;
+
+		},
+		function ( xhr ) {},
+		function ( error ) {}
+	);
+
+
+
+
+// parliament
+loader.load(
+		'assets/p.glb',
+		function ( gltf ) {
+		parliament.add( gltf.scene );
+		gltf.scene.name = 'parlifine';
+
+gltf.scene.children[2].children[0].material = new THREE.MeshLambertMaterial( {
+	color: 0xcccccc, 
+	side  : THREE.DoubleSide,
+	clippingPlanes: [ clipbox ]
+	} );
+
+gltf.scene.children[2].children[1].material = new THREE.MeshLambertMaterial( {
+	color: 0xeeeeee, 
+	side  : THREE.DoubleSide,
+	clippingPlanes: [ clipbox ]
+	} );
+		},
+		function ( xhr ) {},
+		function ( error ) {}
+	);
+
+
+// p2
+loader.load(
+		'assets/p.glb',
+		function ( gltf ) {
+		parliament.add( gltf.scene );
+		// gltf.scene.position.set(0,-0.1,0);
+gltf.scene.name = 'pwire';
+gltf.scene.children[2].children[0].material = wireframemat;
+gltf.scene.children[2].children[1].visible = false;
+		},
+		function ( xhr ) {},
+		function ( error ) {}
+	);
+
+
+// parliament with a crater
+loader.load(
+		'assets/c.glb',
+		function ( gltf ) {
+gltf.scene.children[2].children[0].material = new THREE.MeshLambertMaterial( {  
+	color: 0xcccccc	} );
+
+gltf.scene.children[2].children[1].material = new THREE.MeshLambertMaterial( {
+	color: 0xeeeeee	} );
+
+		parliament.add( gltf.scene );
+		gltf.scene.name = 'crater';
+		gltf.scene.visible = false;
+
+		},
+		function ( xhr ) {		},
+		function ( error ) {}
+	);
+
+
+
+// whitehouse
+loader.load(
+		'assets/whitehouse.glb',
+		function ( gltf ) {
+gltf.scene.children[2].children[0].visible = false;
+
+gltf.scene.children[2].children[1].material = new THREE.MeshLambertMaterial( {
+color: 0xaaaaaa, 
+clippingPlanes: [ clipbox ]
+} );
+
+gltf.scene.children[2].children[2].material = new THREE.MeshLambertMaterial( {
+color: 0xcccccc, 
+side  : THREE.DoubleSide, 
+clippingPlanes: [ clipbox ]
+} );
+
+
+gltf.scene.scale.set(0.05, 0.05, 0.05);
+whitehouse.add( gltf.scene );
+		},
+		function ( xhr ) {},
+		function ( error ) {}
+	);
+
+
+// whitehouse windows
+loader.load(
+		'assets/windows.glb',
+		function ( gltf ) {
+// gltf.scene.children[2].material = new THREE.MeshLambertMaterial( {color: 0x000000,
+// side  : THREE.DoubleSide, 
+// // clippingPlanes: [ clipbox ]
+// } );
+		gltf.scene.scale.set(0.05, 0.05, 0.05);
+		whitehouse.add( gltf.scene );
+		},
+		function ( xhr ) {},
+		function ( error ) {}
+	);
+
+// wh2
+loader.load(
+		'assets/whitehouse.glb',
+		function ( gltf ) {
+		whitehouse.add( gltf.scene );
+gltf.scene.scale.set(0.05, 0.05, 0.05);
+gltf.scene.name = 'whwire';
+gltf.scene.children[2].children[0].visible = false;
+
+gltf.scene.children[2].children[1].material = wireframemat;
+
+gltf.scene.children[2].children[2].material = wireframemat;
+		},
+		function ( xhr ) {},
+		function ( error ) {}
+	);
+
+
+// fx
+
+//fire
+VolumetricFire.texturePath = 'assets/';
+var fireWidth = 7;
+var fireHeight = 8;
+var fireDepth = 7;
+var sliceSpacing = 3;
+var fire = new VolumetricFire(
+fireWidth,
+fireHeight,
+fireDepth,
+sliceSpacing,
+camera
+);
+
+fr2 = fire.mesh;
+fr2.position.set(0, 5, 0);
+stbasil.add(fr2);
+fr2.visible = false;
+
+
+// beam
+var geometry = new THREE.CylinderBufferGeometry( 0.05, 0.05, 40, 6, 1, true );
+var trmaterial = new THREE.MeshBasicMaterial( { color: 0xffffff} );
+beam = new THREE.Mesh( geometry, trmaterial );
+beam.rotation.set (0,-Math.PI/2,0);
+beam.position.set(0,20,0)
+scene.add( beam );
+beam.visible = false;
+
+
+// fxring
+var rgeometry = new THREE.RingBufferGeometry( 0.1,0.5, 60 );
+var rmaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, transparent:true, opacity:0.1 } );
+rmesh = new THREE.Mesh( rgeometry, rmaterial );
+rmesh.position.set(0,0,0);
+rmesh.rotation.set(-Math.PI/2,0,0);
+scene.add( rmesh );
+rmesh.visible = false;
+
+
+// sky night
+var txloader = new THREE.TextureLoader();
+var skymap = txloader.load( 'assets/xgrad.png' );
+var invmap = txloader.load( 'assets/invgrad.png' );
+skymap.magFilter = THREE.NearestFilter;
+skymap.minFilter = THREE.LinearMipMapLinearFilter;
+ var skygeometry = new THREE.SphereGeometry(501, 32, 32)
+  var skymaterial = new THREE.MeshBasicMaterial( { map: skymap, side : THREE.BackSide
+   } );
+  sky = new THREE.Mesh( skygeometry, skymaterial );
+  scene.add(sky);
+
+
+// glow sphere
+var geometry = new THREE.SphereBufferGeometry( 0.5, 40, 40 );
+var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+var glow = new THREE.Mesh( geometry, material );
+glow.scale.set (0.1,0.1,0.1);
+parliament.add( glow );
+glow.visible = false;
+
+
+
+// animate loop
+var animate = function () {
+controls.update();
+TWEEN.update();
+requestAnimationFrame( animate );
+renderer.render(scene, camera);
+if (!stopwarp) {
+var elapsed = clock.getElapsedTime();
+fire.update( elapsed );
+stars.update(elapsed); 
+fxgroup.rotation.y += 0.002;
+}
+
+};
+
+
+
+function onWindowResize() {
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+
+
+// 1 2 3 buttons
+function fbut1() {	
+if (but1.classList == 'on') { //fire
+stopwarp = false; 
+fxgroup.visible = true; 
+fr2.visible = true;
+fxflash();
+return;
+}
+stopwarp = true;   
+fxgroup.visible = false; 
+hideallgroups();
+stbasil.visible = true;
+but1.classList = 'on';
+clipreveal()
+}// toggle 1
+
+// button
+function fbut2() {	
+if (but2.classList == 'on') { //crater
+var crater = scene.getObjectByProperty( 'name', 'crater', true );	
+crater.visible = true;
+stopwarp = false;   
+fxgroup.visible = true;  
+beam.visible = true;
+var parlifine = scene.getObjectByProperty( 'name', 'parlifine', true );	
+parlifine.visible = false;
+fxflash();
+	return}
+stopwarp = true;   
+fxgroup.visible = false;
+hideallgroups();
+parliament.visible = true;
+but2.classList = 'on';
+clipreveal()
+}// toggle 1
+
+// button
+function fbut3() {	
+if (but3.classList == 'on') { //laser beam
+var electric = scene.getObjectByProperty( 'name', 'electric', true );	
+electric.visible = true;
+beam.visible = true;
+stopwarp = false; 
+fxgroup.visible = true; 
+fxflash();
+// but3.classList = 'on blast';
+	return}
+stopwarp = true;   
+fxgroup.visible = false;
+hideallgroups();
+whitehouse.visible = true;
+but3.classList = 'on';
+clipreveal()
+}// toggle 1
+
+
+function hideallgroups() {
+stbasil.visible = false;
+parliament.visible = false;
+whitehouse.visible = false;
+// setTimeout(function () {}, 10);
+
+but1.classList = '';
+but2.classList = '';
+but3.classList = '';
+fr2.visible = false;
+resetparliament();
+var electric = scene.getObjectByProperty( 'name', 'electric', true );	
+electric.visible = false;
+beam.visible = false;
+stopwarp = true;   
+fxgroup.visible = false;
+}
+
+
+
+function clipreveal () {
+stopwarp = true; 
+// squash();
+
+// fxgroup.visible = false;
+
+var pwire = scene.getObjectByProperty( 'name', 'pwire', true );	
+var bwire = scene.getObjectByProperty( 'name', 'bwire', true );	
+var whwire = scene.getObjectByProperty( 'name', 'whwire', true );	
+
+clipbox.normal.y = 5;
+pwire.visible = true;
+bwire.visible = true;
+whwire.visible = true;
+
+new TWEEN.Tween( clipbox.normal ).to( {x: 0, y: 0, z: 0}, 500 )
+.onComplete(function() {
+pwire.visible = false;
+bwire.visible = false;
+whwire.visible = false;
+}).start();
+
+
+}
+
+
+function resetparliament() {
+var crater = scene.getObjectByProperty( 'name', 'crater', true );	
+crater.visible = false;
+var parlifine = scene.getObjectByProperty( 'name', 'parlifine', true );	
+parlifine.visible = true;
+}
+
+
+var xfl = 0.5;
+
+function animpoints() {
+		var CubeGeometry = new THREE.BoxGeometry( 3.2, 2.5, 6, 8, 8, 14 );
+
+		var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+		cube = new THREE.Mesh( CubeGeometry, material );
+
+		whitehouse.add( cube );
+		cube.name = 'electric';
+		cube.visible = false;
+		cube.position.y = 1.7;
+		
+	for( j = 0; j < cube.geometry.vertices.length; j++ ){
+
+		var previousX = cube.geometry.vertices[j].x;
+		var previousY = cube.geometry.vertices[j].y;
+		var previousZ = cube.geometry.vertices[j].z;
+
+
+		var tween = new TWEEN.Tween(cube.geometry.vertices[j]);
+		tween.to({ x: (xfl*Math.random()+1)*previousX, y: (xfl*Math.random()+1)*previousY, z: (xfl*Math.random()+1)*previousZ }, 500 + Math.random()*500);
+
+
+		var tween2 = new TWEEN.Tween(cube.geometry.vertices[j]);
+		tween2.to({ x: previousX, y: previousY, z: previousZ }, 500 + Math.random()*500);
+
+		tween.onUpdate(function(){
+			cube.geometry.verticesNeedUpdate = true;
+		});
+
+		tween2.onUpdate(function(){
+			cube.geometry.verticesNeedUpdate = true;
+		});
+
+
+		tween.easing(TWEEN.Easing.Cubic.InOut);
+		tween2.easing(TWEEN.Easing.Cubic.InOut);
+		tween.chain(tween2);
+		tween2.chain(tween);
+		tween.start();
+
+		var verticeTween = [cube, tween, tween2, j, previousX, previousY, previousZ  ];
+		
+		blobs.push(verticeTween);
+
+	}
+}
+//
+
+// stars
+
+// randomise
+function randomFloat(a, b){
+  var r =  (Math.random() * (b - a) + a);
+  return r;
+}
+
+// make single star
+function Star(material, x, y, size){
+  this.size = size;
+
+  this.obj = new THREE.Geometry();
+  this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
+  this.obj.vertices.push(new THREE.Vector3(0, 0, -size/4));
+  this.obj = new THREE.Line(this.obj, material);
+
+  this.speed = 0.5;
+
+  this.refresh = function(x, y){
+    this.obj.position.z = randomFloat(0, -5);
+    this.obj.position.x = x;
+    this.obj.position.y = y;
+  }
+  this.refresh(x, y);
+}
+
+// make/update star field
+function Starfield(size, width, height){
+  this.stars = [];
+  this.obj = new THREE.Group();
+  this.obj.rotation.set(Math.PI/2,0,0);
+  // this.obj.scale.set(1,1,1);
+  this.size = size;
+  this.width = width;
+  this.height = height;
+  this.material = new THREE.LineBasicMaterial({color: 0xffffff
+
+  });
+  this.init = function(){
+    for(var i = 0; i < this.size; i++){
+      this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 2)));
+      this.obj.add(this.stars[i].obj);
+    }
+    fxgroup.add(this.obj);
+  }
+  this.init();
+  this.update = function(elapsed){
+if (!stopwarp) {
+    for(var i = 0; i < this.size; i++){
+      if(this.stars[i].obj.position.z > 10){
+        this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
+      } // if z>20
+      this.stars[i].obj.position.z += 0.05;
+          }// for each
+                }//if not stopwarp
+  }// update
+}
+
+
+
+
+//
+
+animpoints();
+var stars = new Starfield(10, 2, 2);
+animate();
+
+
+// flash beam fx
+function fxflash() {
+
+    new TWEEN.Tween( light.position ).to( {x: 0, y: 6, z: 0}, 200 )
+        .onComplete(function(value) {
+		    new TWEEN.Tween( light.position ).to( {x: 0, y: 20, z: 0}, 200 ).start();
+	  	}).start();
+
+		rmesh.visible = true;
+    new TWEEN.Tween( rmesh.scale ).to( {x: 23, y: 23, z: 23}, 300 )
+    .onComplete(function() {
+		rmesh.scale.set(1,1,1);
+		rmesh.visible = false;
+	  }).start();
+
+beam.visible = true;
+
+new TWEEN.Tween( beam.scale ).to( {x: 3, y: 1, z: 3}, 100 )
+.onComplete(function() {
+new TWEEN.Tween( beam.scale ).to( {x: 1, y: 1, z: 1}, 80 ).start();
+  setTimeout(function () { beam.visible = false; }, 80);
+}).start();
+
+// // glowball down laser
+glow.visible = true;
+new TWEEN.Tween( glow.scale ).to( {x: 5, y: 5, z: 5}, 100 )
+.onComplete(function() { 
+glow.scale.set (0.1,0.1,0.1);
+glow.visible = false;
+}).start();
+
+
+new TWEEN.Tween( fxgroup.scale )
+.to( {x: 1, y: 0.7, z: 1}, 200 )
+.onComplete(function() { 
+new TWEEN.Tween( fxgroup.scale )
+.to( {x: 1, y: 1, z: 1}, 200 ).start();
+})
+.start();
+
+    new TWEEN.Tween( fr2.scale ).to( {x: 0.9, y: 0.9, z: 0.9}, 60 )
+        .onComplete(function(value) {
+		    new TWEEN.Tween( fr2.scale ).to( {x: 1, y: 1, z: 1}, 60 ).start();
+		alight.intensity = 0.9;
+	  	}).start();
+
+// wh electricity fx grow
+new TWEEN.Tween( cube.scale ).to( {x: 1.2, y: 1.2, z: 1.2}, 80 )
+.onComplete(function() {
+new TWEEN.Tween( cube.scale ).to( {x: 1, y: 1, z: 1}, 220 ).start();
+}).start();
+
+// wh windows flash
+whitehouse.children[1].children[2].material.color = {r:255,g:255,b:255};
+setTimeout(function () {
+whitehouse.children[1].children[2].material.color = {r:0,g:0,b:0};
+}, 120);
+
+alight.intensity = 1.5;
+sky.material.map = invmap;
+setTimeout(function () {
+sky.material.map = skymap;
+alight.intensity = 0.9;
+}, 30);
+
+// makebubbles();
+// console.log(sky.material.map)
+
+}
+
+
+//
+
+
+// make bubbles once
+function makebubbles(xb) {
+    for ( var i = 0; i < 32; i ++ ) {
+        geometry = new THREE.SphereBufferGeometry( 1, 8, 8 );
+        material = new THREE.MeshBasicMaterial({
+            color:  0xffffff, shading: THREE.FlatShading
+            // , transparent: true, opacity: 0.1
+        });
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.scale.x = mesh.scale.y = mesh.scale.z = ( Math.random() * 2 );
+        var x = ( Math.random() - 0.5 ) * 8;
+        var z = ( Math.random() - 0.5 ) * 8;
+        mesh.rotateZ( - Math.PI / 2 );
+        mesh.position.x = x;
+        mesh.position.z = z;
+        mesh.position.y = 1;
+        if ( Math.abs( x ) < 6 && Math.abs( z ) < 6 ) continue;
+        mesh.updateMatrix();
+        bubbles.add(mesh);
+        meshes[ cnt ] = mesh;
+        cnt += 1;
+    }
+
+
+//
+}
+
+// jump dust
+function bblgrw() {
+    var bbls = scene.getObjectByProperty( 'name', 'bubbles', true );
+    tweenBB = new TWEEN.Tween( bbls.scale ).to( { x: 2, y: 2, z: 2}, 300 ).easing( TWEEN.Easing.Quadratic.EaseOut)
+    .onComplete(function() { 
+        bbls.scale.set(1,1,1);
+        for (var i = bbls.children.length - 1; i >= 0; i--) {
+            bbls.remove(bbls.children[i]);
+        }
+    })
+    .start();
+}
+
+
+		</script>
+	</body>
+</html>
