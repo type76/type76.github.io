@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+	body, input {margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden;}
+	#hud {position: absolute; color: #fff; margin: 1em; }
+  #green, #blue {position: absolute; bottom: 0; background: #333; padding: 1em;}
+  #blue {right:0;}
+</style>
+</head>
+<body>
+  <p id="hud">click on web<br> to control spider  </p>
+    
+    <span id="green">y</span>
+    <span id="blue">x</span>
+
+<script src="../js/three.min.js"></script>
+<script src="../js/GLTFLoader.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+<script src="../js/tween.js"></script>
+
+
+
+
+	<script type="text/javascript">
+	var bpoints = 0;
+	var gpoints = 0;
+	var stopwarp = true;
+
+var collidableMeshList = [];
+var chk = document.getElementById('chk');
+var mixer;
+var prevTime = Date.now();
+var xval = 0.000;
+var collidableMeshList = [];
+var bpoints = 0;
+var gpoints = 0;
+var xwall = 5;
+
+// update touch
+	var updateTouchCoordinates = function(evt) {
+	stopwarp = false; 
+	mouse.x = ( evt.touches[0].pageX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( evt.touches[0].pageY / window.innerHeight ) * 2 + 1;
+	raycaster.setFromCamera( mouse, camera );
+	var intersects = raycaster.intersectObject( plane );
+	if (intersects.length > 0) { 
+		movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z);
+		 }
+};
+
+
+// update mouse
+var updateMouseCoordinates = function(evt) {
+	evt.preventDefault();
+	mouse.x = ( evt.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
+	raycaster.setFromCamera( mouse, camera );
+	var intersects = raycaster.intersectObject( plane );
+	if (intersects.length > 0) { 
+		movehero(Math.round(intersects[ 0 ].point.x), Math.round(intersects[ 0 ].point.z));
+		 }
+};
+
+
+function movehero(x, y) {
+		hero.position.x = x;
+		hero.position.z = y;
+    xval = 0;
+    // tween spider with speed based on distance
+    var distance = spider.position.distanceTo( hero.position );
+    // rotate spider to face pointer
+    if (distance>1) { spider.lookAt(hero.position.x, 0.5, hero.position.z); }
+    // tween spider to pointer position
+    new TWEEN.Tween( spider.position ).to( {x:x, y:spider.position.y, z:y}, 500+(distance*50) )
+        .onComplete(function() {
+    // spider.rotation.set(0,0,0);
+        xval = 0;
+  }).onUpdate(function() {
+    if (distance>0.5) {xval = distance/1000;}
+  }).start();
+
+}
+
+
+window.addEventListener('touchstart', updateTouchCoordinates);
+window.addEventListener('touchmove', updateTouchCoordinates);
+window.addEventListener( 'mouseup', updateMouseCoordinates, false );
+
+
+// THREE.JS
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+// controls
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI*0.45;
+controls.enableDamping = true;
+controls.dampingFactor = 0.4;
+controls.maxDistance = 10;
+controls.minDistance = 2;
+controls.enablePan = false;
+
+// camera
+camera.position.y = 13;
+camera.rotation.z = Math.PI/2;
+camera.lookAt(0,0,0)
+
+// groups
+hero = new THREE.Group();
+scene.add( hero );
+//
+spider = new THREE.Group();
+spider.position.set( 0, 0.5,  0);
+scene.add( spider );
+
+
+//raycaster
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2();
+var isDragging = false;
+
+//transparent raycasting plane
+var geometry = new THREE.PlaneBufferGeometry( 10, 10, 10, 10 );
+var material = new THREE.MeshBasicMaterial( { 
+wireframe:true,color: 0x333333,transparent:true,opacity:0
+} );
+var plane = new THREE.Mesh( geometry, material );
+plane.name = 'plane';
+plane.rotation.set(-Math.PI/2,0,0);
+plane.name = 'plane';
+scene.add( plane );
+
+
+// lights
+var pointLight = new THREE.PointLight( 0xffffff, 1, 50 );
+pointLight.position.set( 0, 3, -2 );
+spider.add( pointLight );
+var alight = new THREE.AmbientLight( 0xffffff );
+alight.intensity = 0.2;
+scene.add( alight );
+
+// spider                           
+    var objs = [];
+    var loader = new THREE.GLTFLoader();
+    loader.load("spiderwalk2.glb", gltf => {
+gltf.scene.children[0].material = new THREE.MeshPhongMaterial( {
+color: 0xff0000,
+side  : THREE.DoubleSide,
+morphTargets: true
+} ) ;
+
+        mixer = new THREE.AnimationMixer(gltf.scene);
+
+        for (const anim of gltf.animations) {
+            mixer.clipAction(anim).play();
+        }
+
+        gltf.scene.scale.set(0.005, 0.005, 0.005);     
+        gltf.scene.children[0].castShadow = true;
+        gltf.scene.position.y = -0.5;
+
+        gltf.scene.name = 'spscene';
+        spider.add(gltf.scene);
+
+    });
+
+// web
+var radius = 5;
+var radials = 13;
+var circles = 3;
+var divisions = 13;
+
+var web = new THREE.PolarGridHelper( radius, radials, circles, divisions );
+web.rotation.y = -Math.PI/2;
+web.position.y = 0.01;
+scene.add( web );
+
+// cube pointer
+var bgeometry = new THREE.BoxGeometry( 0.5, 0.5, 0.5 );
+var mmaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+var cube = new THREE.Mesh( bgeometry, mmaterial );
+hero.add( cube );
+cube.visible = false;
+
+
+var animate = function () {
+  if ( mixer ) {
+  var time = Date.now();
+  mixer.update( ( time - prevTime ) * xval );
+  prevTime = time;
+}
+
+	TWEEN.update();
+    requestAnimationFrame( animate );
+  renderer.render(scene, camera);
+//hit
+  for (var vertexIndex = 0; vertexIndex < cube.geometry.vertices.length; vertexIndex++)
+  {   
+    var directionVector = new THREE.Vector3( 0, -1, 0 );
+    var ray = new THREE.Raycaster( spider.position, directionVector.normalize() );
+    var collisionResults = ray.intersectObjects( collidableMeshList );
+    if ( collisionResults.length > 0 && collidableMeshList.distance < directionVector.length() ) 
+      console.log('');
+      hit(collisionResults);
+  } 
+
+}; //animate loop
+
+
+// resize
+window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+}, false);
+
+
+animate();
+
+
+
+
+walls();
+
+function walls() {
+  var wallGeometry = new THREE.CubeGeometry( 0.75, 0.75, 0.75 );
+ var xmat = new THREE.MeshBasicMaterial( {color: 0xffffff
+  ,transparent:true,opacity:0.8
+} );
+  var blue = xmat;
+  var green = xmat;
+
+  var wall = new THREE.Mesh(wallGeometry, blue);
+  wall.position.set(-3, 0, -3);
+  wall.name = 'blue';
+  scene.add(wall);
+  collidableMeshList.push(wall);
+
+  
+  var wall2 = new THREE.Mesh(wallGeometry, green);
+  wall2.position.set(5, 0, -5);
+  wall2.name = 'green';
+  scene.add(wall2);
+  collidableMeshList.push(wall2);
+}
+
+
+
+// HIT function
+function hit (v) {
+if ( v.length > 0) {
+  var num = Math.floor(Math.random()*xwall) + 1;
+  num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+  var num2 = Math.floor(Math.random()*xwall) + 1;
+  num2 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+    // console.log('hit')
+  v[0].object.scale.y = 5;
+  setTimeout(function() {
+        v[0].object.position.x = num;
+        v[0].object.position.z = num2;
+        v[0].object.scale.y = 5;
+
+
+    }, 90);
+
+    setTimeout(function() {
+    v[0].object.scale.y = 1;
+            if (v[0].object.name == 'blue') {bpoints+=1; 
+          // console.log('b:'+ Math.round(bpoints));
+        document.getElementById('blue').innerHTML = 'x:'+ Math.round(bpoints);
+        }
+        if (v[0].object.name == 'green') {gpoints+=1; 
+          // console.log('g:'+ Math.round(gpoints));
+        document.getElementById('green').innerHTML = 'y:'+ Math.round(gpoints);
+        }
+    }, 100);
+}//if
+}// fn hit
+
+
+</script>
+</body>
+</html>
