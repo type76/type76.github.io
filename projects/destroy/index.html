@@ -319,6 +319,25 @@ gltf.scene.children[2].children[2].material = wireframemat;
 		function ( error ) {}
 	);
 
+// var loader = new THREE.GLTFLoader();
+// wh explode
+loader.load( 'assets/explode.glb', function ( gltf ) {
+
+gltf.scene.traverse( function ( node ) {
+if ( node.isMesh ) mesh = node;
+} );
+
+mesh.material = new THREE.MeshLambertMaterial( {color: 0xffffff,side  : THREE.DoubleSide, transparent:true, opacity:0.7
+} );
+mesh.scale.set(0.055, 0.055, 0.055);
+mesh.material.morphTargets = true;
+mesh.morphTargetInfluences[0]=1;
+mesh.name = 'explode';
+scene.add( mesh );
+mesh.visible = false;
+									} );
+
+
 
 // fx
 
@@ -456,6 +475,7 @@ beam.visible = true;
 stopwarp = false; 
 fxgroup.visible = true; 
 fxflash();
+whexplode();
 // but3.classList = 'on blast';
 	return}
 stopwarp = true;   
@@ -471,7 +491,6 @@ function hideallgroups() {
 stbasil.visible = false;
 parliament.visible = false;
 whitehouse.visible = false;
-// setTimeout(function () {}, 10);
 
 but1.classList = '';
 but2.classList = '';
@@ -693,9 +712,11 @@ new TWEEN.Tween( cube.scale ).to( {x: 1, y: 1, z: 1}, 220 ).start();
 }).start();
 
 // wh windows flash
+whitehouse.children[1].children[2].scale.set(1.1,1.1,1.1);
 whitehouse.children[1].children[2].material.color = {r:255,g:255,b:255};
 setTimeout(function () {
 whitehouse.children[1].children[2].material.color = {r:0,g:0,b:0};
+whitehouse.children[1].children[2].scale.set(1,1,1);
 }, 120);
 
 alight.intensity = 1.5;
@@ -753,6 +774,43 @@ function bblgrw() {
     })
     .start();
 }
+
+
+
+function whexplode() {
+var exp = scene.getObjectByProperty( 'name', 'explode', true );
+exp.visible = true;
+
+setTimeout(function () {
+exp.morphTargetInfluences[0]=0;
+}, 200);
+
+setTimeout(function () {
+exp.morphTargetInfluences[0]=0.3;
+}, 220);
+
+setTimeout(function () {
+exp.morphTargetInfluences[0]=1;
+exp.visible = false;
+}, 240);
+
+
+}
+
+
+
+// // tweenings
+// function createTween(influence, start, end) {
+// 	var exp = scene.getObjectByProperty( 'name', 'explode', true );
+
+//   return new TWEEN.Tween({val: start})
+//   .to({val: end}, 900)
+//   .onUpdate(function(value) {
+// exp.morphTargetInfluences[influence] = value.val;
+//   }).onComplete(function(value) {
+//     value.val = start;
+//   });
+// }
 
 
 		</script>
