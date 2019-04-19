@@ -16,8 +16,10 @@
 body {font-family: monospace; 
 margin: 20px auto 20px auto;
 color: #333;
-width: 500px;
+width: 100%;
+max-width: 500px;
 background:#eee url(css/76logo.png) 0 0 no-repeat;
+text-align: center;
 }
 body.dark {  
   animation-delay: 0.4s;
@@ -41,6 +43,7 @@ font-size: 2em;
 color: #333;
 }
 
+.header .name {margin-left: 12px;}
 
 .container {
 display: block;
@@ -71,6 +74,10 @@ background: transparent;
 .container ul li a img {
 padding: 4px;
 background: #fff;
+display: block;
+width: 90%;
+height: auto;
+margin: 0 auto;
 }
 
 .container ul li a:hover img {
@@ -173,25 +180,27 @@ top: 20px; right: 20px;}
 </div><!-- header -->
 
 <div class="container">
-<header class="name">Projects and experiments using javascript. </header>
+<header class="name">javascript experiments</header>
 
 
 <ul class="projects">
-<li><a href="projects/tent/">tent <img src="projects/img/tent.jpg" alt="3D rendered tent">
-  </a><span>Tent configuration web app</span></li>
-<li><a href="projects/drive/">drive <img src="projects/img/drive.jpg" alt="rocket ship on the grid">
-</a><span>Basic driving game prototype</span></li>
+
+<li><a href="projects/drive/">drive <img src="projects/img/drive.jpg" alt="rocket ship on the grid"></a><span>Basic driving game prototype</span></li>
+
 <li><a href="projects/baobab/">baobab <img src="projects/img/baobab.jpg" alt="black tree with white leaves">
 </a><span>Audio generation with 3D feedback (toggle the switch)</span></li>
+
+<li><a href="projects/tent/">tent <img src="projects/img/tent.jpg" alt="3D rendered tent">
+  </a><span>Tent configuration web app</span></li>
+
 <li><a href="projects/loop/">loop <img src="projects/img/loop.jpg" alt="interlocking random words">
-</a><span>Random word cloud with audio loop (click the square to play)</span></li>
+</a><span>Random word cloud with audio loop<br> (click the square to play)[nsfw]</span></li>
 
 <li><a href="projects/earth/">earth <img src="projects/img/earth.jpg" alt="pixellated globe">
 </a><span>Globe UI</span></li>
 
 <li><a href="projects/bot/">bot <img src="projects/img/bot.jpg" alt="2D cartoon face">
 </a><span>Animated 2D lip sync generated from text</span></li>
-
 
 <li><a href="projects/lipsync/">lipsync <img src="projects/img/lipsync.jpg" alt="3D cartoon face">
 </a><span>Animated 3D lip sync generated from text</span></li>
@@ -204,8 +213,6 @@ top: 20px; right: 20px;}
 
 <li><a href="projects/web/">web <img src="projects/img/web.jpg" alt="3D spider on web">
 </a><span>Spider game experiment.</span></li>
-
-
 </ul>
 
 
