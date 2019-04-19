@@ -63,12 +63,15 @@
 #vert {position: absolute; top: 12px; right: 12px;
 display: block; width: 40px; height: 40px; text-align: center; line-height: 40px; background: red; border-radius: 100%; font-size: 1em;}
 button.on {color: red; background: #fff !important;}
-
-
+.keys {position: absolute; bottom: 12px; left: 12px; opacity: 0.1;}
+.keys:hover {opacity: 1;}
 		</style>
 	</head>
 	<body>
-  <button id="vert" title="flip vertical/horizontal mode">+</button>
+
+		<p class="keys">keys: go:up, stop:down, space:fly/drive</p>
+
+		<button id="vert" title="flip vertical/horizontal mode">+</button>
 	
 <div id="hud">
 <div class="slidecontainer">
