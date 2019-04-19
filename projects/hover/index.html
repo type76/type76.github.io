@@ -1,10 +1,10 @@
 
 <html>
 	<head>
-		<title>Lerp</title>
+		<title>Hovership</title>
 		<style>
 			body { margin: 0; 
-				background: #000; 
+				background: #333; 
 				color: #fff;
         font-family: monospace;
 			}
@@ -13,7 +13,6 @@
 			#hud {position: absolute; top:0px; left:0px; width: 110px; }
 			#go {left: 1em; display: none;}
 			#go.show {left: 1em; display: block;}
-			button.on {color: red;}
 
 			.slidecontainer {
         /*width: 90%;*/
@@ -61,9 +60,15 @@
 }
 
 .note {position: absolute; right: 20px;}
+#vert {position: absolute; top: 12px; right: 12px;
+display: block; width: 40px; height: 40px; text-align: center; line-height: 40px; background: red; border-radius: 100%; font-size: 1em;}
+button.on {color: red; background: #fff !important;}
+
+
 		</style>
 	</head>
 	<body>
+  <button id="vert" title="flip vertical/horizontal mode">+</button>
 	
 <div id="hud">
 <div class="slidecontainer">
@@ -79,7 +84,56 @@
 
 
 <script>
+// slider function
+function handleCarrierChange(value) {
+xval = value;
+if (value>0) {stopwarp = false; 
+  var ff = scene.getObjectByProperty( 'name', 'trail', false );
+  ff.scale.x = 20*(value*200); } else {
+    ff.scale.x = 0;
+  }
+}
+
+var vertbtn = document.getElementById("vert");
+vertbtn.addEventListener("click",verticalview, false );
+// vertical mode
+function verticalview() {
+  vertbtn.classList.toggle('on');
+  if (vertbtn.classList != "on") {
+plane.rotation.set(-Math.PI/2,0,0);
+shadowground.visible = true;
+// ground.visible = true;
+shdw.visible = true;
+// cylinder.visible = false;
+horizontal = true;
+new TWEEN.Tween( mothership.position).to( {x: mothership.position.x, y: 0, z: mothership.position.z}, 200 ).easing( TWEEN.Easing.Quadratic.EaseOut).start();
+new TWEEN.Tween( gridHelper.rotation).to( {x: 0, y: 0, z: 0}, 200 ).easing( TWEEN.Easing.Quadratic.EaseOut).start();
+
+  } else {
+plane.rotation.set(0,Math.PI/2,0);
+shadowground.visible = false;
+// ground.visible = false;
+shdw.visible = false;
+horizontal = false;
+// cylinder.visible = true;
+cursor.position.x = 0;
+new TWEEN.Tween( gridHelper.rotation).to( {x: 0, y: 0, z: Math.PI/2}, 200 ).easing( TWEEN.Easing.Quadratic.EaseOut).start();
+
+  setTimeout(function() {
+new TWEEN.Tween( hero.position).to( {x: 0, y: mothership.position.y, z: mothership.position.z}, 200 ).easing( TWEEN.Easing.Quadratic.EaseOut).start();
+// cursor.position.x = 0;
+// hero.position.x = 0;
+    }, 100);
+
+
+}
+
+}
+
+
+
 var stopwarp = true;
+var horizontal = true;
 
 var xval = 0;
 var mixer;
@@ -92,47 +146,34 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 document.body.appendChild( renderer.domElement );
-        // container = document.createElement( 'div' );
-        // document.body.appendChild( container );
-        // container.appendChild( renderer.domElement );
 
-scene.position.set(0,-1,0);
+// scene settings
+scene.position.set(0,0,0);
+camera.position.x = 6;
+camera.position.y = 1;
+camera.position.z = 0;
+camera.lookAt(0,0,0)
 
 // lights
 var light = new THREE.PointLight( 0xffffff, 1, 40 );
 light.position.set( 10, 10, 10 );
 scene.add( light );
 
-camera.position.x = 6;
-camera.position.y = 1;
-camera.position.z = 0;
-camera.lookAt(0,0,0)
 
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.maxPolarAngle = Math.PI*0.51;
+controls.maxPolarAngle = Math.PI*0.46;
 controls.enableDamping = true;
 controls.dampingFactor = 0.4;
-controls.maxDistance = 250;
-controls.minDistance = 4;
+controls.maxDistance = 50;
+controls.minDistance = 6;
 controls.enablePan = false;
 
 // grid
 var size = 10;
 var divisions = 1;
 var gridHelper = new THREE.GridHelper( size, divisions );
-gridHelper.position.set( 0, 0.1, 0 );
-// gridHelper.scale.set(50,1,1);
-// scene.add( gridHelper );
-
-//spider light
-// var splight = new THREE.SpotLight( 0xffffff, 0.1 );
-// splight.position.set( 0, 650, 0 );
-// splight.castShadow = true;
-// splight.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 6, 1, 200, 1000 ) );
-// splight.shadow.mapSize.width = 256;
-// splight.shadow.mapSize.height = 256;
-// splight.name = 'splight';
-// scene.add( splight );
+// gridHelper.position.set( 0, 0.1, 0 );
+scene.add(gridHelper)
 
 // ambient
 var light = new THREE.AmbientLight( 0x666666 );
@@ -140,34 +181,43 @@ light.intensity = 0.9;
 scene.add( light );
 
 
-
 // floor texture
-// var geometry =  new THREE.CircleBufferGeometry( 7, 30 );
 var geometry = new THREE.PlaneBufferGeometry( 10, 10, 1 );
 
-var material = new THREE.MeshLambertMaterial( {color: 0x333333} );
-var ground = new THREE.Mesh( geometry, material );
-// ground.receiveShadow = true;
-ground.rotation.set (-Math.PI/2,0,0);
-scene.add( ground );
+// var material = new THREE.MeshLambertMaterial( {color: 0x333333} );
+// var ground = new THREE.Mesh( geometry, material );
+// // ground.receiveShadow = true;
+// ground.rotation.set (-Math.PI/2,0,0);
+// scene.add( ground );
 
 
 // shadowground
 var txloader = new THREE.TextureLoader();
-var groundtex = txloader.load( 'tex.png' );
+var groundtex = txloader.load( 'space.png' );
 groundtex.magFilter = THREE.NearestFilter;
 groundtex.minFilter = THREE.LinearMipMapLinearFilter;
 groundtex.wrapS = groundtex.wrapT = THREE.RepeatWrapping;
 var material = new THREE.MeshBasicMaterial( {color: 0xffffff
-,transparent : true, opacity:0.9
+,transparent : true, opacity:0.4
 ,map:groundtex 
 } );
 var shadowground = new THREE.Mesh( geometry, material );
 shadowground.position.set (0,0.05,0);
-shadowground.scale.set (1.1,1.1,1.1);
+// shadowground.scale.set (1,1,1);
 shadowground.rotation.set (-Math.PI/2,0,0);
 scene.add( shadowground );
+// shadowground.visible = false;
 
+
+// cylinder
+// var geometry = new THREE.CylinderBufferGeometry( 50, 50, 200, 60, 1, true
+//  );
+// var material = new THREE.MeshBasicMaterial( {color: 0xff0000, transparent : true, opacity:0.2,
+// map:groundtex, side: THREE.BackSide } );
+// var cylinder = new THREE.Mesh( geometry, material );
+// cylinder.rotation.set (0,0,-Math.PI/2);
+// scene.add( cylinder );
+// cylinder.visible = false;
 
 
 // resize
@@ -196,68 +246,18 @@ let bgeometry = new THREE.BoxGeometry( 0.6, 0.1, 0.6 );
 let mmaterial = new THREE.MeshLambertMaterial( { color: 0xcc0000 } );
 let cubicbody = new THREE.Mesh( bgeometry, mmaterial );
 cubicbody.position.set(0,0.3,0);
-cube.add( cubicbody );
-
-// mothership
-// let msgeometry = new THREE.BoxGeometry( 0.8, 0.1, 0.8 );
-// let mothership = new THREE.Mesh( msgeometry, mmaterial );
-// mothership.position.set(0,0.4,0);
-// // mothership.castShadow = true;
-// scene.add( mothership );
-
-// disc
-// var curve = new THREE.EllipseCurve(
-//   0,  0,            // ax, aY
-//   0.7, 0.7,           // xRadius, yRadius
-//   0,  2 * Math.PI,  // aStartAngle, aEndAngle
-//   false,            // aClockwise
-//   0                 // aRotation
-// );
-
-// var points = curve.getPoints( 60 );
-// var dgeometry = new THREE.BufferGeometry().setFromPoints( points );
-// var dmaterial = new THREE.LineBasicMaterial( { color : 0x666666
-//  } );
-
-// var xellipse = new THREE.Line( dgeometry, dmaterial );
-// xellipse.rotation.x = Math.PI/2;
-// xellipse.position.y = 0.5;
-// hero.add(xellipse);
+// cube.add( cubicbody );
 
 
 
-// disc
-// var curve = new THREE.EllipseCurve(
-//   0,  0,            // ax, aY
-//   0.7, 0.7,           // xRadius, yRadius
-//   0,  2 * Math.PI,  // aStartAngle, aEndAngle
-//   false,            // aClockwise
-//   0                 // aRotation
-// );
-
-// var points = curve.getPoints( 60 );
-// var dgeometry = new THREE.BufferGeometry().setFromPoints( points );
-// var dmaterial = new THREE.LineBasicMaterial( { color : 0x666666
-//  } );
-
-// var ellipse = new THREE.Line( dgeometry, dmaterial );
-// ellipse.rotation.x = Math.PI/2;
-// ellipse.position.y = 0.5;
-
-
-
-
-
-
-
-// // mothership
+// // car 3D model
 var loader = new THREE.BufferGeometryLoader();
 
 loader.load(
-  'xcar.json',
+  'hcar.json',
   function ( geometry ) {
     var material = new THREE.MeshPhongMaterial( { 
-          color: 0xffffff
+          color: 0xff0000
           // , transparent:true, opacity:0.5
        } );
 
@@ -266,7 +266,7 @@ loader.load(
     car.name = "car"
     car.position.set(0,0.3, 0);
     car.rotation.set(0,Math.PI/2,0);
-    car.scale.set(1,1,1);
+    car.scale.set(0.4,0.4,0.4);
     mothership.add( car );
 
 },
@@ -278,32 +278,32 @@ loader.load(
   );// end load ship
 
 // shadow 
-let egeometry = new THREE.PlaneGeometry( 0.8, 0.8, 1 );
+let egeometry = new THREE.PlaneGeometry( 1.5, 0.6, 1 );
 let ematerial = new THREE.MeshBasicMaterial( { color: 0x000000, transparent:true,
 opacity:0.2 } );
 let shdw = new THREE.Mesh( egeometry, ematerial );
-shdw.position.set(0,0.1,0);
+shdw.position.set(0,0.2,0);
 shdw.rotation.set(-Math.PI/2,0,0)
 mothership.add(shdw);
-
-
-// var loader = new THREE.TextureLoader();
-// var grad = loader.load( 'wgrad.png', true );
 
 
 // trail
 var loader = new THREE.TextureLoader();
 loader.load( 'xgrad.png', function ( texture ) {
-  var trgeometry = new THREE.PlaneGeometry( 0.1, 0.6, 1 );
+  var trgeometry = new THREE.PlaneBufferGeometry( 0.1, 0.6, 1 );
   trgeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.05, 0, 0) );
 
-  var trmaterial = new THREE.MeshBasicMaterial( { map: texture, transparent: true, opacity: 0.3
+  var trmaterial = new THREE.MeshBasicMaterial( {
+  color:0xff0000, map: texture, transparent: true, opacity: 0.7, side: THREE.DoubleSide
    } );
   var trail = new THREE.Mesh( trgeometry, trmaterial );
   trail.name = "trail";
-  trail.position.set(0.2,0.3,0);
+  trail.position.set(0.2,0.45,0);
   trail.rotation.set(-Math.PI/2,0,0)
   mothership.add(trail);
+//   trail.geometry.verticesNeedUpdate=true;
+// console.log(trail.geometry)
+  // trail.geometry.vertices[1].x+=.01;
 } );
 
 
@@ -321,11 +321,7 @@ loader.load( 'wgrad.png', function ( texture ) {
 } );
 
 
-function handleCarrierChange(value) {
-xval = value;
-if (value>0) {stopwarp = false; }
-}
-//
+// end three objects
 
 // update touch
   let updateTouchCoordinates = function(evt) {
@@ -345,23 +341,15 @@ let updateMouseCoordinates = function(evt) {
   mouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
   raycaster.setFromCamera( mouse, camera );
   let intersects = raycaster.intersectObject( plane );
-  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
-// check l/r
-        // if (evt.pageX < oldx) {
-        //     direction = "left"; console.log('l')
-        // } else if (evt.pageX > oldx) {
-        //     direction = "right"; console.log('r')
-        // }
-        
-        // // document.body.innerHTML = direction;
-        
-        // oldx = evt.pageX;
+  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z, intersects[ 0 ].point.y); }
+
 };
 
 
-function movehero(x, y) {
+function movehero(x, y, z) {
     hero.position.x = x;
     hero.position.z = y;
+    hero.position.y = z;
 }
 
 
@@ -375,20 +363,24 @@ let mouse = new THREE.Vector2();
 let isDragging = false;
 
 //plane geometry
-let plgeometry = new THREE.PlaneBufferGeometry( 10, 10, 10, 10 );
+let plgeometry = new THREE.PlaneBufferGeometry( 10, 10, 1 );
 
 //plane material
 let plmaterial = new THREE.MeshBasicMaterial( { 
+// color:0x220000,
+side: THREE.DoubleSide,
+wireframe: true,
 transparent:true,
 opacity:0
 } );
 
-//plane object3D
+//raycast plane object3D
 let plane = new THREE.Mesh( plgeometry, plmaterial );
 plane.name = 'plane';
 plane.rotation.set(-Math.PI/2,0,0);
 plane.name = 'plane';
 scene.add( plane );
+// plane.visible = false;
 
 // slow down to stop
 function decnum() {
@@ -399,9 +391,10 @@ new TWEEN.Tween( sf.children[i].scale ).to( {x: 1, y: 1, z: 0.01}, 400 ).start()
 }//for
 document.getElementById('carrier').value = 0;
 xval = document.getElementById('carrier').value;
-// new TWEEN.Tween( mothership.scale ).to( {x:1, y:1, z:1}, 200).easing( TWEEN.Easing.Quadratic.EaseOut).start();
+
+
 var ff = scene.getObjectByProperty( 'name', 'trail', false );
-new TWEEN.Tween( ff.scale ).to( {x: 0.1, y: 1, z: 1}, 100 ).start();
+new TWEEN.Tween( ff.scale ).to( {x: 0.1, y: 1, z: 1}, 200 ).start();
 
 stopwarp = true;
 };
@@ -418,21 +411,13 @@ document.getElementById('carrier').value = 0.0055;
 xval = document.getElementById('carrier').value;
 
 var ff = scene.getObjectByProperty( 'name', 'trail', false );
-new TWEEN.Tween( ff.scale ).to( {x: 10, y: 1, z: 1}, 100 ).start();
+new TWEEN.Tween( ff.scale ).to( {x: 20, y: 1, z: 1}, 200 ).start();
 
-// new TWEEN.Tween( xval ).to( 0.0055, 200).easing( TWEEN.Easing.Quadratic.EaseOut)
-// .onUpdate(function(){document.getElementById('carrier').value=xval}).start();
-// new TWEEN.Tween( mothership.scale ).to( {x:1+xval*100, y:1, z:1}, 200).easing( TWEEN.Easing.Quadratic.EaseOut).start();
 stopwarp = false;
 };
 
 function jump() {
-//   new TWEEN.Tween( mothership.position.y ).to( mothership.position.y+1, 200 )
-//   .onComplete(function() {
-// new TWEEN.Tween( mothership.position.y ).to( 0, 200 ).start();
-// }).start();
       console.log(mothership.position.y)
-
 }
 
 
@@ -444,7 +429,7 @@ document.onkeydown = function(evt) {
 
 if (evt.keyCode == 32) {
   evt.preventDefault();
-  jump()
+  verticalview()
 }
 
 if (evt.keyCode == 38) {
@@ -481,7 +466,7 @@ function Star(material, x, y, size){
   this.refresh = function(x, y){
     this.obj.position.z = randomFloat(0, -100);
     this.obj.position.x = x;
-    this.obj.position.y = 0.2;
+    this.obj.position.y = y;
   }
   this.refresh(x, y);
 }
@@ -533,6 +518,7 @@ controls.update();
 TWEEN.update();
 stars.update();
 
+
 groundtex.offset.x -= xval*3;
 // position lerp
 mothership.position.x += (hero.position.x - cursor.position.x)*0.1;
@@ -540,18 +526,25 @@ mothership.position.z += (hero.position.z - cursor.position.z)*0.2;
 // 
 cursor.position.x = mothership.position.x;
 cursor.position.z = mothership.position.z;
-
+//
 mothership.rotation.x = (hero.position.z - mothership.position.z)*0.2;// bank
 mothership.rotation.z = -(hero.position.x - mothership.position.x)*0.05;// pitch
 mothership.rotation.y = (hero.position.z - mothership.position.z)*0.2;// turn
 
-
-mothership.scale.x = 1+xval*30;
+// vertical controls
+if (!horizontal) { 
+mothership.position.y += (hero.position.y - cursor.position.y)*0.5;
+cursor.position.y = mothership.position.y;
+mothership.rotation.z = -(hero.position.y - mothership.position.y)*0.5;// bank
+groundtex.offset.x =0;
+groundtex.offset.y -= xval*3;
+}
+// mothership.scale.x = 1+xval*30;
 };
 
   setTimeout(function () {
     /// stars
-  stars = new Starfield(10, 7, 1);
+  stars = new Starfield(10, 9, 9);
     var sf = scene.getObjectByProperty( 'name', 'starfield', false );
 for ( var i = 0; i < sf.children.length; i ++ ) { sf.children[i].scale.z = 0.1; }
 
