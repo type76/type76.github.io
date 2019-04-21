@@ -167,6 +167,7 @@
             bottom: 2px;
             right: 60px;
         }
+        #interface {position: absolute;}
     </style>
 </head>
 
@@ -213,6 +214,21 @@
     <span id="chkb" /></span>
     <span id="chkg" /></span>
 
+<!-- 
+<div id="interface">
+<p class="lside">
+  <input class="slider" id="carrier" type="range" value="50" min="1" max="2800" step="1" oninput="handleCarrierChange(value)" />
+</p>
+<p class="rside">
+  <input class="slider" id="beat" type="range" value="3" min="0" max="50" step="1" oninput="handleBeatChange(value)" />
+</p>
+
+<p>Volume
+  <input class="slider" id="beat" type="range" value="30" min="0" max="100" step="1" oninput="handleVolumeChange(value)" />
+</p>
+
+</div> -->
+
     <script src="../js/three.min.js"></script>
     <script src="../js/GLTFLoader.js"></script>
     <script src="../js/OrbitControls.min.js"></script>
@@ -225,12 +241,17 @@
         function verticalview() {
             vertbtn.classList.toggle('on');
             if (vertbtn.classList != "on") {
-
+          var sf = scene.getObjectByProperty('name', 'wings', false);
+          new TWEEN.Tween(sf.scale).to({x: 0.1, y: 0.4, z: 0.4}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).onComplete(function() {sf.visible = false;}).start();
 
                 plane.rotation.set(-Math.PI / 2, 0, 0);
                 shadowground.visible = true;
                 shdw.visible = true;
                 horizontal = true;
+                          new TWEEN.Tween(bggroup.position).to({x: 0, y: 0, z: 0}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+shadowground.rotation.set(-Math.PI/2,0,0);
+
+
                 new TWEEN.Tween(mothership.position).to({
                     x: mothership.position.x,
                     y: 0,
@@ -243,10 +264,18 @@
                 }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
 
             } else {
+
+          var sf = scene.getObjectByProperty('name', 'wings', false);
+          sf.visible = true;
+          new TWEEN.Tween(sf.scale).to({x: 0.4, y: 0.4, z: 0.4}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+
                 plane.rotation.set(0, Math.PI / 2, 0);
-                shadowground.visible = false;
+                // shadowground.visible = false;
                 shdw.visible = false;
                 horizontal = false;
+          new TWEEN.Tween(bggroup.position).to({x: 0, y: -5, z: 0}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+shadowground.rotation.set(-Math.PI/2,0,-Math.PI/2);
+
                 cursor.position.x = 0;
                 new TWEEN.Tween(gridHelper.rotation).to({
                     x: 0,
@@ -270,15 +299,10 @@
         // variables
         var bpoints = 0;
         var gpoints = 0;
-
         var collidableMeshList = [];
-
         var stopwarp = true;
         var horizontal = true;
-
-        var xval = 0;
-        var mixer;
-        var prevTime = Date.now();
+        var xspeed = 0;
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.8, 1000);
         var renderer = new THREE.WebGLRenderer({
@@ -317,30 +341,47 @@
         // gridHelper.position.set( 0, 0.1, 0 );
         scene.add(gridHelper)
 
-        // ambient
+        // ambient light
         var light = new THREE.AmbientLight(0x666666);
         light.intensity = 0.9;
         scene.add(light);
+
+        // hero
+        hero = new THREE.Group();
+        scene.add(hero);
+        // cursor
+        cursor = new THREE.Group();
+        scene.add(cursor);
+        // the vehicle
+        mothership = new THREE.Group();
+        scene.add(mothership);
+        mothership.position.x = 4;
+        // pointer/raycast
+        cube = new THREE.Group();
+        mothership.add(cube);
+        // stars/ground
+        bggroup = new THREE.Group();
+        scene.add(bggroup);
 
         // floor texture
         var geometry = new THREE.PlaneBufferGeometry(10, 10, 1);
 
         // shadowground
         var txloader = new THREE.TextureLoader();
-        var groundtex = txloader.load('space.png');
+        var groundtex = txloader.load('stars.png');
         groundtex.magFilter = THREE.NearestFilter;
         groundtex.minFilter = THREE.LinearMipMapLinearFilter;
         groundtex.wrapS = groundtex.wrapT = THREE.RepeatWrapping;
         var material = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.4,
+            color: 0xff0000,
+            // transparent: true,
+            // opacity: 0.1,
             map: groundtex
         });
         var shadowground = new THREE.Mesh(geometry, material);
         shadowground.position.set(0, 0.05, 0);
         shadowground.rotation.set(-Math.PI / 2, 0, 0);
-        scene.add(shadowground);
+        bggroup.add(shadowground);
 
         // resize
         window.addEventListener('resize', onWindowResize, false);
@@ -351,21 +392,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // hero
-        hero = new THREE.Group();
-        scene.add(hero);
-
-        cursor = new THREE.Group();
-        scene.add(cursor);
-
-        mothership = new THREE.Group();
-        scene.add(mothership);
-
-        cube = new THREE.Group();
-        mothership.add(cube);
-
-        xgroup = new THREE.Group();
-        scene.add(xgroup);
 
         var loader = new THREE.GLTFLoader();
 
@@ -390,6 +416,21 @@
             // mesh.morphTargetInfluences[0] = 1;
             // mesh.morphTargetInfluences[1] = 1;
 
+        }); // vehicle gltf
+
+        // wings
+       var filepath = "wings.glb";
+        loader.load(filepath, function(gltf) {
+
+            gltf.scene.traverse(function(node) {
+                if (node.isMesh) mesh = node;
+            });
+            mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
+            mesh.position.set(0, 0.3, 0);
+            mesh.scale.set(0.1, 0.4, 0.4);
+            mesh.name = 'wings';
+            mothership.add(mesh);
+            mesh.visible = false;
         }); // vehicle gltf
 
         // hero
@@ -457,7 +498,7 @@
 
         } );
 
-        // line
+        // line on back (health?)
         var geometry = new THREE.Geometry();
         geometry.vertices.push(new THREE.Vector3(0.79, 0.45, -0.26));
         geometry.vertices.push(new THREE.Vector3(0.79, 0.45, 0.26));
@@ -469,7 +510,7 @@
         line.scale.z = 0.000001;
         mothership.add(line);
 
-        // sky night
+        // skybox
         var loader = new THREE.TextureLoader();
         loader.load('wgrad.png', function(texture) {
             var skygeometry = new THREE.SphereGeometry(501, 32, 32)
@@ -483,6 +524,36 @@
             skyn.name = "skynight";
             scene.add(skyn);
         });
+
+
+        //raycaster - ship
+        let shipray = new THREE.Raycaster();
+
+        //raycaster - mouse
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let isDragging = false;
+
+        //plane geometry
+        let plgeometry = new THREE.PlaneBufferGeometry(10, 10, 1);
+
+        //plane material
+        let plmaterial = new THREE.MeshBasicMaterial({
+            // color:0x220000,
+            side: THREE.DoubleSide,
+            wireframe: true,
+            transparent: true,
+            opacity: 0
+        });
+
+        //raycast plane object3D
+        let plane = new THREE.Mesh(plgeometry, plmaterial);
+        plane.name = 'plane';
+        plane.rotation.set(-Math.PI / 2, 0, 0);
+        plane.name = 'plane';
+
+        scene.add(plane);
+        // plane.visible = false;
 
         // end three objects
 
@@ -519,40 +590,10 @@
 
         window.addEventListener('mousemove', updateMouseCoordinates, false);
 
-        //raycaster - ship
-        let shipray = new THREE.Raycaster();
-
-        //raycaster - mouse
-        let raycaster = new THREE.Raycaster();
-        let mouse = new THREE.Vector2();
-        let isDragging = false;
-
-        //plane geometry
-        let plgeometry = new THREE.PlaneBufferGeometry(10, 10, 1);
-
-        //plane material
-        let plmaterial = new THREE.MeshBasicMaterial({
-            // color:0x220000,
-            side: THREE.DoubleSide,
-            wireframe: true,
-            transparent: true,
-            opacity: 0
-        });
-
-        //raycast plane object3D
-        let plane = new THREE.Mesh(plgeometry, plmaterial);
-        plane.name = 'plane';
-        plane.rotation.set(-Math.PI / 2, 0, 0);
-        plane.name = 'plane';
-
-        scene.add(plane);
-        // plane.visible = false;
 
         // slow down to stop
         function decnum() {
             document.getElementById('dirdwn').classList = "on";
-            // new TWEEN.Tween( mothership.position ).to( {x: mothership.position.x, y: 0, z: mothership.position.z}, 200 ).start();
-
             var sf = scene.getObjectByProperty('name', 'starfield', false);
 
             for (var i = 0; i < sf.children.length; i++) {
@@ -564,7 +605,8 @@
                     sf.visible = false;
                 }).start();
             } //for
-            xval = 0;
+            // xspeed = 0;
+            // new TWEEN.Tween( xspeed ).to( 0, 2000 ).start();
 
             var ff = scene.getObjectByProperty( 'name', 'trail', false );
             new TWEEN.Tween( ff.scale ).to( {x: 0.1, y: 1, z: 1}, 200 ).start();
@@ -583,11 +625,11 @@
 
         // accelerate
         function incnum() {
+          // toggleSound()
             document.getElementById('starttxt').style.display = "none";
             document.getElementById('dirup').classList = "on";
             collidableMeshList[0].visible = true;
             collidableMeshList[1].visible = true;
-            // new TWEEN.Tween( mothership.position ).to( {x: mothership.position.x, y: 0.03, z: mothership.position.z}, 200 ).start();
 
             var sf = scene.getObjectByProperty('name', 'starfield', false);
             sf.visible = true;
@@ -600,7 +642,8 @@
                 }, 400).start();
             } //for
 
-            xval = 0.0055;
+            xspeed = 0.0055;
+            // xspeed = new TWEEN.Tween( 0 ).to( 0.0055, 2000 ).start();
 
             var ff = scene.getObjectByProperty( 'name', 'trail', false );
             new TWEEN.Tween( ff.scale ).to( {x: 20, y: 1, z: 1}, 200 ).start();
@@ -675,7 +718,7 @@
             this.obj.name = "starfield";
             this.obj.visible = false;
             this.obj.rotation.set(0, Math.PI / 2, 0);
-            this.obj.position.set(0, 0, 0);
+            this.obj.position.set(0, 5, 0);
             this.size = size;
             this.width = width;
             this.height = height;
@@ -687,7 +730,7 @@
                     this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 3)));
                     this.obj.add(this.stars[i].obj);
                 }
-                scene.add(this.obj);
+                bggroup.add(this.obj);
             }
             this.init();
             this.update = function() {
@@ -698,7 +741,7 @@
                             }
 
                             // this.stars[i].obj.position.z += this.stars[i].speed;
-                            this.stars[i].obj.position.z += xval * 80;
+                            this.stars[i].obj.position.z += xspeed * 80;
 
                         }
 
@@ -720,13 +763,13 @@
             var wall = new THREE.Mesh(wallGeometry, blue);
             wall.position.set(-3, 0.5, -3);
             wall.name = 'blue';
-            scene.add(wall);
+            bggroup.add(wall);
             collidableMeshList.push(wall);
 
             var wall2 = new THREE.Mesh(wallGeometry, green);
             wall2.position.set(3, 0.5, -3);
             wall2.name = 'green';
-            scene.add(wall2);
+            bggroup.add(wall2);
             collidableMeshList.push(wall2);
 
             // collidableMeshList[0].visible = false;
@@ -752,6 +795,7 @@
                     bpoints += 2;
                     document.getElementById('chkb').innerHTML = bpoints;
                     flash(document.getElementById('chkb'));
+                    bluehit()
                     // end point
 
                 }
@@ -772,6 +816,13 @@
         } // fn hit
 
 
+        // blue hit
+        function bluehit() {
+          carrier_freq = 5000;
+        setTimeout(function() {
+          carrier_freq = 100;
+        }, 300);
+        }
 
         //crash ship
       function crash() {
@@ -805,8 +856,8 @@
             stars.update();
 
             if (!stopwarp) {
-
-                groundtex.offset.x -= xval * 3;
+// xspeed += (0 ) 
+                groundtex.offset.x -= xspeed * 3;
                 // position lerp
                 mothership.position.x += (hero.position.x - cursor.position.x) * 0.1;
                 mothership.position.z += (hero.position.z - cursor.position.z) * 0.2;
@@ -824,7 +875,7 @@
                     cursor.position.y = mothership.position.y;
                     mothership.rotation.z = -(hero.position.y - mothership.position.y) * 0.5; // bank
                     groundtex.offset.x = 0;
-                    groundtex.offset.y -= xval * 3;
+                    groundtex.offset.y -= xspeed * 3;
                 }
 
                 for (var vertexIndex = 0; vertexIndex < cubicbody.geometry.vertices.length; vertexIndex++) {
@@ -840,12 +891,12 @@
                 }
 
                 // set collectables speed/pos
-                collidableMeshList[0].position.x += xval * 22;
+                collidableMeshList[0].position.x += xspeed * 22;
                 if (collidableMeshList[0].position.x > 5) {
                     collidableMeshList[0].position.x = -5;
                 }
 
-                collidableMeshList[1].position.x += xval * 12;
+                collidableMeshList[1].position.x += xspeed * 12;
                 if (collidableMeshList[1].position.x > 5) {
                     collidableMeshList[1].position.x = -5;
                 }
@@ -868,7 +919,85 @@
         }, 200);
 
 
+// console.log(xspeed)
+// var carrier_freq = 100;
+// var beat_freq = 3;
+// var isPlaying = false;
+// var left_osc, right_osc;
+// var volume = 0.3;
 
+// var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+// var cntx = new AudioContext();
+
+// var merger = cntx.createChannelMerger(2);
+
+// volumeNode = cntx.createGain();
+// volumeNode.gain.value = volume;
+
+// merger.connect(volumeNode);
+// volumeNode.connect(cntx.destination);
+
+// function toggleSound() {
+// if (isPlaying) {
+//   document.body.classList = '';
+//   right_osc.stop();
+
+//   setTimeout(function () {
+//       left_osc.stop();
+//   }, 50);
+
+//   setTimeout(function () {
+//       isPlaying = false;
+//   }, 100);
+
+//     } else {
+//   document.body.classList = 'on';
+//   left_osc = cntx.createOscillator();
+//   right_osc = cntx.createOscillator();
+//   setFreqs();
+//   right_osc.connect(merger, 0, 0);
+//   left_osc.connect(merger, 0, 1);
+//   left_osc.start();
+
+//   setTimeout(function () {
+//       right_osc.start();
+//   }, 50);
+
+//   setTimeout(function () {
+//       isPlaying = true;
+//   }, 100);
+
+//     }// if else
+// }// func
+
+// function setFreqs() {
+//    if (typeof right_osc != "undefined") {
+//      right_osc.frequency.value = carrier_freq;
+//      left_osc.frequency.value = carrier_freq + beat_freq;
+//    }
+// }
+
+// function handleVolumeChange(val) {
+//   var element = document.getElementById("volumeLabel");
+//   // element.innerHTML = val;
+//   volume = Number(val)/100;
+//   volumeNode.gain.value = volume;
+// }
+
+// function handleCarrierChange(val) {
+//   var element = document.getElementById("carrierLabel");
+//   // element.innerHTML = val;
+//   carrier_freq = Number(val);
+//   setFreqs();
+// }
+
+// function handleBeatChange(val) {
+//   var element = document.getElementById("beatLabel");
+//   // element.innerHTML = val;
+//   beat_freq = Number(val);
+//   setFreqs();
+// }
     </script>
 </body>
 
