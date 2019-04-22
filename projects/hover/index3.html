@@ -1,0 +1,1252 @@
+<html>
+
+<head>
+    <title>fly / drive</title>
+    <style>
+@font-face {
+            font-family: 'glass_tty_vt220medium';
+            src: url('glass_tty_vt220-webfont.woff2') format('woff2'),
+            url('glass_tty_vt220-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            animation: flicker 0.15s 3; 
+        }
+
+                body {
+            margin: 0;
+            background: #333;
+            color: #fff;
+            /*font-family: monospace;*/
+            font-family: "glass_tty_vt220medium", monospace;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+        
+        button {
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            /*font-family: monospace;*/
+            font-family: "glass_tty_vt220medium", monospace;
+            font-size: 4em;
+            color: #fff;
+            opacity: 0.7;
+        }
+        
+        #hud {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 110px;
+        }
+        
+        #go {
+            left: 1em;
+            display: none;
+        }
+        
+        #go.show {
+            left: 1em;
+            display: block;
+        }
+        
+        button.on {
+            color: #fff !important;
+            background: red !important;
+            opacity: 1;
+        }
+        
+        button:hover {
+            background: red !important;
+            opacity: 1 !important;
+        }
+        
+        button.on:hover {
+            color: #fff !important;
+        }
+        
+        #space,
+        #dirup,
+        #dirdwn,
+        #rotate {
+            background: transparent;
+            outline: none;
+            /*font-family: monospace;*/
+            font-family: "glass_tty_vt220medium", monospace;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            width: 108px;
+            height: 24px;
+            text-align: center;
+            line-height: 20px;
+            color: #fff;
+            position: absolute;
+            z-index: 1;
+            top: 60px;
+            left: 32px;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        #dirup {
+            top: 32px;
+            left: 204px;
+            width: 24px;
+            transform: rotate(-90deg);
+            transform-origin: center;
+        }
+        
+        #dirdwn {
+            left: 204px;
+            width: 24px;
+            transform: rotate(90deg);
+            transform-origin: center;
+        }
+        #rotate {
+            left: 204px;
+            width: 24px;
+            /*background: blue !important;*/
+            top: 4px;
+            left: 4px;
+        }
+        
+        svg path {
+            opacity: 0.15;
+        }
+        
+        #svgkeys {
+            position: absolute;
+        }
+        
+        #keys {
+            position: relative;
+            bottom: 0;
+        }
+        
+        #keyboard {
+            position: absolute;
+            bottom: 94px;
+            left: 4px;
+        }
+        
+        #keyboard p {
+            position: absolute;
+            bottom: 94px;
+            left: 4px;
+        }
+        
+        input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            /*font-family: monospace;*/
+            font-family: "glass_tty_vt220medium", monospace;
+            font-size: 2em;
+        }
+        
+        #chkb,
+        #chkg {
+            position: absolute;
+            right: 12px;
+            bottom: 22px;
+            text-align: right;
+            width: 1em;
+            height: 1em;
+            text-align: right;
+            background: transparent;
+            font-size: 1.2em;
+            color: #fff;
+            line-height: 1em;
+            padding: 2px 8px;
+        }
+        
+        #chkb.on,
+        #chkg.on {
+            background: #fff !important;
+        }
+        
+        #chkb {
+            color: #fff;
+            right: 70px;
+        }
+        
+        #chkg {
+            color: red;
+        }
+        
+        #botmsg {position: absolute; padding:0 14px; top: 0;}
+        .clr {animation: botOut 0.1s forwards ease-in-out; transform-origin: top;}
+
+
+@keyframes botOut {
+  0% { transform:scaleY(1);}
+  100% { transform:scaleY(0);}
+}
+    </style>
+</head>
+
+<body>
+<p id="botmsg"></p>
+<p id="starttxt"></p>
+
+    <div id="keyboard">
+        <div id="keys">
+            <button id="rotate" onclick="rotatescene()" title="rotate scene">r</button>
+            <button id="space" onclick="verticalview()" title="fly mode">space</button>
+            <button id="dirup" title="go" onclick="incnum()">&gt;</button>
+            <button id="dirdwn" title="stop" onclick="decnum()">&gt;</button>
+        </div>
+
+        <svg id="svgkeys" height="90" preserveAspectRatio="none" viewBox="0 0 260 90" width="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <g id="a">
+                    <path d="m24 24v-24h-24v24z" fill="#903" />
+                </g>
+            </defs>
+            <use transform="translate(4 60)" xlink:href="#a" />
+            <use transform="translate(4 32)" xlink:href="#a" />
+            <use transform="translate(4 4)" xlink:href="#a" />
+            <use transform="translate(32 32)" xlink:href="#a" />
+            <use transform="translate(32 4)" xlink:href="#a" />
+            <use transform="translate(60 32)" xlink:href="#a" />
+            <use transform="translate(60 4)" xlink:href="#a" />
+            <use transform="translate(88 32)" xlink:href="#a" />
+            <use transform="translate(88 4)" xlink:href="#a" />
+            <use transform="translate(116 4)" xlink:href="#a" />
+            <use transform="translate(144 60)" xlink:href="#a" />
+            <use transform="translate(176 60)" xlink:href="#a" />
+            <use transform="translate(232 60)" xlink:href="#a" />
+            <g fill="#903">
+                <path d="m26-26h-24v28h-28v24h52z" transform="translate(142 30)" />
+                <path d="m54 12v-24h-108v24z" transform="translate(86 72)" />
+                <path d="m12 12v-24h-24v24z" transform="translate(216 44)" />
+                <path d="m12-12h-24v24h24z" transform="translate(216 72)" />
+            </g>
+        </svg>
+
+    </div>
+    <!-- keyboard -->
+
+    <span id="chkb" />0</span>
+    <span id="chkg" />0</span>
+
+    <script src="../js/three.min.js"></script>
+    <script src="../js/GLTFLoader.js"></script>
+    <script src="../js/OrbitControls.min.js"></script>
+    <script src="../js/tween.js"></script>
+    <script src="../js/GLTFLoader.js"></script>
+    <script src="../js/tss.js"></script>
+
+    <script>
+
+
+function rotatescene() {
+  document.getElementById("rotate").classList.toggle('on');
+  if (document.getElementById("rotate").classList != "on") {
+  speakthis('stop');
+  controls.autoRotate = false;
+  } else {
+    speakthis('rotate');
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 2.0;
+  }
+
+}
+
+
+
+        var vertbtn = document.getElementById("space");
+        // vertical mode
+        function verticalview() {
+            vertbtn.classList.toggle('on');
+            if (vertbtn.classList != "on") {
+                      gridHelper.visible = true;
+          var sf = scene.getObjectByProperty('name', 'wings', false);
+          new TWEEN.Tween(sf.scale).to({x: 0.1, y: 0.4, z: 0.4}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).onComplete(function() {sf.visible = false;}).start();
+
+                plane.rotation.set(-Math.PI / 2, 0, 0);
+                shadowground.visible = true;
+                shdw.visible = true;
+                horizontal = true;
+                new TWEEN.Tween(bggroup.position).to({x: 0, y: 0, z: 0}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+                shadowground.rotation.set(-Math.PI/2,0,0);
+
+
+                new TWEEN.Tween(mothership.position).to({
+                    x: mothership.position.x,
+                    y: 0,
+                    z: mothership.position.z
+                }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+                new TWEEN.Tween(gridHelper.rotation).to({
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+
+            } else {
+          gridHelper.visible = false;
+          var sf = scene.getObjectByProperty('name', 'wings', false);
+          sf.visible = true;
+          new TWEEN.Tween(sf.scale).to({x: 0.4, y: 0.4, z: 0.4}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+
+                plane.rotation.set(0, Math.PI / 2, 0);
+                // shadowground.visible = false;
+                shdw.visible = false;
+                horizontal = false;
+          new TWEEN.Tween(bggroup.position).to({x: 0, y: -5, z: 0}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+          shadowground.rotation.set(-Math.PI/2,0,-Math.PI/2);
+
+                cursor.position.x = 0;
+                new TWEEN.Tween(gridHelper.rotation).to({
+                    x: 0,
+                    y: 0,
+                    z: Math.PI / 2
+                }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+
+                setTimeout(function() {
+                    new TWEEN.Tween(hero.position).to({
+                        x: 0,
+                        y: mothership.position.y,
+                        z: mothership.position.z
+                    }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+
+                }, 100);
+
+            } // else
+
+        } // vert mode
+
+        // variables
+        var tyspeed = 50;
+        var bpoints = 0;
+        var gpoints = 0;
+        var collidableMeshList = [];
+        var stopwarp = true;
+        var horizontal = true;
+        var xspeed = 0;
+        //tss voices
+        f0  = 200;
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.8, 1000);
+        var renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        // scene settings
+        scene.position.set(0, -0.5, 0);
+        camera.position.x = 2;
+        camera.position.y = 0;
+        camera.position.z = 0;
+        camera.lookAt(0, 0, 0)
+        // scene.fog = new THREE.FogExp2( 0x000000, 0.0020 );
+
+        // lights
+        var light = new THREE.PointLight(0xffffff, 1, 40);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.maxPolarAngle = Math.PI * 0.46;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.4;
+        controls.maxDistance = 50;
+        controls.minDistance = 1;
+        controls.enablePan = false;
+
+        // grid
+        var size = 10;
+        var divisions = 1;
+        var gridHelper = new THREE.GridHelper(size, divisions);
+        // gridHelper.position.set( 0, 0.1, 0 );
+        scene.add(gridHelper)
+        gridHelper.visible = false;
+
+        // ambient light
+        var light = new THREE.AmbientLight(0x666666);
+        light.intensity = 0.9;
+        scene.add(light);
+
+        // hero
+        hero = new THREE.Group();
+        scene.add(hero);
+        // cursor
+        cursor = new THREE.Group();
+        scene.add(cursor);
+        // the vehicle
+        mothership = new THREE.Group();
+        scene.add(mothership);
+        // mothership.position.x = 4;
+        // pointer/raycast
+        cube = new THREE.Group();
+        mothership.add(cube);
+        // stars/ground
+        bggroup = new THREE.Group();
+        scene.add(bggroup);
+
+        // floor texture
+        var geometry = new THREE.PlaneBufferGeometry(10, 10, 1);
+
+        // shadowground
+        var txloader = new THREE.TextureLoader();
+        var groundtex = txloader.load('stars.png');
+        groundtex.magFilter = THREE.NearestFilter;
+        groundtex.minFilter = THREE.LinearMipMapLinearFilter;
+        groundtex.wrapS = groundtex.wrapT = THREE.RepeatWrapping;
+        var material = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            // transparent: true,
+            // opacity: 0.1,
+            map: groundtex
+        });
+        var shadowground = new THREE.Mesh(geometry, material);
+        shadowground.position.set(0, 0.05, 0);
+        shadowground.rotation.set(-Math.PI / 2, 0, 0);
+        bggroup.add(shadowground);
+
+
+        // base floor circle 
+        var geometry = new THREE.CircleBufferGeometry( 50, 32 );
+        var material = new THREE.MeshBasicMaterial( { color: 0x000000 } );
+        var circle = new THREE.Mesh( geometry, material );
+        circle.rotation.set(-Math.PI / 2, 0, 0);
+
+        bggroup.add( circle );
+
+        // resize
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+
+        var loader = new THREE.GLTFLoader();
+
+        // vehicle
+        var filepath = "car1.glb";
+        loader.load(filepath, function(gltf) {
+
+            gltf.scene.traverse(function(node) {
+                if (node.isMesh) mesh = node;
+            });
+
+            mesh.material = new THREE.MeshLambertMaterial({
+                color: 0xff0000,
+                morphTargets: true
+            });
+            mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
+            mesh.position.set(0, 0.3, 0);
+            mesh.scale.set(0.4, 0.4, 0.4);
+            mothership.add(mesh);
+            mesh.visible = false;
+            // console.log(mesh)
+            // mesh.morphTargetInfluences[0] = 1;
+            // mesh.morphTargetInfluences[1] = 1;
+
+        }); // vehicle gltf
+
+        // wings
+       var filepath = "wings.glb";
+        loader.load(filepath, function(gltf) {
+
+            gltf.scene.traverse(function(node) {
+                if (node.isMesh) mesh = node;
+            });
+            mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
+            mesh.position.set(0, 0.3, 0);
+            mesh.scale.set(0.1, 0.4, 0.4);
+            mesh.name = 'wings';
+            mothership.add(mesh);
+            mesh.visible = false;
+        }); // vehicle gltf
+
+        // hero
+        let bgeometry = new THREE.BoxGeometry(0.9, 0.6, 0.3);
+        let mmaterial = new THREE.MeshLambertMaterial({
+            color: 0x333333,
+            wireframe: true
+        });
+        let cubicbody = new THREE.Mesh(bgeometry, mmaterial);
+        cubicbody.position.set(0, 0.5, 0);
+        mothership.add(cubicbody);
+        cubicbody.visible = false;
+
+        // // car 3D model
+        var loader = new THREE.BufferGeometryLoader();
+
+        loader.load(
+            'hcar.json',
+            function(geometry) {
+                var carmaterial = new THREE.MeshPhongMaterial({
+                    color: 0xff0000
+                    // ,wireframe: true
+                });
+
+                car = new THREE.Mesh(geometry, carmaterial);
+                car.name = "car"
+                car.position.set(0, 0.3, 0);
+                car.rotation.set(0, Math.PI / 2, 0);
+                car.scale.set(0.4, 0.4, 0.4);
+                mothership.add(car);
+                // car.visible = false;
+
+            },
+            function(xhr) {},
+            function(xhr) {
+                console.log('An error happened');
+            }
+        ); // end load ship
+
+        // shadow 
+        let egeometry = new THREE.PlaneGeometry(1.5, 0.6, 1);
+        let ematerial = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            // transparent:true, opacity:0.2
+        });
+        let shdw = new THREE.Mesh(egeometry, ematerial);
+        shdw.position.set(0.05, 0.2, 0);
+        shdw.rotation.set(-Math.PI / 2, 0, 0)
+        mothership.add(shdw);
+
+        // // trail
+        var loader = new THREE.TextureLoader();
+        loader.load( 'xgrad.png', function ( texture ) {
+          var trgeometry = new THREE.PlaneBufferGeometry( 0.1, 0.6, 1 );
+          trgeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.05, 0, 0) );
+
+          var trmaterial = new THREE.MeshBasicMaterial( {
+          color:0xff0000, map: texture, transparent: true, opacity: 0.7, side: THREE.DoubleSide
+           } );
+          var trail = new THREE.Mesh( trgeometry, trmaterial );
+          trail.name = "trail";
+          trail.position.set(0.2,0.45,0);
+          trail.rotation.set(-Math.PI/2,0,0)
+          mothership.add(trail);
+
+        } );
+
+        // line on back (health?)
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(0.79, 0.45, -0.26));
+        geometry.vertices.push(new THREE.Vector3(0.79, 0.45, 0.26));
+        var material = new THREE.LineBasicMaterial({
+            color: 0xffffff
+        });
+
+        var line = new THREE.Line(geometry, material);
+        line.scale.z = 0.000001;
+        mothership.add(line);
+
+        // skybox
+        var loader = new THREE.TextureLoader();
+        loader.load('wgrad.png', function(texture) {
+            var skygeometry = new THREE.SphereGeometry(501, 32, 32)
+            var skymaterial = new THREE.MeshBasicMaterial({
+                map: texture,
+                side: THREE.BackSide,
+                transparent: true,
+                opacity: 0.8
+            });
+            var skyn = new THREE.Mesh(skygeometry, skymaterial);
+            skyn.name = "skynight";
+            scene.add(skyn);
+        });
+
+
+        //raycaster - ship
+        let shipray = new THREE.Raycaster();
+
+        //raycaster - mouse
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        // let isDragging = false;
+
+        //plane geometry
+        let plgeometry = new THREE.PlaneBufferGeometry(10, 10, 1);
+
+        //plane material
+        let plmaterial = new THREE.MeshBasicMaterial({
+            // color:0x220000,
+            side: THREE.DoubleSide,
+            wireframe: true,
+            transparent: true,
+            opacity: 0
+        });
+
+        //raycast plane object3D
+        let plane = new THREE.Mesh(plgeometry, plmaterial);
+        plane.name = 'plane';
+        plane.rotation.set(-Math.PI / 2, 0, 0);
+        plane.name = 'plane';
+
+        scene.add(plane);
+        // plane.visible = false;
+
+        // end three objects
+
+        // update touch
+        let updateTouchCoordinates = function(evt) {
+            stopwarp = false;
+            mouse.x = (evt.touches[0].pageX / window.innerWidth) * 2 - 1;
+            mouse.y = -(evt.touches[0].pageY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            let intersects = raycaster.intersectObject(plane);
+            if (intersects.length > 0) {
+                movehero(intersects[0].point.x, intersects[0].point.z);
+            }
+        };
+
+        // update mouse
+        let updateMouseCoordinates = function(evt) {
+            evt.preventDefault();
+            mouse.x = (evt.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(evt.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            let intersects = raycaster.intersectObject(plane);
+            if (intersects.length > 0) {
+                movehero(intersects[0].point.x, intersects[0].point.z, intersects[0].point.y);
+            }
+
+        };
+
+        function movehero(x, y, z) {
+            hero.position.x = x;
+            hero.position.z = y;
+            hero.position.y = z;
+        }
+
+        window.addEventListener('mousemove', updateMouseCoordinates, false);
+
+
+        // slow down to stop
+        function decnum(el) {
+          if (el!='quiet') {
+            speakMsg('stop');
+          }
+            botmsg = 'stop';
+            typereset();
+            typeWriter();
+
+            document.getElementById('dirdwn').classList = "on";
+            var sf = scene.getObjectByProperty('name', 'starfield', false);
+
+            for (var i = 0; i < sf.children.length; i++) {
+                new TWEEN.Tween(sf.children[i].scale).to({
+                    x: 1,
+                    y: 1,
+                    z: 0.01
+                }, 400).onComplete(function() {
+                    sf.visible = false;
+                }).start();
+            } //for
+            // xspeed = 0;
+            // new TWEEN.Tween( xspeed ).to( 0, 2000 ).start();
+
+            var ff = scene.getObjectByProperty( 'name', 'trail', false );
+            new TWEEN.Tween( ff.scale ).to( {x: 0.1, y: 1, z: 1}, 200 ).start();
+            new TWEEN.Tween(line.scale).to({
+                x: 1,
+                y: 1,
+                z: 0.000001
+            }, 200).start();
+            stopwarp = true;
+
+            setTimeout(function() {
+                document.getElementById('dirdwn').classList = "";
+            }, 100);
+
+            if (!horizontal) {
+                  new TWEEN.Tween(mothership.position).to({
+                    x: mothership.position.x,
+                    y: -5,
+                    z: mothership.position.z
+                }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+                }
+
+        }; // decnum
+
+        // accelerate
+        function incnum() {
+            // clrbotmsg();      
+            controls.autoRotate = false;
+     
+            speakMsg('go');
+            botmsg = 'go';
+            typereset();
+            typeWriter();
+
+            document.getElementById('dirup').classList = "on";
+            collidableMeshList[0].visible = true;
+            collidableMeshList[1].visible = true;
+
+            var sf = scene.getObjectByProperty('name', 'starfield', false);
+            sf.visible = true;
+            // console.log(scene)
+            for (var i = 0; i < sf.children.length; i++) {
+                new TWEEN.Tween(sf.children[i].scale).to({
+                    x: 1,
+                    y: 1,
+                    z: 1
+                }, 400).start();
+            } //for
+
+            xspeed = 0.0055;
+            // xspeed = new TWEEN.Tween( 0 ).to( 0.0055, 2000 ).start();
+
+            var ff = scene.getObjectByProperty( 'name', 'trail', false );
+            new TWEEN.Tween( ff.scale ).to( {x: 20, y: 1, z: 1}, 200 ).start();
+
+            new TWEEN.Tween(line.scale).to({
+                x: 1,
+                y: 1,
+                z: 1
+            }, 200).start();
+            stopwarp = false;
+
+            setTimeout(function() {
+                document.getElementById('dirup').classList = "";
+            }, 100);
+
+        }; //incnum
+
+
+
+        //keys
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            // console.log(evt)
+
+            if (evt.keyCode == 32) { // space
+                evt.preventDefault();
+                if (!stopwarp) {verticalview();}
+              var rx = randx(); 
+              speakthis(rx);
+
+            }
+
+            if (evt.keyCode == 38) { // up
+                evt.preventDefault();
+                incnum()
+            }
+
+            if (evt.keyCode == 40) { // down
+                evt.preventDefault();
+                decnum()
+            }
+
+
+          if (evt.keyCode == 82) { // r
+                evt.preventDefault();
+                rotatescene()
+            }
+
+        };
+
+        // randomise
+        function randomFloat(a, b) {
+            var r = (Math.random() * (b - a) + a);
+            return r;
+        }
+
+        // make single star
+        function Star(material, x, y, size) {
+            this.size = size;
+
+            this.obj = new THREE.Geometry();
+            this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
+            this.obj.vertices.push(new THREE.Vector3(0, 0, -size));
+            this.obj = new THREE.Line(this.obj, material);
+
+            this.speed = randomFloat(1, 10);
+
+            this.refresh = function(x, y) {
+                this.obj.position.z = randomFloat(0, -100);
+                this.obj.position.x = x;
+                this.obj.position.y = y;
+            }
+            this.refresh(x, y);
+        }
+
+        // make/update star field
+        function Starfield(size, width, height) {
+            this.stars = [];
+            this.obj = new THREE.Group();
+            this.obj.name = "starfield";
+            this.obj.visible = false;
+            this.obj.rotation.set(0, Math.PI / 2, 0);
+            this.obj.position.set(0, 5, 0);
+            this.size = size;
+            this.width = width;
+            this.height = height;
+            this.material = new THREE.MeshBasicMaterial({
+                color: 0xffffff
+            });
+            this.init = function() {
+                for (var i = 0; i < this.size; i++) {
+                    this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 3)));
+                    this.obj.add(this.stars[i].obj);
+                }
+                bggroup.add(this.obj);
+            }
+            this.init();
+            this.update = function() {
+                    if (!stopwarp) {
+                        for (var i = 0; i < this.size; i++) {
+                            if (this.stars[i].obj.position.z > 5) {
+                                this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
+                            }
+
+                            // this.stars[i].obj.position.z += this.stars[i].speed;
+                            this.stars[i].obj.position.z += xspeed * 80;
+
+                        }
+
+                    } //if not stopwarp
+                } // update
+        }
+
+        // collide objects
+        function walls() {
+            var wallGeometry = new THREE.CubeGeometry(0.3, 0.3, 0.3);
+
+            var blue = new THREE.MeshLambertMaterial({
+                color: 0x00ff00
+                , wireframe:true
+            });
+            var green = new THREE.MeshLambertMaterial({
+                color: 0xff0000
+            });
+            var yellow = new THREE.MeshLambertMaterial({
+                color: 0x00ff00
+            });
+
+            var wall = new THREE.Mesh(wallGeometry, blue);
+            wall.position.set(-3, 0.5, -3);
+            wall.name = 'blue';// bad thing
+            bggroup.add(wall);
+            collidableMeshList.push(wall);
+
+            var wall2 = new THREE.Mesh(wallGeometry, green);
+            wall2.position.set(3, 0.5, -3);
+            wall2.name = 'green';// bonus point
+            bggroup.add(wall2);
+            collidableMeshList.push(wall2);
+
+            var wall3 = new THREE.Mesh(new THREE.CubeGeometry(0.4, 0.4, 0.4), yellow);
+            wall3.position.set(-50, 0.5, 0);
+            wall3.name = 'yellow';// building parent
+            bggroup.add(wall3);
+            collidableMeshList.push(wall3);
+
+// building
+            var yellow = new THREE.MeshLambertMaterial({
+                color: 0x333333
+            });
+            var building = new THREE.Mesh(new THREE.SphereGeometry( 0.8, 2, 1, 0, 3 ), yellow);
+            building.rotation.x = -Math.PI/2;
+            building.rotation.z = Math.PI*Math.random();
+            building.position.set(0, -0.5, 0);
+            building.scale.z = 3;
+            building.name = 'building';
+            wall3.add(building);
+
+        }
+
+
+        // HIT function
+        function hit(v) {
+            if (v.length > 0) {
+                // set the rules here...
+                // if (gpoints > 5 || bpoints > 5) {crash();}
+
+                // random respawn algs
+                var num = Math.floor(Math.random() * 5) + 1;
+                num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+                var num2 = Math.floor(Math.random() * 5) + 1;
+                num2 *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+                // make it bounce
+                //blue hit
+                if (v[0].object.name == 'blue') {
+                v[0].object.position.x = num;
+                v[0].object.position.z = num2;
+                v[0].object.scale.y = 10;
+                    bluehit()
+                    crash()
+                    // end point
+                }
+                //green hit
+                if (v[0].object.name == 'green') {
+                v[0].object.position.x = num;
+                v[0].object.position.z = num2;
+                v[0].object.scale.y = 10;
+                greenhit()
+                }
+                //yellow hit
+                if (v[0].object.name == 'yellow') {
+                  yellowhit()
+                }
+                setTimeout(function() {
+                    v[0].object.scale.y = 1;
+                }, 100);
+                // end point
+
+            } //if
+        } // fn hit
+
+
+        // blue hit [bad]
+        function bluehit() {
+        bpoints += 2;
+        document.getElementById('chkb').innerHTML = bpoints;
+        flash(document.getElementById('chkb'));
+        car.material = new THREE.MeshPhongMaterial({
+                        color: 0x000000
+                    });
+        setTimeout(function() {
+        car.material = new THREE.MeshPhongMaterial({
+                        color: 0xff0000
+                    });          
+        }, 300);
+
+            speakthis('hit');
+        }
+
+        // green hit
+        function greenhit() {
+        gpoints += 1;
+        // xspeed = 0.02;
+
+        xspeed += gpoints/100;
+        flash(document.getElementById('chkg'));
+        document.getElementById('chkg').innerHTML = gpoints;
+        car.material = new THREE.MeshPhongMaterial({
+                    color: 0xffffff
+                });          
+        setTimeout(function() {
+        car.material = new THREE.MeshPhongMaterial({
+                        color: 0xff0000
+                    });          
+        }, 300);
+
+            speakthis('hit');
+
+        }
+        // yellow hit
+        function yellowhit() {
+        mesh.visible = true;
+        car.visible = false;
+        shdw.visible = false;
+        mesh.morphTargetInfluences[0] = 1; 
+        decnum('quiet');
+
+        setTimeout(function() {
+       gameover();
+        }, 300);
+  
+        }
+
+        //crash ship
+      function crash() {
+        mesh.visible = true;
+        car.visible = false;
+        // stopwarp = true;
+        mesh.morphTargetInfluences[0] = 1;          
+                
+        setTimeout(function() {
+          mesh.visible = false;
+          car.visible = true;
+        }, 100);
+
+      }
+
+
+
+// speak and write this
+function speakthis(argument){
+botmsg = argument;
+speakMsg(botmsg);
+typereset();
+typeWriter();
+}
+
+
+// game over
+function gameover(){
+speakthis('game over');
+}
+
+
+//flash helper f
+function flash(argument) {
+    argument.classList = "on";
+    setTimeout(function() {
+        argument.classList = "";
+    }, 100);
+}
+
+
+// reset title
+function typereset() {
+  document.getElementById("botmsg").innerHTML = '';
+  k = 0;
+}
+
+
+// type writer effect
+function typeWriter() {
+  if (k < botmsg.length) {
+    document.getElementById("botmsg").innerHTML += botmsg.charAt(k);
+    k++;
+    setTimeout(typeWriter, tyspeed);
+  }
+}
+
+
+
+function clrbotmsg(){
+document.getElementById('botmsg').classList = "clr";
+  setTimeout(function () {
+    document.getElementById('botmsg').innerHTML = "";
+    document.getElementById('botmsg').classList = "";
+  }, 300);
+}
+
+
+// long press function
+function clk(){
+  console.log('clk');
+  xspeed = 0.02;
+  speakMsg('boo ya');
+  botmsg = 'boo ya';
+  typereset();
+  typeWriter();
+
+  setTimeout(function () {
+    xspeed = 0.0055;
+  }, 800);
+}
+
+
+// long press
+var node = document.getElementsByTagName("canvas")[0];
+var longpress = false;
+var presstimer = null;
+var longtarget = null;
+
+var cancel = function(e) {
+    if (presstimer !== null) {
+        clearTimeout(presstimer);
+        presstimer = null;
+    }
+    // this.classList.remove("longpress");
+};
+
+var click = function(e) {
+    if (presstimer !== null) {
+        clearTimeout(presstimer);
+        presstimer = null;
+    }   
+    // this.classList.remove("longpress");
+    if (longpress) {
+        return false;
+    }
+};
+
+var start = function(e) {
+    if (e.type === "click" && e.button !== 0) {
+        return;
+    }
+    longpress = false;
+    // this.classList.add("longpress");
+    presstimer = setTimeout(function() {
+// alert("long click");
+        clk();
+        longpress = true;
+    }, 1000);
+    return false;
+};
+
+node.addEventListener("mousedown", start);
+node.addEventListener("touchstart", start);
+node.addEventListener("click", click);
+node.addEventListener("mouseout", cancel);
+node.addEventListener("touchend", cancel);
+node.addEventListener("touchleave", cancel);
+node.addEventListener("touchcancel", cancel);
+
+
+
+// speak text
+function speakMsg(text) {
+    try {
+        var f1 = f0;
+        var speed = 0.3;
+
+        var seconds = text.length;
+        var waveBytes = SAMPLE_FREQUENCY * 2 * 2 * seconds;
+        var buf = new Int16Array(new ArrayBuffer(waveBytes));
+        SynthSpeech(buf, text, f1, speed, 0);
+        playAudioBuffer(buf); 
+    } catch (e) {
+        alert("Something went horribly wrong:\n" + e);
+    }
+};
+
+//play spktxt
+function playAudioBuffer(buf) {
+    var maxAmp = 22000;
+    var audioString = "";
+
+    for (var i=0; i<buf.length; i++) {
+        var y = buf[i] / maxAmp * 0x7800;
+        audioString += String.fromCharCode(y & 255, (y >> 8) & 255);
+    }
+    var audio = new Audio("data:audio/wav;base64,"+btoa(atob("UklGRti/UABXQVZFZm10IBAAAAABAAIARKwAABCxAgAEABAAZGF0YbS/UAA") + audioString));
+    audio.play();
+}
+
+
+
+// speak
+function randx(items) {
+  return rants[~~(rants.length * Math.random())];
+}
+
+var rants = [
+"<preposition>","<firstname>","<abstract>","<activity>","<adv>","<color>","<conj>","<country>","<emo>","<em>","<face>","<firstname>","<greet>","<surname>","<nonsense>","<noun>","<sound>","<title>","<place>","<prefix>","<prepos>","<pron>","<quality>","<rel>","<sconj>","<substance>","<timeadv>","<timenoun>","<unit>","<verbimg>","<say>","<verb>","<vocal>","<preposition>","<yn>","<adj>","<adj.nsfw>","<adj.nsfw>","<noun.food>","<noun.body>"];
+
+
+
+// STARTING FUNCTION >>>
+        walls();
+        setTimeout(function() {
+        // rotate scene
+        // controls.autoRotate = true;
+        // controls.autoRotateSpeed = 2.0;
+        // document.getElementById("rotate").classList.toggle('on');
+
+            botmsg = 'press up to go';
+            typereset();
+            typeWriter();
+            // stars
+            stars = new Starfield(10, 9, 9);
+            var sf = scene.getObjectByProperty('name', 'starfield', false);
+            for (var i = 0; i < sf.children.length; i++) {
+                sf.children[i].scale.z = 0.1;
+            }
+
+            animate();
+
+        }, 200);
+
+
+        // RENDER LOOP
+        var animate = function() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+            controls.update();
+            TWEEN.update();
+            stars.update();
+
+            if (!stopwarp) {
+                // xspeed += (0) 
+                // ground texture [speed]
+                groundtex.offset.x -= xspeed * 3;
+                // ship position lerp
+                mothership.position.x += (hero.position.x - cursor.position.x) * 0.1;
+                mothership.position.z += (hero.position.z - cursor.position.z) * 0.2;
+                // 
+                cursor.position.x = mothership.position.x;
+                cursor.position.z = mothership.position.z;
+                //
+                mothership.rotation.x = (hero.position.z - mothership.position.z) * 0.2; // bank
+                mothership.rotation.z = -(hero.position.x - mothership.position.x) * 0.05; // pitch
+                mothership.rotation.y = (hero.position.z - mothership.position.z) * 0.2; // turn
+
+                // fly mode controls
+                if (!horizontal) {
+                    mothership.position.y += (hero.position.y - cursor.position.y) * 0.5;
+                    cursor.position.y = mothership.position.y;
+                    mothership.rotation.z = -(hero.position.y - mothership.position.y) * 0.5; // bank
+                    groundtex.offset.x = 0;
+                    groundtex.offset.y -= xspeed * 3;
+                }
+                // ship raycaster [cubicbody]
+              // if (horizontal) {
+
+                for (var vertexIndex = 0; vertexIndex < cubicbody.geometry.vertices.length; vertexIndex++) {
+                    var localVertex = cubicbody.geometry.vertices[vertexIndex].clone();
+                    var globalVertex = localVertex.applyMatrix4(cubicbody.matrix);
+                    var directionVector = globalVertex.sub(cubicbody.position);
+
+                    var vray = new THREE.Raycaster(mothership.position, directionVector.normalize());
+                    var collisionResults = vray.intersectObjects(collidableMeshList);
+                    if (collisionResults.length > 0 && collidableMeshList.distance < directionVector.length())
+                        console.log('hit');
+                    hit(collisionResults)
+                }// for
+
+              // }// if horizontal
+
+                // set collectables speed/pos
+                collidableMeshList[0].position.x += xspeed * 42;
+                if (collidableMeshList[0].position.x > 5) {
+                    collidableMeshList[0].position.x = -10;
+            // random respawn
+                var num = Math.floor(Math.random() * 5) + 1;
+                num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+            // collider0
+                collidableMeshList[0].position.z = num;
+                collidableMeshList[0].position.x += (xspeed * 42)+ num+5.1;
+                }
+            // collider1
+                collidableMeshList[1].position.x += xspeed * 22;
+                if (collidableMeshList[1].position.x > 5) {
+                    collidableMeshList[1].position.x = -30;
+                // random respawn
+                var num = Math.floor(Math.random() * 5) + 1;
+                num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+                collidableMeshList[1].position.z = num;           
+              }
+
+            // collider rock
+                collidableMeshList[2].position.x += xspeed * 22;
+                if (collidableMeshList[2].position.x == -7) {
+            speakMsg('warning');
+            botmsg = 'warning';
+            typereset();
+            typeWriter();
+                }
+                if (collidableMeshList[2].position.x > 5) {
+                    collidableMeshList[2].position.x = -30;
+                // random respawn
+                var num = Math.floor(Math.random() * 5) + 1;
+                num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+                collidableMeshList[2].position.z = num;           
+              }
+
+
+            } //if warp is true
+        }; //render loop
+
+
+    </script>
+</body>
+
+</html>2
