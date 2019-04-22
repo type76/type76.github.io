@@ -17,6 +17,7 @@
             background: #333;
             color: #fff;
             /*font-family: monospace;*/
+            overflow: hidden;
             font-family: "glass_tty_vt220medium", monospace;
         }
         
@@ -153,7 +154,7 @@
             font-size: 2em;
         }
         
-        #chkb,
+        #xspd,
         #chkg {
             position: absolute;
             right: 12px;
@@ -169,12 +170,12 @@
             padding: 2px 8px;
         }
         
-        #chkb.on,
+        #xspd.on,
         #chkg.on {
             background: #fff !important;
         }
         
-        #chkb {
+        #xspd {
             color: #fff;
             right: 70px;
         }
@@ -236,7 +237,7 @@
     </div>
     <!-- keyboard -->
 
-    <span id="chkb" />0</span>
+    <span id="xspd" />0</span>
     <span id="chkg" />0</span>
 
     <script src="../js/three.min.js"></script>
@@ -657,6 +658,8 @@ function rotatescene() {
             } //for
             // xspeed = 0;
             // new TWEEN.Tween( xspeed ).to( 0, 2000 ).start();
+xspeed = 0;
+document.getElementById("xspd").innerHTML = '0';
 
             var ff = scene.getObjectByProperty( 'name', 'trail', false );
             new TWEEN.Tween( ff.scale ).to( {x: 0.1, y: 1, z: 1}, 200 ).start();
@@ -707,6 +710,7 @@ function rotatescene() {
             } //for
 
             xspeed = 0.0055;
+            document.getElementById("xspd").innerHTML = '0';
             // xspeed = new TWEEN.Tween( 0 ).to( 0.0055, 2000 ).start();
 
             var ff = scene.getObjectByProperty( 'name', 'trail', false );
@@ -912,9 +916,11 @@ function rotatescene() {
 
         // blue hit [bad]
         function bluehit() {
-        bpoints += 2;
-        document.getElementById('chkb').innerHTML = bpoints;
-        flash(document.getElementById('chkb'));
+        // bpoints += 2;
+        // gpoints += 1;
+        xspeed = 0.02;
+        gpoints = 0;
+        flash(document.getElementById('chkg'));
         car.material = new THREE.MeshPhongMaterial({
                         color: 0x000000
                     });
@@ -931,8 +937,8 @@ function rotatescene() {
         function greenhit() {
         gpoints += 1;
         // xspeed = 0.02;
-
-        xspeed += gpoints/100;
+// TURBO BOOST
+        xspeed += gpoints/1000;
         flash(document.getElementById('chkg'));
         document.getElementById('chkg').innerHTML = gpoints;
         car.material = new THREE.MeshPhongMaterial({
@@ -1163,7 +1169,7 @@ var rants = [
             controls.update();
             TWEEN.update();
             stars.update();
-
+            document.getElementById('xspd').innerHTML = Math.round(xspeed*10000);
             if (!stopwarp) {
                 // xspeed += (0) 
                 // ground texture [speed]
@@ -1188,7 +1194,7 @@ var rants = [
                     groundtex.offset.y -= xspeed * 3;
                 }
                 // ship raycaster [cubicbody]
-              // if (horizontal) {
+              if (horizontal) {
 
                 for (var vertexIndex = 0; vertexIndex < cubicbody.geometry.vertices.length; vertexIndex++) {
                     var localVertex = cubicbody.geometry.vertices[vertexIndex].clone();
@@ -1202,7 +1208,7 @@ var rants = [
                     hit(collisionResults)
                 }// for
 
-              // }// if horizontal
+              }// if horizontal
 
                 // set collectables speed/pos
                 collidableMeshList[0].position.x += xspeed * 42;
