@@ -154,8 +154,7 @@
             font-size: 2em;
         }
         
-        #xspd,
-        #chkg {
+        #xspd {
             position: absolute;
             right: 12px;
             bottom: 22px;
@@ -170,8 +169,7 @@
             padding: 2px 8px;
         }
         
-        #xspd.on,
-        #chkg.on {
+        #xspd.on {
             background: #fff !important;
         }
         
@@ -180,10 +178,7 @@
             right: 70px;
         }
         
-        #chkg {
-            color: red;
-        }
-        
+
         #botmsg {position: absolute; padding:0 14px; top: 0;}
         .clr {animation: botOut 0.1s forwards ease-in-out; transform-origin: top;}
 
@@ -238,7 +233,6 @@
     <!-- keyboard -->
 
     <span id="xspd" />0</span>
-    <span id="chkg" />0</span>
 
     <script src="../js/three.min.js"></script>
     <script src="../js/GLTFLoader.js"></script>
@@ -738,7 +732,7 @@ document.getElementById("xspd").innerHTML = '0';
 
             if (evt.keyCode == 32) { // space
                 evt.preventDefault();
-                if (!stopwarp) {verticalview();}
+              if (!stopwarp) {verticalview();}
               var rx = randx(); 
               speakthis(rx);
 
@@ -754,10 +748,24 @@ document.getElementById("xspd").innerHTML = '0';
                 decnum()
             }
 
-
           if (evt.keyCode == 82) { // r
                 evt.preventDefault();
                 rotatescene()
+            }
+
+          if (evt.keyCode == 90) { // z
+                evt.preventDefault();
+                incnum()
+            }
+
+          if (evt.keyCode == 87) { // w
+                evt.preventDefault();
+                incnum()
+            }
+
+          if (evt.keyCode == 83) { // s
+                evt.preventDefault();
+                decnum()
             }
 
         };
@@ -834,7 +842,7 @@ document.getElementById("xspd").innerHTML = '0';
                 , wireframe:true
             });
             var green = new THREE.MeshLambertMaterial({
-                color: 0xff0000
+                color: 0xffffff
             });
             var yellow = new THREE.MeshLambertMaterial({
                 color: 0x00ff00
@@ -857,6 +865,7 @@ document.getElementById("xspd").innerHTML = '0';
             wall3.name = 'yellow';// building parent
             bggroup.add(wall3);
             collidableMeshList.push(wall3);
+            wall3.visible = false;
 
 // building
             var yellow = new THREE.MeshLambertMaterial({
@@ -916,11 +925,8 @@ document.getElementById("xspd").innerHTML = '0';
 
         // blue hit [bad]
         function bluehit() {
-        // bpoints += 2;
-        // gpoints += 1;
         xspeed = 0.02;
         gpoints = 0;
-        flash(document.getElementById('chkg'));
         car.material = new THREE.MeshPhongMaterial({
                         color: 0x000000
                     });
@@ -930,29 +936,27 @@ document.getElementById("xspd").innerHTML = '0';
                     });          
         }, 300);
 
-            speakthis('hit');
+            speakthis('zap');
         }
 
         // green hit
         function greenhit() {
         gpoints += 1;
-        // xspeed = 0.02;
-// TURBO BOOST
+        // TURBO BOOST
         xspeed += gpoints/1000;
-        flash(document.getElementById('chkg'));
-        document.getElementById('chkg').innerHTML = gpoints;
         car.material = new THREE.MeshPhongMaterial({
                     color: 0xffffff
                 });          
         setTimeout(function() {
-        car.material = new THREE.MeshPhongMaterial({
+          car.material = new THREE.MeshPhongMaterial({
                         color: 0xff0000
-                    });          
+                      });          
         }, 300);
 
-            speakthis('hit');
+            speakthis('boost');
 
         }
+
         // yellow hit
         function yellowhit() {
         mesh.visible = true;
@@ -1037,15 +1041,7 @@ document.getElementById('botmsg').classList = "clr";
 // long press function
 function clk(){
   console.log('clk');
-  xspeed = 0.02;
-  speakMsg('boo ya');
-  botmsg = 'boo ya';
-  typereset();
-  typeWriter();
-
-  setTimeout(function () {
-    xspeed = 0.0055;
-  }, 800);
+  speakthis('boo ya');
 }
 
 
@@ -1219,7 +1215,7 @@ var rants = [
                 num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
             // collider0
                 collidableMeshList[0].position.z = num;
-                collidableMeshList[0].position.x += (xspeed * 42)+ num+5.1;
+                collidableMeshList[0].position.x = -30;
                 }
             // collider1
                 collidableMeshList[1].position.x += xspeed * 22;
