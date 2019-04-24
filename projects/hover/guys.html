@@ -1,0 +1,131 @@
+
+<html>
+	<head>
+		<title>guys</title>
+		<style>
+			body { margin: 0; 
+				/*background: #d80000; */
+				background: #000; 
+				color: #fff;
+			}
+			canvas { width: 100%; height: 100% }
+			button { position: absolute; background: transparent; border:none; outline:none; cursor: pointer; font-family: monospace; font-size: 4em; color: #fff;}
+			#go {left: 1em; display: none;}
+			#go.show {left: 1em; display: block;}
+			button.on {color: red;}
+		</style>
+	</head>
+	<body>
+	<button id="rotate" >o</button>
+
+<script src="../js/three.min.js"></script>
+<script src="../js/GLTFLoader.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+
+
+<script>
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.8, 1000 );
+
+var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.localClippingEnabled = true;
+
+document.body.appendChild( renderer.domElement );
+
+scene.position.set(0,-1,0);
+camera.lookAt(0,0,0)
+
+// lights
+var light = new THREE.AmbientLight( 0xffffff );
+light.intensity = 0.9;
+scene.add( light );
+
+var light = new THREE.PointLight( 0xffffff, 1, 40 );
+light.position.set( 10, 10, 10 );
+scene.add( light );
+
+camera.position.x = 5;
+camera.position.y = 1;
+camera.position.z = 0;
+
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI*0.51;
+controls.enableDamping = true;
+controls.dampingFactor = 0.4;
+controls.maxDistance = 15;
+controls.minDistance = 5;
+controls.enablePan = false;
+
+
+
+// rocks
+        for ( var i = 0; i < 19; i ++ ) {
+var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+var geometry = new THREE.SphereGeometry( 0.1, 2, 1, 0, 3 );
+var mesh = new THREE.Mesh( geometry, material );
+          mesh.rotation.x = -Math.PI/2;
+          mesh.rotation.z = Math.PI*Math.random();
+          var sc = Math.random()*0.5;
+          console.log(sc)
+          mesh.scale.set(sc, sc, sc);
+
+          mesh.position.x = ( Math.random() - 0.5 ) * 7;
+          mesh.position.z = ( Math.random() - 0.5 ) * 7;
+          mesh.updateMatrix();
+          mesh.matrixAutoUpdate = false;
+          scene.add( mesh );
+
+        }
+
+
+var loader = new THREE.GLTFLoader();
+loader.load(
+		'guys.glb',
+		function ( gltf ) {
+		scene.add( gltf.scene );
+		gltf.scene.scale.set(3, 3, 3);
+		// gltf.scene.rotation.set(0, Math.PI/2, 0);
+
+		},
+		function ( xhr ) {
+			console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+		},
+		function ( error ) {
+			console.log( 'An error happened' );
+		}
+	);
+
+
+// animate loop
+var animate = function () {
+// TWEEN.update();
+requestAnimationFrame( animate );
+renderer.render(scene, camera);
+controls.update();
+
+};
+
+animate();
+
+
+
+
+// rotate
+document.getElementById("rotate").addEventListener("click",rotx, false );
+
+
+function rotx() {
+	rotate.classList.toggle('on');
+	if (rotate.classList != "on") {
+		controls.autoRotate = false;
+	} else {
+		controls.autoRotate = true;
+		controls.autoRotateSpeed = 4.0;
+	}
+
+}
+
+		</script>
+	</body>
+</html>
