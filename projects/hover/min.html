@@ -402,9 +402,9 @@ controls.enablePan = false;
 controls.enabled = false;
 
 // ambient
-var light = new THREE.AmbientLight( 0x333333 );
-light.intensity = 1;
-scene.add( light );
+// var light = new THREE.AmbientLight( 0x333333 );
+// light.intensity = 1;
+// scene.add( light );
 
 scene.fog = new THREE.FogExp2( 0x000000, 0.020 );
 
@@ -429,8 +429,8 @@ mothership = new THREE.Group();
 selection.add( mothership );
 
 // scene light
-var light = new THREE.PointLight( 0xffffff, 1, 25 );
-light.position.set( 0, 10, 0 );
+var light = new THREE.PointLight( 0xffffff, 1, 150 );
+light.position.set( 0, 100, 0 );
 scene.add( light );
 
 
@@ -679,11 +679,15 @@ function bg() {
 
 // RAF events for throttle
 function accelerate() {
-audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-source = audioCtx.createBufferSource();
-getData();
-source.start(0);
   slowdown = false;
+if (revcounter<0.1) {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  source = audioCtx.createBufferSource();
+  getData();
+  source.start(0);
+}  else {  
+}
+
   timerID = cancelAnimationFrame(slowtimer);
   timerID = requestAnimationFrame(timer);
 }
@@ -726,12 +730,13 @@ var animate = function () {
   renderer.render(scene, camera);
   movement();
   bgupdate();
+  stars.update();
   controls.update();
   TWEEN.update();
   camera.lookAt(0,0,0);
   if (revcounter>0) {source.playbackRate.value = revcounter/200;
 
-// fail
+// engine fail
 // if ( Math.random() > 0.9) { 
 // revcounter += ( 1 - revcounter ) * 0.3; }  
 // revcounter = revcounter;
@@ -741,6 +746,7 @@ var animate = function () {
 };// loop
 
 // START
+stars = new Starfield(10, 9, 9);
 setTimeout(function() {
 new TWEEN.Tween( camera.position ).to( {x: 7, y: 2, z: 0}, 3000 )
 .easing( TWEEN.Easing.Quadratic.EaseInOut)
@@ -807,6 +813,69 @@ source.connect(gainNode)
 }
 
 
+
+// randomise
+function randomFloat(a, b) {
+  var r = (Math.random() * (b - a) + a);
+  return r;
+}
+
+// make single star
+function Star(material, x, y, size) {
+  this.size = size;
+
+  this.obj = new THREE.Geometry();
+  this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
+  this.obj.vertices.push(new THREE.Vector3(0, 0, -size));
+  this.obj = new THREE.Line(this.obj, material);
+
+  this.speed = randomFloat(1, 10);
+
+  this.refresh = function(x, y) {
+    this.obj.position.z = randomFloat(0, -100);
+    this.obj.position.x = x;
+    this.obj.position.y = y;
+  }
+  this.refresh(x, y);
+}
+
+// make/update star field
+function Starfield(size, width, height) {
+  this.stars = [];
+  this.obj = new THREE.Group();
+  this.obj.name = "starfield";
+  // this.obj.visible = false;
+  this.obj.rotation.set(0, Math.PI / 2, 0);
+  this.obj.position.set(0, 5, 0);
+  this.size = size;
+  this.width = width;
+  this.height = height;
+  this.material = new THREE.MeshBasicMaterial({
+    color: 0xffffff
+  });
+  this.init = function() {
+    for (var i = 0; i < this.size; i++) {
+      this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 3)));
+      this.obj.add(this.stars[i].obj);
+    }
+    scene.add(this.obj);
+  }
+  this.init();
+  this.update = function() {
+    if (!slowdown) {
+      for (var i = 0; i < this.size; i++) {
+        if (this.stars[i].obj.position.z > 5) {
+          this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
+        }
+
+// this.stars[i].obj.position.z += this.stars[i].speed;
+this.stars[i].obj.position.z += revcounter/500;
+
+}
+
+} //if not slowdown
+} // update
+}
 
 
 </script>
