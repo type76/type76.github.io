@@ -4,14 +4,11 @@
 		<title>guys</title>
 		<style>
 			body { margin: 0; 
-				/*background: #d80000; */
 				background: #000; 
 				color: #fff;
 			}
 			canvas { width: 100%; height: 100% }
 			button { position: absolute; background: transparent; border:none; outline:none; cursor: pointer; font-family: monospace; font-size: 4em; color: #fff;}
-			#go {left: 1em; display: none;}
-			#go.show {left: 1em; display: block;}
 			button.on {color: red;}
 		</style>
 	</head>
@@ -54,7 +51,7 @@ controls.maxPolarAngle = Math.PI*0.51;
 controls.enableDamping = true;
 controls.dampingFactor = 0.4;
 controls.maxDistance = 15;
-controls.minDistance = 5;
+controls.minDistance = 1;
 controls.enablePan = false;
 
 
@@ -85,8 +82,6 @@ loader.load(
 		function ( gltf ) {
 		scene.add( gltf.scene );
 		gltf.scene.scale.set(3, 3, 3);
-		// gltf.scene.rotation.set(0, Math.PI/2, 0);
-
 		},
 		function ( xhr ) {
 			console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
