@@ -24,6 +24,7 @@ font-family: 'glass_tty_vt220medium';}
     .on, button:hover {color: red !important; opacity: 1;}
     #accl, #cambut {position: absolute; bottom: 0; right:0; opacity: 0.5; font-size: 1em;}
     #cambut {right: auto; left: 0;}
+    #cambut span {text-decoration: underline;}
 
 
 
@@ -35,7 +36,7 @@ font-family: 'glass_tty_vt220medium';}
 
     <button id="accl" title="go" onclick="go()">go</button>
 
-    <button id="cambut" title="camera mode" onclick="camreset()">camera</button>
+    <button id="cambut" title="camera mode" onclick="camreset()"><span>c</span>amera [free]</button>
 
 
     <script src="../js/three.min.js"></script>
@@ -401,9 +402,11 @@ controls.enablePan = false;
 controls.enabled = false;
 
 // ambient
-var light = new THREE.AmbientLight( 0x660000 );
-light.intensity = 0.4;
+var light = new THREE.AmbientLight( 0x333333 );
+light.intensity = 1;
 scene.add( light );
+
+scene.fog = new THREE.FogExp2( 0x000000, 0.020 );
 
 
 // resize
@@ -510,8 +513,8 @@ scene.add(gridHelper)
 // ship shadow object 
 let egeometry = new THREE.PlaneGeometry(1.5, 0.6, 1);
 let ematerial = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-  transparent: true, opacity: 0.1
+  color: 0x000000,
+  transparent: true, opacity: 0.2
 });
 let shdw = new THREE.Mesh(egeometry, ematerial);
 // shdw.position.set(0, 0.01, 0);
@@ -667,7 +670,7 @@ function bg() {
   bgmesh = new THREE.Mesh(geometry, material);
   bgmesh.rotation.set(-Math.PI/2,0,Math.PI/2);
   bgmesh.position.set(0,-1.7,0);
-  bgmesh.scale.set(1,1,0.3);
+  bgmesh.scale.set(2,4,0.2);
   scene.add(bgmesh);
 
 }//bg
@@ -676,6 +679,10 @@ function bg() {
 
 // RAF events for throttle
 function accelerate() {
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+source = audioCtx.createBufferSource();
+getData();
+source.start(0);
   slowdown = false;
   timerID = cancelAnimationFrame(slowtimer);
   timerID = requestAnimationFrame(timer);
@@ -694,6 +701,7 @@ function slowtimer() {
   if (revcounter<0.1) {
     revcounter=0; 
     cancelAnimationFrame(slowtimer); 
+    source.stop(0);
     return;
   } else {
     requestAnimationFrame(slowtimer);
@@ -712,14 +720,24 @@ function timer() {
 // render loop
 var animate = function () {
   increment = revcounter/5000;
-  document.getElementById('spd').innerHTML = revcounter;
+
+  document.getElementById('spd').innerHTML = Math.floor(revcounter);
   requestAnimationFrame( animate );
   renderer.render(scene, camera);
   movement();
   bgupdate();
   controls.update();
   TWEEN.update();
-  camera.lookAt(0,0,0)
+  camera.lookAt(0,0,0);
+  if (revcounter>0) {source.playbackRate.value = revcounter/100;
+
+// fail
+// if ( Math.random() > 0.9) { 
+// revcounter += ( 1 - revcounter ) * 0.3; }  
+// revcounter = revcounter;
+}
+
+
 };// loop
 
 // START
@@ -744,13 +762,51 @@ new TWEEN.Tween( camera.position ).to( {x: 7, y: 2, z: 0}, 1000 )
 new TWEEN.Tween( camera.rotation ).to( {x: 0, y: 0, z: 0}, 1000 )
 .easing( TWEEN.Easing.Quadratic.EaseInOut)
 .start();
-document.getElementById("cambut").innerHTML = 'camera';
+document.getElementById("cambut").innerHTML = '<span>c</span>amera [free]';
     } else {
 controls.enabled = true;
-document.getElementById("cambut").innerHTML = 'camera [reset]';
+document.getElementById("cambut").innerHTML = '<span>c</span>amera [fixed]';
     }
 
   }
+
+
+
+
+
+//audio
+function getData() {
+  source = audioCtx.createBufferSource();
+  request = new XMLHttpRequest();
+
+  request.open('GET', 'motor.wav', true);
+
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.playbackRate.value = revcounter/10;
+        source.loop = true;
+
+var gainNode = audioCtx.createGain()
+gainNode.gain.value = 0.2 // 10% volume
+gainNode.connect(audioCtx.destination)
+source.connect(gainNode)
+
+      },
+
+      function(e){"Error with decoding audio data" + e.error});
+
+  }
+
+  request.send();
+}
+
+
 
 
 </script>
