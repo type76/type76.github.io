@@ -1,0 +1,758 @@
+<html>
+<head>
+  <title>corpse</title>
+  <style>
+  @font-face {
+    font-family: 'glass_tty_vt220medium';
+    src: url('glass_tty_vt220-webfont.woff2') format('woff2'),
+    url('glass_tty_vt220-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  body { margin: 0; 
+    background: #000; 
+    color: #fff;
+    font-family: 'glass_tty_vt220medium';
+    overflow: hidden;
+  }
+button {padding: 12px;
+      outline: none; border:0; background: transparent; color: #fff; cursor: pointer;
+font-family: 'glass_tty_vt220medium';}
+  #spd {color:#fff; padding: 12px;
+    font-size: 2em; position: absolute; top: 0; right:0; padding: 12px;}
+    .on, button:hover {color: red !important; opacity: 1;}
+    #accl, #cambut {position: absolute; bottom: 0; right:0; opacity: 0.5; font-size: 1em;}
+    #cambut {right: auto; left: 0;}
+
+
+
+    </style>
+  </head>
+  <body>
+
+    <span id="spd" title="go">0</span>
+
+    <button id="accl" title="go" onclick="go()">go</button>
+
+    <button id="cambut" title="camera mode" onclick="camreset()">camera</button>
+
+
+    <script src="../js/three.min.js"></script>
+    <script src="../js/OrbitControls.min.js"></script>
+    <script src="../js/GLTFLoader.js"></script>
+    <script src="../js/tween.js"></script>
+
+
+
+
+    <script id="vertex-shader" type="x-shader/x-fragment">
+// source : https://codepen.io/ma77os/pen/WYwRmV
+
+vec3 mod289(vec3 x)
+{
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec4 mod289(vec4 x)
+{
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec4 permute(vec4 x)
+{
+  return mod289(((x*34.0)+1.0)*x);
+}
+
+vec4 taylorInvSqrt(vec4 r)
+{
+  return 1.79284291400159 - 0.85373472095314 * r;
+}
+
+vec3 fade(vec3 t) {
+  return t*t*t*(t*(t*6.0-15.0)+10.0);
+}
+
+// Classic Perlin noise
+float cnoise(vec3 P)
+{
+  vec3 Pi0 = floor(P);
+  vec3 Pi1 = Pi0 + vec3(1.0);
+  Pi0 = mod289(Pi0);
+  Pi1 = mod289(Pi1);
+  vec3 Pf0 = fract(P);
+  vec3 Pf1 = Pf0 - vec3(1.0);
+  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+  vec4 iz0 = Pi0.zzzz;
+  vec4 iz1 = Pi1.zzzz;
+
+  vec4 ixy = permute(permute(ix) + iy);
+  vec4 ixy0 = permute(ixy + iz0);
+  vec4 ixy1 = permute(ixy + iz1);
+
+  vec4 gx0 = ixy0 * (1.0 / 7.0);
+  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+  gx0 = fract(gx0);
+  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+  vec4 sz0 = step(gz0, vec4(0.0));
+  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+
+  vec4 gx1 = ixy1 * (1.0 / 7.0);
+  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+  gx1 = fract(gx1);
+  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+  vec4 sz1 = step(gz1, vec4(0.0));
+  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+
+  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+
+  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+  g000 *= norm0.x;
+  g010 *= norm0.y;
+  g100 *= norm0.z;
+  g110 *= norm0.w;
+  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+  g001 *= norm1.x;
+  g011 *= norm1.y;
+  g101 *= norm1.z;
+  g111 *= norm1.w;
+
+  float n000 = dot(g000, Pf0);
+  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+  float n111 = dot(g111, Pf1);
+
+  vec3 fade_xyz = fade(Pf0);
+  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+  return 2.2 * n_xyz;
+}
+
+// Classic Perlin noise, periodic variant
+float pnoise(vec3 P, vec3 rep)
+{
+  vec3 Pi0 = mod(floor(P), rep);
+  vec3 Pi1 = mod(Pi0 + vec3(1.0), rep);
+  Pi0 = mod289(Pi0);
+  Pi1 = mod289(Pi1);
+  vec3 Pf0 = fract(P);
+  vec3 Pf1 = Pf0 - vec3(1.0);
+  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+  vec4 iz0 = Pi0.zzzz;
+  vec4 iz1 = Pi1.zzzz;
+
+  vec4 ixy = permute(permute(ix) + iy);
+  vec4 ixy0 = permute(ixy + iz0);
+  vec4 ixy1 = permute(ixy + iz1);
+
+  vec4 gx0 = ixy0 * (1.0 / 7.0);
+  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+  gx0 = fract(gx0);
+  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+  vec4 sz0 = step(gz0, vec4(0.0));
+  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+
+  vec4 gx1 = ixy1 * (1.0 / 7.0);
+  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+  gx1 = fract(gx1);
+  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+  vec4 sz1 = step(gz1, vec4(0.0));
+  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+
+  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+
+  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+  g000 *= norm0.x;
+  g010 *= norm0.y;
+  g100 *= norm0.z;
+  g110 *= norm0.w;
+  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+  g001 *= norm1.x;
+  g011 *= norm1.y;
+  g101 *= norm1.z;
+  g111 *= norm1.w;
+
+  float n000 = dot(g000, Pf0);
+  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+  float n111 = dot(g111, Pf1);
+
+  vec3 fade_xyz = fade(Pf0);
+  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+  return 2.2 * n_xyz;
+}
+
+#define LAMBERT
+varying vec3 vLightFront;
+#ifdef DOUBLE_SIDED
+varying vec3 vLightBack;
+#endif
+#include <common>
+#include <uv_pars_vertex>
+#include <uv2_pars_vertex>
+#include <envmap_pars_vertex>
+#include <bsdfs>
+#include <lights_pars_begin>
+
+
+uniform float time;
+attribute float vDisplace;
+
+void main() {
+  #include <uv_vertex>
+  #include <uv2_vertex>
+  #include <color_vertex>
+  #include <beginnormal_vertex>
+  #include <morphnormal_vertex>
+  #include <skinbase_vertex>
+  #include <skinnormal_vertex>
+  #include <defaultnormal_vertex>
+
+  float n = cnoise(vec3(position.x, position.y + time*6.0, position.z)*0.1);
+  float h = n + 1.0;
+  float angle = uv.x * 3.14;
+  float c = abs(cos(angle));
+  h *= pow(c, 1.8);
+h *= 20.0; //VERTICAL DISPLACEMENT
+vec3 transformed = vec3( position.x, position.y, position.z + h );
+
+#include <morphtarget_vertex>
+#include <skinning_vertex>
+#include <project_vertex>
+#include <logdepthbuf_vertex>
+#include <clipping_planes_vertex>
+#include <worldpos_vertex>
+#include <lights_lambert_vertex>
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+uniform float time;
+uniform vec3 cor;
+
+uniform vec3 diffuse;
+uniform vec3 emissive;
+uniform float opacity;
+varying vec3 vLightFront;
+#ifdef DOUBLE_SIDED
+varying vec3 vLightBack;
+#endif
+#include <common>
+#include <packing>
+#include <dithering_pars_fragment>
+#include <color_pars_fragment>
+#include <uv_pars_fragment>
+#include <uv2_pars_fragment>
+#include <map_pars_fragment>
+#include <alphamap_pars_fragment>
+#include <aomap_pars_fragment>
+#include <lightmap_pars_fragment>
+#include <emissivemap_pars_fragment>
+#include <envmap_pars_fragment>
+#include <bsdfs>
+#include <lights_pars_begin>
+#include <fog_pars_fragment>
+#include <shadowmap_pars_fragment>
+#include <shadowmask_pars_fragment>
+#include <specularmap_pars_fragment>
+#include <logdepthbuf_pars_fragment>
+#include <clipping_planes_pars_fragment>
+
+void main() {
+
+  #include <clipping_planes_fragment>
+
+  vec4 diffuseColor = vec4( diffuse, opacity );
+  ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+  vec3 totalEmissiveRadiance = emissive;
+
+  #include <logdepthbuf_fragment>
+  #include <map_fragment>
+  #include <color_fragment>
+  #include <alphamap_fragment>
+  #include <alphatest_fragment>
+  #include <specularmap_fragment>
+  #include <emissivemap_fragment>
+  reflectedLight.indirectDiffuse = getAmbientLightIrradiance( ambientLightColor );
+  #include <lightmap_fragment>
+  reflectedLight.indirectDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb );
+  #ifdef DOUBLE_SIDED
+  reflectedLight.directDiffuse = ( gl_FrontFacing ) ? vLightFront : vLightBack;
+  #else
+  reflectedLight.directDiffuse = vLightFront;
+  #endif
+  reflectedLight.directDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb ) * getShadowMask();
+  #include <aomap_fragment>
+  vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + totalEmissiveRadiance;
+  #include <envmap_fragment>
+  gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+  #include <tonemapping_fragment>
+  #include <encodings_fragment>
+  #include <fog_fragment>
+  #include <premultiplied_alpha_fragment>
+  #include <dithering_fragment>
+}
+
+</script> 
+
+<script>
+
+function go() {
+  document.getElementById("accl").classList.toggle('on');
+  if (document.getElementById("accl").classList != "on") {
+    decelerate();
+    document.getElementById("accl").innerHTML = 'go';
+  } else {
+    accelerate();
+    document.getElementById("accl").innerHTML = 'stop';
+  }
+}
+
+
+
+//keys [keypress]
+document.onkeydown = function(evt) {
+  evt = evt || window.event;
+// console.log(evt)
+if (evt.keyCode == 38) { // up
+  evt.preventDefault();
+  accelerate();
+  document.getElementById("accl").innerHTML = 'stop';
+}
+if (evt.keyCode == 40) { // down
+  evt.preventDefault();
+  decelerate();
+  document.getElementById("accl").innerHTML = 'go';
+}
+if (evt.keyCode == 67) { // c
+  evt.preventDefault();
+  camreset();
+}
+}
+var curves = [];
+
+var increment = 0;
+var slowdown = false;
+
+var timerID;
+var revcounter = 0;
+var topspeed = 100;
+
+var xspeed = 0;
+var stationary = true;
+var collidableMeshList = [];
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.8, 1000 );
+var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+document.body.appendChild( renderer.domElement );
+
+// root scene position
+scene.position.set(0,-0.5,0);
+
+camera.position.x = 25;
+camera.position.y = 2;
+camera.position.z = 0;
+camera.lookAt(0,0,0)
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI*0.45;
+// controls.maxAzimuthAngle = Math.PI * 0.3;
+// controls.minAzimuthAngle = -Math.PI * 0.3;
+controls.enableDamping = true;
+controls.dampingFactor = 0.4;
+controls.maxDistance = 25;
+controls.minDistance = 2;
+controls.enablePan = false;
+controls.enabled = false;
+
+// ambient
+var light = new THREE.AmbientLight( 0x660000 );
+light.intensity = 0.4;
+scene.add( light );
+
+
+// resize
+window.addEventListener( 'resize', onWindowResize, false );
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+
+selection = new THREE.Group();
+scene.add( selection );
+
+cursor = new THREE.Group();
+scene.add( cursor );
+
+
+mothership = new THREE.Group();
+selection.add( mothership );
+
+// scene light
+var light = new THREE.PointLight( 0xffffff, 1, 25 );
+light.position.set( 0, 10, 0 );
+scene.add( light );
+
+
+// update touch
+let updateTouchCoordinates = function(evt) {
+  stationary = false; 
+  stretch();
+  mouse.x = ( evt.touches[0].pageX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( evt.touches[0].pageY / window.innerHeight ) * 2 + 1;
+  raycaster.setFromCamera( mouse, camera );
+  let intersects = raycaster.intersectObject( cplane );
+  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
+};
+
+
+// update mouse
+let updateMouseCoordinates = function(evt) {
+  evt.preventDefault();
+
+  mouse.x = ( evt.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
+  raycaster.setFromCamera( mouse, camera );
+  let intersects = raycaster.intersectObject( cplane );
+  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
+};
+
+
+function movehero(x, y) {
+  cursor.position.x = x;
+  cursor.position.z = y;
+}
+
+
+window.addEventListener('touchstart', updateTouchCoordinates);
+window.addEventListener('touchmove', updateTouchCoordinates);
+window.addEventListener( 'mousemove', updateMouseCoordinates, false );
+
+//raycaster
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+
+// control-plane geometry
+let plgeometry = new THREE.PlaneBufferGeometry( 10, 10, 1, 1 );
+
+//control-plane material
+let plmaterial = new THREE.MeshPhongMaterial( { 
+  color:0x222222
+} );
+
+//control-plane object3D
+let cplane = new THREE.Mesh( plgeometry, plmaterial );
+cplane.name = 'plane';
+cplane.rotation.set(-Math.PI/2,0,0);
+cplane.position.set(0,0.1,0);
+cplane.name = 'cplane';
+scene.add( cplane );
+
+// // road
+// road = cplane.clone();
+// road.scale.set( 11, 1, 1 );
+// scene.add( road );
+
+
+// grid
+var size = 10;
+var divisions = 1;
+var gridHelper = new THREE.GridHelper(size, divisions, 0xff0000, 0x33333);
+gridHelper.position.set( 0, 0.2, 0 );
+// gridHelper.scale.set( 200, 1, 1 );
+scene.add(gridHelper)
+
+// hero
+// let bgeometry = new THREE.BoxGeometry( 0.8, 0.1, 0.8 );
+// let mmaterial = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
+// let cube = new THREE.Mesh( bgeometry, mmaterial );
+// cube.position.set(0,0.2,0);
+// mothership.add( cube );
+
+
+// ship shadow object 
+let egeometry = new THREE.PlaneGeometry(1.5, 0.6, 1);
+let ematerial = new THREE.MeshBasicMaterial({
+  color: 0xff0000,
+  transparent: true, opacity: 0.1
+});
+let shdw = new THREE.Mesh(egeometry, ematerial);
+// shdw.position.set(0, 0.01, 0);
+shdw.position.set(0.05, 0.2, 0);
+
+shdw.rotation.set(-Math.PI / 2, 0, 0)
+mothership.add(shdw);
+
+
+var loader = new THREE.GLTFLoader();
+
+// vehicle
+var filepath = "car1.glb";
+loader.load(filepath, function(gltf) {
+
+  gltf.scene.traverse(function(node) {
+    if (node.isMesh) mesh = node;
+  });
+
+  mesh.material = new THREE.MeshLambertMaterial({
+    color: 0xff0000,
+    morphTargets: true
+  });
+  mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
+  // mesh.position.set(0, 1, 0);
+  mesh.scale.set(0.4, 0.4, 0.4);
+  mothership.add(mesh);
+
+// car -light
+var light = new THREE.PointLight( 0xffffff, 1, 0.9 );
+light.position.set( 0, 0, 1.15 );
+mesh.add( light );
+
+
+//   // line on back (health?)
+// var geometry = new THREE.Geometry();
+// geometry.vertices.push(new THREE.Vector3(0.79, 0.26, -0.27));
+// geometry.vertices.push(new THREE.Vector3(0.79, 0.26, 0.27));
+// var material = new THREE.LineBasicMaterial({
+//   color: 0xffffff
+// });
+
+// var line = new THREE.Line(geometry, material);
+// line.rotation.set(0, Math.PI/2, 0);
+// // line.scale.z = 0.000001;
+// mesh.add(line);
+//   // mesh.visible = false;
+}); // vehicle gltf
+
+
+// // trail
+var loader = new THREE.TextureLoader();
+loader.load( 'xgrad.png', function ( texture ) {
+  var trgeometry = new THREE.PlaneBufferGeometry( 0.8, 0.55, 1 );
+  trgeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.4, 0, 0.36) );
+
+  var trmaterial = new THREE.MeshBasicMaterial( {
+    color:0xff0000, map: texture, transparent: true, opacity: 0.7, side: THREE.DoubleSide
+  } );
+  trail = new THREE.Mesh( trgeometry, trmaterial );
+  trail.name = "trail";
+  trail.rotation.set(-Math.PI/2,0,0)
+  selection.add(trail);
+
+} );
+
+
+// base floor circle 
+var geometry = new THREE.CircleBufferGeometry( 100, 32 );
+var circle = new THREE.Mesh( geometry, plmaterial );
+circle.rotation.set(-Math.PI / 2, 0, 0);
+scene.add( circle );
+
+
+// background update
+function bgupdate() {
+  rocks.position.x += increment * 11;
+
+  bgmesh.material.uniforms.time.value += increment*1.5;
+  // bgmesh.material.uniforms.time.value += increment*3;
+
+  if (rocks.position.x > 5) {
+    rocks.position.x = -40;
+// random respawn
+var num = Math.floor(Math.random() * 5) + 1;
+num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+rocks.position.z = num;
+var sc = Math.random();
+rocks.scale.set(sc,sc,sc);
+rocks.rotation.z = Math.PI*Math.random();
+}
+}
+
+function movement() {
+// selection lerp position to cursor
+selection.position.x += (cursor.position.x - selection.position.x)*revcounter/500;
+selection.position.z += (cursor.position.z - selection.position.z)*revcounter/500;
+// selection lerp rotation to cursor
+selection.rotation.x = (cursor.position.z - selection.position.z) * revcounter/500;
+mothership.rotation.z = -(cursor.position.x - selection.position.x) * revcounter/500;
+
+// rotate on turn
+if (revcounter>0) {
+  mothership.rotation.y = (cursor.position.z - selection.position.z) * revcounter/400;
+// trail.rotation.z = (cursor.position.z - selection.position.z) * revcounter/900;
+}
+trail.scale.x = 1+(increment*200);
+// lift on drive
+if (revcounter<50) {
+  mesh.position.y = 0.2+increment*10;
+  trail.position.y = increment*10;
+}
+}
+
+// -background
+bg();
+function bg() {
+  var rockmaterial = new THREE.MeshLambertMaterial({
+    color: 0xcccccc
+    // color: 0x5F5F5F
+    // , wireframe:true
+  });
+
+  rocks = new THREE.Mesh(new THREE.SphereGeometry( 0.2, 2, 1, 0, 3 ), rockmaterial);
+  rocks.rotation.x = -Math.PI/2;
+  rocks.position.set(-4, 0.5, 3);
+  rocks.name = 'rocks';
+  scene.add(rocks);
+
+  // mountain bg groundplane
+  var geometry = new THREE.PlaneBufferGeometry(50, 50, 50, 50);
+
+  textureLoader = new THREE.TextureLoader();
+
+  var displaceBuffer = new Float32Array(geometry.attributes.position.count);
+  for (var i = 0; i < displaceBuffer.length; i++) {
+    displaceBuffer[i] = Math.random()*20;
+  }
+  geometry.addAttribute('vDisplace', new THREE.BufferAttribute(displaceBuffer, 1));
+  var customUniforms = THREE.UniformsUtils.merge([
+    THREE.ShaderLib.lambert.uniforms,
+    {
+      time: { type: "f", value: 3.0 },
+      cor: { type: "v3", value: new THREE.Vector3(0.0, 0.0, 1.0) } }]);
+
+  var material = new THREE.ShaderMaterial({
+    uniforms: customUniforms,
+    vertexShader: document.getElementById("vertex-shader").textContent,
+    fragmentShader: document.getElementById("fragment-shader").textContent,
+    lights: true
+  });
+
+  bgmesh = new THREE.Mesh(geometry, material);
+  bgmesh.rotation.set(-Math.PI/2,0,Math.PI/2);
+  bgmesh.position.set(0,-1.7,0);
+  bgmesh.scale.set(1,1,0.3);
+  scene.add(bgmesh);
+
+}//bg
+
+
+
+// RAF events for throttle
+function accelerate() {
+  slowdown = false;
+  timerID = cancelAnimationFrame(slowtimer);
+  timerID = requestAnimationFrame(timer);
+}
+
+function decelerate() {
+  slowdown = true;
+  timerID = cancelAnimationFrame(timerID);
+  timerID = requestAnimationFrame(slowtimer);
+}
+
+
+// slow down
+function slowtimer() {
+  revcounter--;
+  if (revcounter<0.1) {
+    revcounter=0; 
+    cancelAnimationFrame(slowtimer); 
+    return;
+  } else {
+    requestAnimationFrame(slowtimer);
+  }
+}
+
+
+function timer() { 
+  if (revcounter < topspeed || slowdown == true) {
+    timerID = requestAnimationFrame(timer);
+    if (revcounter<topspeed+1) { 
+      revcounter++; }
+    }
+  }
+
+// render loop
+var animate = function () {
+  increment = revcounter/5000;
+  document.getElementById('spd').innerHTML = revcounter;
+  requestAnimationFrame( animate );
+  renderer.render(scene, camera);
+  movement();
+  bgupdate();
+  controls.update();
+  TWEEN.update();
+  camera.lookAt(0,0,0)
+};// loop
+
+// START
+setTimeout(function() {
+new TWEEN.Tween( camera.position ).to( {x: 7, y: 2, z: 0}, 3000 )
+.easing( TWEEN.Easing.Quadratic.EaseInOut)
+.start();
+
+animate();
+}, 200);
+
+
+
+
+  function camreset() {
+    document.getElementById("cambut").classList.toggle('on');
+    if (document.getElementById("cambut").classList != "on") {
+controls.enabled = false;
+new TWEEN.Tween( camera.position ).to( {x: 7, y: 2, z: 0}, 1000 )
+.easing( TWEEN.Easing.Quadratic.EaseInOut)
+.start();
+new TWEEN.Tween( camera.rotation ).to( {x: 0, y: 0, z: 0}, 1000 )
+.easing( TWEEN.Easing.Quadratic.EaseInOut)
+.start();
+document.getElementById("cambut").innerHTML = 'camera';
+    } else {
+controls.enabled = true;
+document.getElementById("cambut").innerHTML = 'camera [reset]';
+    }
+
+  }
+
+
+</script>
+</body>
+</html>
