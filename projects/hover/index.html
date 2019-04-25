@@ -1,1004 +1,1177 @@
 <html>
-
 <head>
-    <title>fly / drive</title>
-    <style>
-        body {
-            margin: 0;
-            background: #333;
-            color: #fff;
-            font-family: monospace;
-        }
-        
-        canvas {
-            width: 100%;
-            height: 100%
-        }
-        
-        button {
-            background: transparent;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 4em;
-            color: #fff;
-            opacity: 0.7;
-        }
-        
-        #hud {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 110px;
-        }
-        
-        #go {
-            left: 1em;
-            display: none;
-        }
-        
-        #go.show {
-            left: 1em;
-            display: block;
-        }
-        
-        button.on {
-            color: #fff !important;
-            background: red !important;
-            opacity: 1;
-        }
-        
-        button:hover {
-            background: red !important;
-            opacity: 1 !important;
-        }
-        
-        button.on:hover {
-            color: #fff !important;
-        }
-        
-        #space,
-        #dirup,
-        #dirdwn {
-            background: transparent;
-            outline: none;
-            font-family: monospace;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            width: 108px;
-            height: 24px;
-            text-align: center;
-            line-height: 20px;
-            color: #fff;
-            position: absolute;
-            z-index: 1;
-            top: 60px;
-            left: 32px;
-        }
-        
-        button {
-            background: rgba(255, 255, 255, 0.1) !important;
-        }
-        
-        #dirup {
-            top: 32px;
-            left: 204px;
-            width: 24px;
-            transform: rotate(-90deg);
-            transform-origin: center;
-        }
-        
-        #dirdwn {
-            left: 204px;
-            width: 24px;
-            transform: rotate(90deg);
-            transform-origin: center;
-        }
-        
-        svg path {
-            opacity: 0.15;
-        }
-        
-        #svgkeys {
-            position: absolute;
-        }
-        
-        #keys {
-            position: relative;
-            bottom: 0;
-        }
-        
-        #keyboard {
-            position: absolute;
-            bottom: 94px;
-            left: 4px;
-        }
-        
-        #keyboard p {
-            position: absolute;
-            bottom: 94px;
-            left: 4px;
-        }
-        
-        input {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #fff;
-            font-family: monospace;
-            font-size: 2em;
-        }
-        
-        #chkb,
-        #chkg {
-            position: absolute;
-            right: 12px;
-            bottom: 22px;
-            text-align: right;
-            width: 1em;
-            height: 1em;
-            text-align: right;
-            background: transparent;
-            font-size: 2em;
-            color: #fff;
-            line-height: 1em;
-            padding: 2px 8px;
-        }
-        
-        #chkb.on,
-        #chkg.on {
-            background: #fff !important;
-        }
-        
-        #chkb {
-            color: #fff;
-            bottom: 70px;
-        }
-        
-        #chkg {
-            color: red;
-        }
-        
-        #starttxt {
-            position: absolute;
-            bottom: 2px;
-            right: 60px;
-        }
-        #interface {position: absolute;}
+  <title>corpse</title>
+  <style>
+  @font-face {
+    font-family: 'glass_tty_vt220medium';
+    src: url('glass_tty_vt220-webfont.woff2') format('woff2'),
+    url('glass_tty_vt220-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  body { margin: 0; 
+    background: #000; 
+    color: #fff;
+    font-family: 'glass_tty_vt220medium';
+    overflow: hidden;
+  }
+  button {padding: 12px;
+    outline: none; border:0; background: transparent; color: #fff; cursor: pointer !important;
+    font-family: 'glass_tty_vt220medium';}
+    #spd {color:#fff; padding: 12px;
+      font-size: 2em; position: absolute; top: 0; right:0; padding: 12px;}
+      .on, button:hover {color: red !important; opacity: 1;}
+      #accl, #cambut {position: absolute; bottom: 0; right:0; opacity: 0.5; font-size: 1em;}
+      #cambut {right: auto; left: 0;}
+      #cambut span {text-decoration: underline;}
+      .msgdiv {display: block; width: 100%; position: absolute; top: 20%; padding: 1em;}
+      #botmsg {font-size: 1.2em;  font-family: 'glass_tty_vt220medium'; line-height: 1.6em;}
+      #menuscreen {margin: 0; position: absolute;
+        width: 100%;}
+      #menuscreen ul {margin: 0; padding: 0;}
+      #menuscreen li {list-style: none; line-height: 1.2em;}
+      #menuscreen li:before {content: '.';}
+      #menuscreen li span {color: red;}
+      button {font-size: 1em; cursor: pointer;}
+      #nav {display: block; margin: 1em 5px; }
+      #botmsg.story  {font-size: 1.2em; line-height: 1.4em; text-align: left;}
     </style>
-</head>
+  </head>
+  <body>
 
-<body>
-    <p id="starttxt">press space to fly/drive and up to go</p>
+<!-- <button id="startgame" onclick="gamestart()">start game]</button>  -->
+<button id="startgame" onclick="gamestart()">[start game]</button>
 
-    <div id="keyboard">
-        <div id="keys">
-            <button id="space" title="fly / drive" onclick="verticalview()">space</button>
-            <button id="dirup" title="go" onclick="incnum()">&gt;</button>
-            <button id="dirdwn" title="stop" onclick="decnum()">&gt;</button>
-        </div>
+<div id="menuscreen">
+<span id="nav">
+<button onclick="mgoal()">goal</button> | <button onclick="controlkeys()">controls</button> | <button onclick="showstory()">story</button>
+</span>
 
-        <svg id="svgkeys" height="90" preserveAspectRatio="none" viewBox="0 0 260 90" width="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <defs>
-                <g id="a">
-                    <path d="m24 24v-24h-24v24z" fill="#903" />
-                </g>
-            </defs>
-            <use transform="translate(4 60)" xlink:href="#a" />
-            <use transform="translate(4 32)" xlink:href="#a" />
-            <use transform="translate(4 4)" xlink:href="#a" />
-            <use transform="translate(32 32)" xlink:href="#a" />
-            <use transform="translate(32 4)" xlink:href="#a" />
-            <use transform="translate(60 32)" xlink:href="#a" />
-            <use transform="translate(60 4)" xlink:href="#a" />
-            <use transform="translate(88 32)" xlink:href="#a" />
-            <use transform="translate(88 4)" xlink:href="#a" />
-            <use transform="translate(116 4)" xlink:href="#a" />
-            <use transform="translate(144 60)" xlink:href="#a" />
-            <use transform="translate(176 60)" xlink:href="#a" />
-            <use transform="translate(232 60)" xlink:href="#a" />
-            <g fill="#903">
-                <path d="m26-26h-24v28h-28v24h52z" transform="translate(142 30)" />
-                <path d="m54 12v-24h-108v24z" transform="translate(86 72)" />
-                <path d="m12 12v-24h-24v24z" transform="translate(216 44)" />
-                <path d="m12-12h-24v24h24z" transform="translate(216 72)" />
-            </g>
-        </svg>
+<!--  -->
+<!-- your cargo is a box of reality bending sticks and must escape this planet and warp -->
 
-    </div>
-    <!-- keyboard -->
+<ul id="mkeys" style="display: none;">
+  <li><span>mouse</span> : hover to control</li>
+  <li><span>up/w/z</span> : go</li>
+  <li><span>down/s</span> : stop</li>
+  <li><span>c</span> : camera mode</li>
+  <li><span>escape</span> : quit</li>
+</ul>
+</div><!-- menuscreen -->
 
-    <span id="chkb" /></span>
-    <span id="chkg" /></span>
+    <span id="spd" title="go">0</span>
 
-<!-- 
-<div id="interface">
-<p class="lside">
-  <input class="slider" id="carrier" type="range" value="50" min="1" max="2800" step="1" oninput="handleCarrierChange(value)" />
-</p>
-<p class="rside">
-  <input class="slider" id="beat" type="range" value="3" min="0" max="50" step="1" oninput="handleBeatChange(value)" />
-</p>
+    <div class="msgdiv"><pre id="botmsg"></pre></div>
 
-<p>Volume
-  <input class="slider" id="beat" type="range" value="30" min="0" max="100" step="1" oninput="handleVolumeChange(value)" />
-</p>
+    <button id="accl" title="go" onclick="go()">go</button>
 
-</div> -->
+    <button id="cambut" title="camera mode" onclick="camreset()"><span>c</span>amera [free]</button>
+
 
     <script src="../js/three.min.js"></script>
-    <script src="../js/GLTFLoader.js"></script>
     <script src="../js/OrbitControls.min.js"></script>
-    <script src="../js/tween.js"></script>
     <script src="../js/GLTFLoader.js"></script>
+    <script src="../js/tween.js"></script>
 
-    <script>
-        var vertbtn = document.getElementById("space");
-        // vertical mode
-        function verticalview() {
-            vertbtn.classList.toggle('on');
-            if (vertbtn.classList != "on") {
-          var sf = scene.getObjectByProperty('name', 'wings', false);
-          new TWEEN.Tween(sf.scale).to({x: 0.1, y: 0.4, z: 0.4}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).onComplete(function() {sf.visible = false;}).start();
+<script type="text/javascript">
+function clrscr() {
+document.getElementById('botmsg').innerHTML = '';
+document.getElementById('mkeys').style.display = 'none';
+document.getElementById('botmsg').classList = '';
+}
 
-                plane.rotation.set(-Math.PI / 2, 0, 0);
-                shadowground.visible = true;
-                shdw.visible = true;
-                horizontal = true;
-                          new TWEEN.Tween(bggroup.position).to({x: 0, y: 0, z: 0}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
-shadowground.rotation.set(-Math.PI/2,0,0);
+function controlkeys() {
+clrscr();
+writethis(
+  'mouse: control' +
+  "\n" +
+  'up/w/z: go' +
+  "\n" +
+  'down/s: stop' +
+  "\n" +
+  'c: camera' +
+    "\n" +
+  'esc: quit' );
+}
+
+function mgoal() {
+clrscr();
+writethis('Reach 1000mph to warp speed');
+}
+
+function showstory() {
+// <p id="mstory">
+// Claus and G'Naike have 
+// Transport reality bending cargo at warp speed.
+// </p>Transport reality bending cargo at warp speed
+clrscr();
+document.getElementById('botmsg').classList = 'story';
+writethis(
+  "Warning." +
+  "\n" +
+  'Abnormal object detected inside hull' +
+  "\n" +
+  'Does not compute.' );
+
+}
 
 
-                new TWEEN.Tween(mothership.position).to({
-                    x: mothership.position.x,
-                    y: 0,
-                    z: mothership.position.z
-                }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
-                new TWEEN.Tween(gridHelper.rotation).to({
-                    x: 0,
-                    y: 0,
-                    z: 0
-                }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+</script>
 
-            } else {
 
-          var sf = scene.getObjectByProperty('name', 'wings', false);
-          sf.visible = true;
-          new TWEEN.Tween(sf.scale).to({x: 0.4, y: 0.4, z: 0.4}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+    <script id="vertex-shader" type="x-shader/x-fragment">
+// source : https://codepen.io/ma77os/pen/WYwRmV
 
-                plane.rotation.set(0, Math.PI / 2, 0);
-                // shadowground.visible = false;
-                shdw.visible = false;
-                horizontal = false;
-          new TWEEN.Tween(bggroup.position).to({x: 0, y: -5, z: 0}, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
-shadowground.rotation.set(-Math.PI/2,0,-Math.PI/2);
+vec3 mod289(vec3 x)
+{
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
 
-                cursor.position.x = 0;
-                new TWEEN.Tween(gridHelper.rotation).to({
-                    x: 0,
-                    y: 0,
-                    z: Math.PI / 2
-                }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+vec4 mod289(vec4 x)
+{
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
 
-                setTimeout(function() {
-                    new TWEEN.Tween(hero.position).to({
-                        x: 0,
-                        y: mothership.position.y,
-                        z: mothership.position.z
-                    }, 200).easing(TWEEN.Easing.Quadratic.EaseOut).start();
+vec4 permute(vec4 x)
+{
+  return mod289(((x*34.0)+1.0)*x);
+}
 
-                }, 100);
+vec4 taylorInvSqrt(vec4 r)
+{
+  return 1.79284291400159 - 0.85373472095314 * r;
+}
 
-            } // else
+vec3 fade(vec3 t) {
+  return t*t*t*(t*(t*6.0-15.0)+10.0);
+}
 
-        } // vert mode
+// Classic Perlin noise
+float cnoise(vec3 P)
+{
+  vec3 Pi0 = floor(P);
+  vec3 Pi1 = Pi0 + vec3(1.0);
+  Pi0 = mod289(Pi0);
+  Pi1 = mod289(Pi1);
+  vec3 Pf0 = fract(P);
+  vec3 Pf1 = Pf0 - vec3(1.0);
+  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+  vec4 iz0 = Pi0.zzzz;
+  vec4 iz1 = Pi1.zzzz;
 
-        // variables
-        var bpoints = 0;
-        var gpoints = 0;
-        var collidableMeshList = [];
-        var stopwarp = true;
-        var horizontal = true;
-        var xspeed = 0;
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.8, 1000);
-        var renderer = new THREE.WebGLRenderer({
-            alpha: true,
-            antialias: true
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFShadowMap;
-        document.body.appendChild(renderer.domElement);
+  vec4 ixy = permute(permute(ix) + iy);
+  vec4 ixy0 = permute(ixy + iz0);
+  vec4 ixy1 = permute(ixy + iz1);
 
-        // scene settings
-        scene.position.set(0, 0, 0);
-        camera.position.x = 6;
-        camera.position.y = 1;
-        camera.position.z = 0;
-        camera.lookAt(0, 0, 0)
+  vec4 gx0 = ixy0 * (1.0 / 7.0);
+  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+  gx0 = fract(gx0);
+  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+  vec4 sz0 = step(gz0, vec4(0.0));
+  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
 
-        // lights
-        var light = new THREE.PointLight(0xffffff, 1, 40);
-        light.position.set(10, 10, 10);
-        scene.add(light);
+  vec4 gx1 = ixy1 * (1.0 / 7.0);
+  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+  gx1 = fract(gx1);
+  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+  vec4 sz1 = step(gz1, vec4(0.0));
+  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
 
-        var controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.maxPolarAngle = Math.PI * 0.46;
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.4;
-        controls.maxDistance = 50;
-        controls.minDistance = 1;
-        controls.enablePan = false;
+  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
 
-        // grid
-        var size = 10;
-        var divisions = 1;
-        var gridHelper = new THREE.GridHelper(size, divisions);
-        // gridHelper.position.set( 0, 0.1, 0 );
-        scene.add(gridHelper)
+  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+  g000 *= norm0.x;
+  g010 *= norm0.y;
+  g100 *= norm0.z;
+  g110 *= norm0.w;
+  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+  g001 *= norm1.x;
+  g011 *= norm1.y;
+  g101 *= norm1.z;
+  g111 *= norm1.w;
 
-        // ambient light
-        var light = new THREE.AmbientLight(0x666666);
-        light.intensity = 0.9;
-        scene.add(light);
+  float n000 = dot(g000, Pf0);
+  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+  float n111 = dot(g111, Pf1);
 
-        // hero
-        hero = new THREE.Group();
-        scene.add(hero);
-        // cursor
-        cursor = new THREE.Group();
-        scene.add(cursor);
-        // the vehicle
-        mothership = new THREE.Group();
-        scene.add(mothership);
-        mothership.position.x = 4;
-        // pointer/raycast
-        cube = new THREE.Group();
-        mothership.add(cube);
-        // stars/ground
-        bggroup = new THREE.Group();
-        scene.add(bggroup);
+  vec3 fade_xyz = fade(Pf0);
+  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+  return 2.2 * n_xyz;
+}
 
-        // floor texture
-        var geometry = new THREE.PlaneBufferGeometry(10, 10, 1);
+// Classic Perlin noise, periodic variant
+float pnoise(vec3 P, vec3 rep)
+{
+  vec3 Pi0 = mod(floor(P), rep);
+  vec3 Pi1 = mod(Pi0 + vec3(1.0), rep);
+  Pi0 = mod289(Pi0);
+  Pi1 = mod289(Pi1);
+  vec3 Pf0 = fract(P);
+  vec3 Pf1 = Pf0 - vec3(1.0);
+  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+  vec4 iz0 = Pi0.zzzz;
+  vec4 iz1 = Pi1.zzzz;
 
-        // shadowground
-        var txloader = new THREE.TextureLoader();
-        var groundtex = txloader.load('stars.png');
-        groundtex.magFilter = THREE.NearestFilter;
-        groundtex.minFilter = THREE.LinearMipMapLinearFilter;
-        groundtex.wrapS = groundtex.wrapT = THREE.RepeatWrapping;
-        var material = new THREE.MeshBasicMaterial({
-            color: 0xff0000,
-            // transparent: true,
-            // opacity: 0.1,
-            map: groundtex
-        });
-        var shadowground = new THREE.Mesh(geometry, material);
-        shadowground.position.set(0, 0.05, 0);
-        shadowground.rotation.set(-Math.PI / 2, 0, 0);
-        bggroup.add(shadowground);
+  vec4 ixy = permute(permute(ix) + iy);
+  vec4 ixy0 = permute(ixy + iz0);
+  vec4 ixy1 = permute(ixy + iz1);
 
-        // resize
-        window.addEventListener('resize', onWindowResize, false);
+  vec4 gx0 = ixy0 * (1.0 / 7.0);
+  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+  gx0 = fract(gx0);
+  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+  vec4 sz0 = step(gz0, vec4(0.0));
+  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+  vec4 gx1 = ixy1 * (1.0 / 7.0);
+  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+  gx1 = fract(gx1);
+  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+  vec4 sz1 = step(gz1, vec4(0.0));
+  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+
+  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+
+  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+  g000 *= norm0.x;
+  g010 *= norm0.y;
+  g100 *= norm0.z;
+  g110 *= norm0.w;
+  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+  g001 *= norm1.x;
+  g011 *= norm1.y;
+  g101 *= norm1.z;
+  g111 *= norm1.w;
+
+  float n000 = dot(g000, Pf0);
+  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+  float n111 = dot(g111, Pf1);
+
+  vec3 fade_xyz = fade(Pf0);
+  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+  return 2.2 * n_xyz;
+}
+
+#define LAMBERT
+varying vec3 vLightFront;
+#ifdef DOUBLE_SIDED
+varying vec3 vLightBack;
+#endif
+#include <common>
+#include <uv_pars_vertex>
+#include <uv2_pars_vertex>
+#include <envmap_pars_vertex>
+#include <bsdfs>
+#include <lights_pars_begin>
+
+
+uniform float time;
+attribute float vDisplace;
+
+void main() {
+  #include <uv_vertex>
+  #include <uv2_vertex>
+  #include <color_vertex>
+  #include <beginnormal_vertex>
+  #include <morphnormal_vertex>
+  #include <skinbase_vertex>
+  #include <skinnormal_vertex>
+  #include <defaultnormal_vertex>
+
+  float n = cnoise(vec3(position.x, position.y + time*6.0, position.z)*0.1);
+  float h = n + 1.0;
+  float angle = uv.x * 3.14;
+  float c = abs(cos(angle));
+  h *= pow(c, 1.8);
+h *= 20.0; //VERTICAL DISPLACEMENT
+vec3 transformed = vec3( position.x, position.y, position.z + h );
+
+#include <morphtarget_vertex>
+#include <skinning_vertex>
+#include <project_vertex>
+#include <logdepthbuf_vertex>
+#include <clipping_planes_vertex>
+#include <worldpos_vertex>
+#include <lights_lambert_vertex>
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+uniform float time;
+uniform vec3 cor;
+
+uniform vec3 diffuse;
+uniform vec3 emissive;
+uniform float opacity;
+varying vec3 vLightFront;
+#ifdef DOUBLE_SIDED
+varying vec3 vLightBack;
+#endif
+#include <common>
+#include <packing>
+#include <dithering_pars_fragment>
+#include <color_pars_fragment>
+#include <uv_pars_fragment>
+#include <uv2_pars_fragment>
+#include <map_pars_fragment>
+#include <alphamap_pars_fragment>
+#include <aomap_pars_fragment>
+#include <lightmap_pars_fragment>
+#include <emissivemap_pars_fragment>
+#include <envmap_pars_fragment>
+#include <bsdfs>
+#include <lights_pars_begin>
+#include <fog_pars_fragment>
+#include <shadowmap_pars_fragment>
+#include <shadowmask_pars_fragment>
+#include <specularmap_pars_fragment>
+#include <logdepthbuf_pars_fragment>
+#include <clipping_planes_pars_fragment>
+
+void main() {
+
+  #include <clipping_planes_fragment>
+
+  vec4 diffuseColor = vec4( diffuse, opacity );
+  ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+  vec3 totalEmissiveRadiance = emissive;
+
+  #include <logdepthbuf_fragment>
+  #include <map_fragment>
+  #include <color_fragment>
+  #include <alphamap_fragment>
+  #include <alphatest_fragment>
+  #include <specularmap_fragment>
+  #include <emissivemap_fragment>
+  reflectedLight.indirectDiffuse = getAmbientLightIrradiance( ambientLightColor );
+  #include <lightmap_fragment>
+  reflectedLight.indirectDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb );
+  #ifdef DOUBLE_SIDED
+  reflectedLight.directDiffuse = ( gl_FrontFacing ) ? vLightFront : vLightBack;
+  #else
+  reflectedLight.directDiffuse = vLightFront;
+  #endif
+  reflectedLight.directDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb ) * getShadowMask();
+  #include <aomap_fragment>
+  vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + totalEmissiveRadiance;
+  #include <envmap_fragment>
+  gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+  #include <tonemapping_fragment>
+  #include <encodings_fragment>
+  #include <fog_fragment>
+  #include <premultiplied_alpha_fragment>
+  #include <dithering_fragment>
+}
+
+</script> 
+
+<script>
+
+function go() {
+  if (stopgame) {return} 
+
+    document.getElementById("accl").classList.toggle('on');
+  if (document.getElementById("accl").classList != "on") {
+    decelerate();
+    document.getElementById("accl").innerHTML = 'go';
+  } else {
+    accelerate();
+    document.getElementById("accl").innerHTML = 'stop';
+  }
+}
+
+
+
+//keys [keypress]
+document.onkeydown = function(evt) {
+  evt = evt || window.event;
+console.log(evt)
+  if (stopgame && evt.keyCode != 67) {return}
+
+if (evt.keyCode == 38) { // up
+  evt.preventDefault();
+  accelerate();
+  document.getElementById("accl").innerHTML = 'stop';
+  clicksnd();
+}
+if (evt.keyCode == 40) { // down
+  evt.preventDefault();
+  decelerate();
+  document.getElementById("accl").innerHTML = 'go';
+  clicksnd();
+}
+if (evt.keyCode == 67) { // c
+  evt.preventDefault();
+  camreset();
+  clicksnd();
+}
+if (evt.keyCode == 90) { // z
+  evt.preventDefault();
+  accelerate()
+  clicksnd();
+}
+if (evt.keyCode == 87) { // w
+  evt.preventDefault();
+  accelerate()
+  clicksnd();
+}
+if (evt.keyCode == 83) { // s
+  evt.preventDefault();
+  decelerate()
+  clicksnd();
+}
+if (evt.keyCode == 27) { // escape
+  evt.preventDefault();
+  gamestart();
+}
+
+} // keys
+
+// variables
+var tyspeed = 50;
+var curves = [];
+var increment = 0;
+var slowdown = false;
+var stopgame = false;
+var timerID;
+var revcounter = 0;
+var topspeed = 100;
+var xspeed = 0;
+var stationary = true;
+var collidableMeshList = [];
+
+// three.js
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.8, 1000 );
+var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+document.body.appendChild( renderer.domElement );
+
+// root scene position
+scene.position.set(0,-0.5,0);
+camera.position.x = 25;
+camera.position.y = 2;
+camera.position.z = 0;
+camera.lookAt(0,0,0);
+
+// controls
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI*0.48;
+controls.enableDamping = true;
+controls.dampingFactor = 0.4;
+controls.maxDistance = 25;
+controls.minDistance = 1;
+controls.enablePan = false;
+controls.enabled = false;
+
+// ambient
+var amblight = new THREE.AmbientLight( 0x333333 );
+amblight.intensity = 1;
+scene.add( amblight );
+
+scene.fog = new THREE.FogExp2( 0x000000, 0.020 );
+
+
+// resize
+window.addEventListener( 'resize', onWindowResize, false );
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+// groups
+
+// mouse position in 3D space
+selection = new THREE.Group();
+scene.add( selection );
+// lerped cursor
+cursor = new THREE.Group();
+scene.add( cursor );
+// car
+mothership = new THREE.Group();
+selection.add( mothership );
+// intro scene objects
+introscene = new THREE.Group();
+scene.add( introscene );
+// track objects
+track = new THREE.Group();
+scene.add( track );
+// background objects
+bggroup = new THREE.Group();
+scene.add( bggroup );
+bggroup.visible = false;
+
+// scene light
+var light = new THREE.PointLight( 0xffffff, 1, 150 );
+light.position.set( 0, 100, 0 );
+scene.add( light );
+
+// update touch
+let updateTouchCoordinates = function(evt) {
+  stationary = false; 
+  stretch();
+  mouse.x = ( evt.touches[0].pageX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( evt.touches[0].pageY / window.innerHeight ) * 2 + 1;
+  raycaster.setFromCamera( mouse, camera );
+  let intersects = raycaster.intersectObject( cplane );
+  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
+};
+
+// update mouse
+let updateMouseCoordinates = function(evt) {
+  evt.preventDefault();
+
+  mouse.x = ( evt.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
+  raycaster.setFromCamera( mouse, camera );
+  let intersects = raycaster.intersectObject( cplane );
+  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
+};
+
+
+// move ship function
+function movehero(x, y) {
+  cursor.position.x = x;
+  cursor.position.z = y;
+}
+
+// touch events
+window.addEventListener('touchstart', updateTouchCoordinates);
+window.addEventListener('touchmove', updateTouchCoordinates);
+window.addEventListener( 'mousemove', updateMouseCoordinates, false );
+
+//raycaster
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+
+// control-plane geometry
+let plgeometry = new THREE.PlaneBufferGeometry( 10, 10, 1, 1 );
+
+//control-plane material
+let plmaterial = new THREE.MeshPhongMaterial( { 
+  color:0x222222
+} );
+
+//control-plane object3D
+let cplane = new THREE.Mesh( plgeometry, plmaterial );
+cplane.name = 'plane';
+cplane.rotation.set(-Math.PI/2,0,0);
+cplane.position.set(0,0.1,0);
+cplane.name = 'cplane';
+scene.add( cplane );
+
+// // road
+// road = cplane.clone();
+// road.scale.set( 11, 1, 1 );
+// scene.add( road );
+
+
+// grid
+var size = 10;
+var divisions = 1;
+var gridHelper = new THREE.GridHelper(size, divisions, 0xff0000, 0x33333);
+gridHelper.position.set( 0, 0.2, 0 );
+// gridHelper.scale.set( 200, 1, 1 );
+track.add(gridHelper)
+
+// hero
+// let bgeometry = new THREE.BoxGeometry( 0.8, 0.1, 0.8 );
+// let mmaterial = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
+// let cube = new THREE.Mesh( bgeometry, mmaterial );
+// cube.position.set(0,0.2,0);
+// mothership.add( cube );
+
+
+// ship shadow object 
+let egeometry = new THREE.PlaneGeometry(1.5, 0.6, 1);
+let ematerial = new THREE.MeshBasicMaterial({
+  color: 0x000000,
+  transparent: true, opacity: 0.2
+});
+let shdw = new THREE.Mesh(egeometry, ematerial);
+// shdw.position.set(0, 0.01, 0);
+shdw.position.set(0.05, 0.2, 0);
+
+shdw.rotation.set(-Math.PI / 2, 0, 0)
+mothership.add(shdw);
+
+
+var loader = new THREE.GLTFLoader();
+
+// vehicle
+var filepath = "car1.glb";
+loader.load(filepath, function(gltf) {
+
+  gltf.scene.traverse(function(node) {
+    if (node.isMesh) mesh = node;
+  });
+
+  mesh.material = new THREE.MeshLambertMaterial({
+    color: 0xff0000,
+    morphTargets: true
+  });
+  mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
+  // mesh.position.set(0, 1, 0);
+  mesh.scale.set(0.4, 0.4, 0.4);
+  mothership.add(mesh);
+
+// car -light
+var light = new THREE.PointLight( 0xffffff, 1, 0.9 );
+light.position.set( 0, 0, 1.15 );
+mesh.add( light );
+
+
+//   // line on back (health?)
+// var geometry = new THREE.Geometry();
+// geometry.vertices.push(new THREE.Vector3(0.79, 0.26, -0.27));
+// geometry.vertices.push(new THREE.Vector3(0.79, 0.26, 0.27));
+// var material = new THREE.LineBasicMaterial({
+//   color: 0xffffff
+// });
+
+// var line = new THREE.Line(geometry, material);
+// line.rotation.set(0, Math.PI/2, 0);
+// // line.scale.z = 0.000001;
+// mesh.add(line);
+//   // mesh.visible = false;
+}); // vehicle gltf
+
+
+// // trail
+var loader = new THREE.TextureLoader();
+loader.load( 'xgrad.png', function ( texture ) {
+  var trgeometry = new THREE.PlaneBufferGeometry( 0.8, 0.55, 1 );
+  trgeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.4, 0, 0.36) );
+
+  var trmaterial = new THREE.MeshBasicMaterial( {
+    color:0xff0000, map: texture, transparent: true, opacity: 0.7, side: THREE.DoubleSide
+  } );
+  trail = new THREE.Mesh( trgeometry, trmaterial );
+  trail.name = "trail";
+  trail.rotation.set(-Math.PI/2,0,0)
+  selection.add(trail);
+
+} );
+
+
+// base floor circle 
+var geometry = new THREE.CircleBufferGeometry( 100, 32 );
+var circle = new THREE.Mesh( geometry, plmaterial );
+circle.rotation.set(-Math.PI / 2, 0, 0);
+scene.add( circle );
+
+
+// background update
+function bgupdate() {
+  rocks.position.x += increment * 11;
+  // mountains texture speed
+  bgmesh.material.uniforms.time.value += increment*1.5;
+
+// rocks logic
+if (rocks.position.x > 5) {
+  rocks.position.x = -40;
+// random respawn
+var num = Math.floor(Math.random() * 5) + 1;
+num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+rocks.position.z = num;
+var sc = Math.random();
+rocks.scale.set(sc,sc,sc);
+rocks.rotation.z = Math.PI*Math.random();
+}
+}// bgupdate
+
+function movement() {
+  var selposx = (cursor.position.x - selection.position.x)*revcounter/500;
+  revcounter += 0.000001;
+// selection lerp position to cursor
+selection.position.x += selposx;
+selection.position.z += (cursor.position.z - selection.position.z)*revcounter/500;
+
+
+// selection lerp rotation to cursor
+selection.rotation.x = (cursor.position.z - selection.position.z) * revcounter/500;
+mothership.rotation.z = -(cursor.position.x - selection.position.x) * revcounter/500;
+
+// rotate on turn
+if (revcounter>0) {
+  mothership.rotation.y = (cursor.position.z - selection.position.z) * revcounter/400;
+// trail.rotation.z = (cursor.position.z - selection.position.z) * revcounter/900;
+}
+trail.scale.x = 1+(increment*200);
+// lift on drive
+if (revcounter<50) {
+  mesh.position.y = 0.2+increment*10;
+  trail.position.y = increment*10;
+}
+} // movement
+
+// -background
+bg();
+function bg() {
+  var rockmaterial = new THREE.MeshLambertMaterial({
+    color: 0xcccccc
+    // color: 0x5F5F5F
+    // , wireframe:true
+  });
+
+  rocks = new THREE.Mesh(new THREE.SphereGeometry( 0.2, 2, 1, 0, 3 ), rockmaterial);
+  rocks.rotation.x = -Math.PI/2;
+  rocks.position.set(-12, 0.5, 3);
+  rocks.name = 'rocks';
+  track.add(rocks);
+
+  // mountain bg groundplane
+  var geometry = new THREE.PlaneBufferGeometry(50, 50, 50, 50);
+
+  textureLoader = new THREE.TextureLoader();
+
+  var displaceBuffer = new Float32Array(geometry.attributes.position.count);
+  for (var i = 0; i < displaceBuffer.length; i++) {
+    displaceBuffer[i] = Math.random()*20;
+  }
+  geometry.addAttribute('vDisplace', new THREE.BufferAttribute(displaceBuffer, 1));
+  var customUniforms = THREE.UniformsUtils.merge([
+    THREE.ShaderLib.lambert.uniforms,
+    {
+      time: { type: "f", value: 3.0 },
+      cor: { type: "v3", value: new THREE.Vector3(0.0, 0.0, 1.0) } }]);
+
+  var material = new THREE.ShaderMaterial({
+    uniforms: customUniforms,
+    vertexShader: document.getElementById("vertex-shader").textContent,
+    fragmentShader: document.getElementById("fragment-shader").textContent,
+    lights: true
+  });
+
+  bgmesh = new THREE.Mesh(geometry, material);
+  bgmesh.rotation.set(-Math.PI/2,0,Math.PI/2);
+  bgmesh.position.set(0,-1.7,0);
+  bgmesh.scale.set(2,4,0.2);
+  scene.add(bgmesh);
+
+}//bg
+
+intro()
+function intro() {
+  stopgame = true;
+  var loader = new THREE.GLTFLoader();
+  loader.load(
+    'guys.glb',
+    function ( gltf ) {
+      introscene.add( gltf.scene );
+    gltf.scene.scale.set(3, 3, 3);
+    gltf.scene.rotation.set(0,-Math.PI,0);
+    gltf.scene.position.set(0,0,-8);
+    // 2=car, 3=claus, 4=gnaike
+    console.log(gltf.scene)
+    // gltf.scene.children[4].geometry.center();
+
+  },
+  function ( xhr ) {
+    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+  },
+  function ( error ) {
+    console.log( 'An error happened' );
+  }
+  );
+
+// introscene rocks
+        for ( var i = 0; i < 19; i ++ ) {
+var material = new THREE.MeshLambertMaterial( {color: 0xff0000} );
+var geometry = new THREE.SphereGeometry( 0.1, 2, 1, 0, 3 );
+var mesh = new THREE.Mesh( geometry, material );
+          mesh.rotation.x = -Math.PI/2;
+          mesh.rotation.z = Math.PI*Math.random();
+          var sc = Math.random()*0.5;
+          console.log(sc)
+          mesh.scale.set(sc, sc, sc);
+
+          mesh.position.x = ( Math.random() - 0.5 ) * 15;
+          mesh.position.z = ( Math.random() - 0.5 ) * 15;
+          mesh.updateMatrix();
+          mesh.matrixAutoUpdate = false;
+          introscene.add( mesh );
+
         }
 
-
-        var loader = new THREE.GLTFLoader();
-
-        // vehicle
-        var filepath = "car1.glb";
-        loader.load(filepath, function(gltf) {
-
-            gltf.scene.traverse(function(node) {
-                if (node.isMesh) mesh = node;
-            });
-
-            mesh.material = new THREE.MeshLambertMaterial({
-                color: 0xff0000,
-                morphTargets: true
-            });
-            mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
-            mesh.position.set(0, 0.3, 0);
-            mesh.scale.set(0.4, 0.4, 0.4);
-            mothership.add(mesh);
-            mesh.visible = false;
-            // console.log(mesh)
-            // mesh.morphTargetInfluences[0] = 1;
-            // mesh.morphTargetInfluences[1] = 1;
-
-        }); // vehicle gltf
-
-        // wings
-       var filepath = "wings.glb";
-        loader.load(filepath, function(gltf) {
-
-            gltf.scene.traverse(function(node) {
-                if (node.isMesh) mesh = node;
-            });
-            mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
-            mesh.position.set(0, 0.3, 0);
-            mesh.scale.set(0.1, 0.4, 0.4);
-            mesh.name = 'wings';
-            mothership.add(mesh);
-            mesh.visible = false;
-        }); // vehicle gltf
-
-        // hero
-        let bgeometry = new THREE.BoxGeometry(0.9, 0.6, 0.3);
-        let mmaterial = new THREE.MeshLambertMaterial({
-            color: 0xcc0000,
-            wireframe: true
-        });
-        let cubicbody = new THREE.Mesh(bgeometry, mmaterial);
-        cubicbody.position.set(0, 0.5, 0);
-        mothership.add(cubicbody);
-        cubicbody.visible = false;
-
-        // // car 3D model
-        var loader = new THREE.BufferGeometryLoader();
-
-        loader.load(
-            'hcar.json',
-            function(geometry) {
-                var carmaterial = new THREE.MeshPhongMaterial({
-                    color: 0xff0000
-                    // ,wireframe: true
-                });
-
-                car = new THREE.Mesh(geometry, carmaterial);
-                car.name = "car"
-                car.position.set(0, 0.3, 0);
-                car.rotation.set(0, Math.PI / 2, 0);
-                car.scale.set(0.4, 0.4, 0.4);
-                mothership.add(car);
-                // car.visible = false;
-
-            },
-            function(xhr) {},
-            function(xhr) {
-                console.log('An error happened');
-            }
-        ); // end load ship
-
-        // shadow 
-        let egeometry = new THREE.PlaneGeometry(1.5, 0.6, 1);
-        let ematerial = new THREE.MeshBasicMaterial({
-            color: 0x000000,
-            // transparent:true, opacity:0.2
-        });
-        let shdw = new THREE.Mesh(egeometry, ematerial);
-        shdw.position.set(0.05, 0.2, 0);
-        shdw.rotation.set(-Math.PI / 2, 0, 0)
-        mothership.add(shdw);
-
-        // // trail
-        var loader = new THREE.TextureLoader();
-        loader.load( 'xgrad.png', function ( texture ) {
-          var trgeometry = new THREE.PlaneBufferGeometry( 0.1, 0.6, 1 );
-          trgeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.05, 0, 0) );
-
-          var trmaterial = new THREE.MeshBasicMaterial( {
-          color:0xff0000, map: texture, transparent: true, opacity: 0.7, side: THREE.DoubleSide
-           } );
-          var trail = new THREE.Mesh( trgeometry, trmaterial );
-          trail.name = "trail";
-          trail.position.set(0.2,0.45,0);
-          trail.rotation.set(-Math.PI/2,0,0)
-          mothership.add(trail);
-
-        } );
-
-        // line on back (health?)
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(new THREE.Vector3(0.79, 0.45, -0.26));
-        geometry.vertices.push(new THREE.Vector3(0.79, 0.45, 0.26));
-        var material = new THREE.LineBasicMaterial({
-            color: 0xffffff
-        });
-
-        var line = new THREE.Line(geometry, material);
-        line.scale.z = 0.000001;
-        mothership.add(line);
-
-        // skybox
-        var loader = new THREE.TextureLoader();
-        loader.load('wgrad.png', function(texture) {
-            var skygeometry = new THREE.SphereGeometry(501, 32, 32)
-            var skymaterial = new THREE.MeshBasicMaterial({
-                map: texture,
-                side: THREE.BackSide,
-                transparent: true,
-                opacity: 0.8
-            });
-            var skyn = new THREE.Mesh(skygeometry, skymaterial);
-            skyn.name = "skynight";
-            scene.add(skyn);
-        });
+// intro light
+// amblight.intensity = 2;
+document.getElementById('spd').style.display = 'none';
+document.getElementById('accl').style.display = 'none';
+mothership.visible = false;
+selection.visible = false;
+cursor.visible = false;
+cplane.visible = false;
+bggroup.visible = false;
+track.visible = false;
+bgmesh.scale.x = 6;
+// camreset();
+}// intro
 
 
-        //raycaster - ship
-        let shipray = new THREE.Raycaster();
 
-        //raycaster - mouse
-        let raycaster = new THREE.Raycaster();
-        let mouse = new THREE.Vector2();
-        let isDragging = false;
+// start game button toggle
+function gamestart() {
+  document.getElementById('botmsg').style.display = 'none';
+  document.getElementById("startgame").classList.toggle('on');
+  if (document.getElementById("startgame").classList != "on") {
+    gmstop();
+    document.getElementById('menuscreen').style.display = 'block';
+  } else {
+    camstart();
+    gmstart();
+    document.getElementById('menuscreen').style.display = 'none';
+  }
 
-        //plane geometry
-        let plgeometry = new THREE.PlaneBufferGeometry(10, 10, 1);
 
-        //plane material
-        let plmaterial = new THREE.MeshBasicMaterial({
-            // color:0x220000,
-            side: THREE.DoubleSide,
-            wireframe: true,
-            transparent: true,
-            opacity: 0
-        });
+// stop game
+  function gmstop() {
+    stopgame = true;
+    revcounter = 0;
+    // source.stop(0);
+    document.getElementById('botmsg').style.display = 'block';
+    document.getElementById('botmsg').innerHTML = '';
+    if (revcounter>0.1) {source.stop(0);}
+    introscene.visible = true;
+    document.getElementById('startgame').innerHTML = '[start game]';
+    document.getElementById('spd').style.display = 'none';
+    document.getElementById('accl').style.display = 'none';
+    bgmesh.scale.x = 10;
+    mothership.visible = false;
+    selection.visible = false;
+    cursor.visible = false;
+    cplane.visible = false;
+    bggroup.visible = false;
+    track.visible = false;
+  }// game end
 
-        //raycast plane object3D
-        let plane = new THREE.Mesh(plgeometry, plmaterial);
-        plane.name = 'plane';
-        plane.rotation.set(-Math.PI / 2, 0, 0);
-        plane.name = 'plane';
 
-        scene.add(plane);
-        // plane.visible = false;
+// start game
+  function gmstart() {
+    stopgame = false;
+    introscene.visible = false;
+    document.getElementById('startgame').innerHTML = 'quit';
+    document.getElementById('spd').style.display = 'block';
+    document.getElementById('accl').style.display = 'block';
+    bgmesh.scale.x = 2;
+    mothership.visible = true;
+    selection.visible = true;
+    cursor.visible = true;
+    cplane.visible = true;
+    bggroup.visible = true;
+    track.visible = true;
+  }
 
-        // end three objects
+}// game start
 
-        // update touch
-        let updateTouchCoordinates = function(evt) {
-            stopwarp = false;
-            mouse.x = (evt.touches[0].pageX / window.innerWidth) * 2 - 1;
-            mouse.y = -(evt.touches[0].pageY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            let intersects = raycaster.intersectObject(plane);
-            if (intersects.length > 0) {
-                movehero(intersects[0].point.x, intersects[0].point.z);
-            }
-        };
 
-        // update mouse
-        let updateMouseCoordinates = function(evt) {
-            evt.preventDefault();
-            mouse.x = (evt.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(evt.clientY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            let intersects = raycaster.intersectObject(plane);
-            if (intersects.length > 0) {
-                movehero(intersects[0].point.x, intersects[0].point.z, intersects[0].point.y);
-            }
+// // star length
+// function starlength() {
+// var sf = scene.getObjectByProperty('name', 'starfield', false);
 
-        };
+//   for (var i = 0; i < sf.children.length; i++) {
+//     new TWEEN.Tween(sf.children[i].scale).to({
+//       x: 1,
+//       y: 1,
+//       z: 0.01
+//     }, 400).onComplete(function() {
+//       // sf.visible = false;
+//     }).start();
+// } //for
+// }
 
-        function movehero(x, y, z) {
-            hero.position.x = x;
-            hero.position.z = y;
-            hero.position.y = z;
+// RAF events for throttle
+// start speed up
+function accelerate() {
+  slowdown = false;
+  if (revcounter<0.1) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    source = audioCtx.createBufferSource();
+    getData();
+    source.start(0);
+  }  else {  
+  }
+
+  timerID = cancelAnimationFrame(slowtimer);
+  timerID = requestAnimationFrame(timer);
+}
+// start slowdown
+function decelerate() {
+  slowdown = true;
+  timerID = cancelAnimationFrame(timerID);
+  timerID = requestAnimationFrame(slowtimer);
+}
+
+
+// slow down
+function slowtimer() {
+  revcounter--;
+  if (revcounter<0.1) {
+    revcounter=0; 
+    cancelAnimationFrame(slowtimer); 
+    if (revcounter>0.1) {source.stop(0);}
+    return;
+  } else {
+    requestAnimationFrame(slowtimer);
+  }
+}
+
+// speed up
+function timer() { 
+  if (revcounter < topspeed || slowdown == true) {
+    timerID = requestAnimationFrame(timer);
+    if (revcounter<topspeed+1) { 
+      revcounter++; }
+    }
+  }
+
+// camera reset position
+function camreset() {
+  document.getElementById("cambut").classList.toggle('on');
+  if (document.getElementById("cambut").classList != "on") {
+    controls.enabled = false;
+    new TWEEN.Tween( camera.position ).to( {x: 7, y: 2, z: 0}, 1000 )
+    .easing( TWEEN.Easing.Quadratic.EaseInOut)
+    .start();
+    new TWEEN.Tween( camera.rotation ).to( {x: 0, y: 0, z: 0}, 1000 )
+    .easing( TWEEN.Easing.Quadratic.EaseInOut)
+    .start();
+    document.getElementById("cambut").innerHTML = '<span>c</span>amera [free]';
+  } else {
+    controls.enabled = true;
+    document.getElementById("cambut").innerHTML = '<span>c</span>amera [fixed]';
+  }
+
+}
+
+
+
+
+
+//audio
+function getData() {
+  source = audioCtx.createBufferSource();
+  request = new XMLHttpRequest();
+
+  request.open('GET', 'motor.wav', true);
+
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+      myBuffer = buffer;
+      songLength = buffer.duration;
+      source.buffer = myBuffer;
+      source.playbackRate.value = revcounter/10;
+      source.loop = true;
+
+      var gainNode = audioCtx.createGain()
+gainNode.gain.value = 0.2 // 10% volume
+gainNode.connect(audioCtx.destination)
+source.connect(gainNode)
+
+},
+
+function(e){"Error with decoding audio data" + e.error});
+
+  }
+
+  request.send();
+}
+
+
+
+// randomise
+function randomFloat(a, b) {
+  var r = (Math.random() * (b - a) + a);
+  return r;
+}
+
+// make single star
+function Star(material, x, y, size) {
+  this.size = size;
+
+  this.obj = new THREE.Geometry();
+  this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
+  this.obj.vertices.push(new THREE.Vector3(0, 0, -size));
+  this.obj = new THREE.Line(this.obj, material);
+
+  this.speed = randomFloat(1, 10);
+
+  this.refresh = function(x, y) {
+    this.obj.position.z = randomFloat(0, -100);
+    this.obj.position.x = x;
+    this.obj.position.y = y;
+  }
+  this.refresh(x, y);
+}
+
+// make/update star field
+function Starfield(size, width, height) {
+  this.stars = [];
+  this.obj = new THREE.Group();
+  this.obj.name = "starfield";
+  // this.obj.visible = false;
+  this.obj.rotation.set(0, Math.PI / 2, 0);
+  this.obj.position.set(0, 6, 0);
+  this.size = size;
+  this.width = width;
+  this.height = height;
+  this.material = new THREE.MeshBasicMaterial({
+    color: 0xffffff
+  });
+  this.init = function() {
+    for (var i = 0; i < this.size; i++) {
+      this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 3)));
+      this.obj.add(this.stars[i].obj);
+    }
+    bggroup.add(this.obj);
+  }
+  this.init();
+  this.update = function() {
+    // if (!slowdown) {
+      for (var i = 0; i < this.size; i++) {
+        if (this.stars[i].obj.position.z > 5) {
+          this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
         }
 
-        window.addEventListener('mousemove', updateMouseCoordinates, false);
+        this.stars[i].obj.scale.z = revcounter/500;
+        this.stars[i].obj.position.z += revcounter/500;
+// }
+
+} //if not slowdown
+} // update
+}
+
+// click press sound
+function clicksnd() {
+  new Audio("3click.wav").play();
+}
 
 
-        // slow down to stop
-        function decnum() {
-            document.getElementById('dirdwn').classList = "on";
-            var sf = scene.getObjectByProperty('name', 'starfield', false);
+// render loop
+var animate = function () {
+  increment = revcounter/5000;
 
-            for (var i = 0; i < sf.children.length; i++) {
-                new TWEEN.Tween(sf.children[i].scale).to({
-                    x: 1,
-                    y: 1,
-                    z: 0.01
-                }, 400).onComplete(function() {
-                    sf.visible = false;
-                }).start();
-            } //for
-            // xspeed = 0;
-            // new TWEEN.Tween( xspeed ).to( 0, 2000 ).start();
-
-            var ff = scene.getObjectByProperty( 'name', 'trail', false );
-            new TWEEN.Tween( ff.scale ).to( {x: 0.1, y: 1, z: 1}, 200 ).start();
-            new TWEEN.Tween(line.scale).to({
-                x: 1,
-                y: 1,
-                z: 0.000001
-            }, 200).start();
-            stopwarp = true;
-
-            setTimeout(function() {
-                document.getElementById('dirdwn').classList = "";
-            }, 100);
-
-        }; // decnum
-
-        // accelerate
-        function incnum() {
-          // toggleSound()
-            document.getElementById('starttxt').style.display = "none";
-            document.getElementById('dirup').classList = "on";
-            collidableMeshList[0].visible = true;
-            collidableMeshList[1].visible = true;
-
-            var sf = scene.getObjectByProperty('name', 'starfield', false);
-            sf.visible = true;
-            // console.log(scene)
-            for (var i = 0; i < sf.children.length; i++) {
-                new TWEEN.Tween(sf.children[i].scale).to({
-                    x: 1,
-                    y: 1,
-                    z: 1
-                }, 400).start();
-            } //for
-
-            xspeed = 0.0055;
-            // xspeed = new TWEEN.Tween( 0 ).to( 0.0055, 2000 ).start();
-
-            var ff = scene.getObjectByProperty( 'name', 'trail', false );
-            new TWEEN.Tween( ff.scale ).to( {x: 20, y: 1, z: 1}, 200 ).start();
-
-            new TWEEN.Tween(line.scale).to({
-                x: 1,
-                y: 1,
-                z: 1
-            }, 200).start();
-            stopwarp = false;
-
-            setTimeout(function() {
-                document.getElementById('dirup').classList = "";
-            }, 100);
-
-        }; //incnum
-
-
-
-        //keys
-        //esc
-        document.onkeydown = function(evt) {
-            evt = evt || window.event;
-            // console.log(evt)
-
-            if (evt.keyCode == 32) {
-                evt.preventDefault();
-                verticalview()
-            }
-
-            if (evt.keyCode == 38) {
-                evt.preventDefault();
-                incnum()
-            }
-
-            if (evt.keyCode == 40) {
-                evt.preventDefault();
-                decnum()
-            }
-
-        };
-
-        // randomise
-        function randomFloat(a, b) {
-            var r = (Math.random() * (b - a) + a);
-            return r;
-        }
-
-        // make single star
-        function Star(material, x, y, size) {
-            this.size = size;
-
-            this.obj = new THREE.Geometry();
-            this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
-            this.obj.vertices.push(new THREE.Vector3(0, 0, -size));
-            this.obj = new THREE.Line(this.obj, material);
-
-            this.speed = randomFloat(1, 10);
-
-            this.refresh = function(x, y) {
-                this.obj.position.z = randomFloat(0, -100);
-                this.obj.position.x = x;
-                this.obj.position.y = y;
-            }
-            this.refresh(x, y);
-        }
-
-        // make/update star field
-        function Starfield(size, width, height) {
-            this.stars = [];
-            this.obj = new THREE.Group();
-            this.obj.name = "starfield";
-            this.obj.visible = false;
-            this.obj.rotation.set(0, Math.PI / 2, 0);
-            this.obj.position.set(0, 5, 0);
-            this.size = size;
-            this.width = width;
-            this.height = height;
-            this.material = new THREE.MeshBasicMaterial({
-                color: 0xffffff
-            });
-            this.init = function() {
-                for (var i = 0; i < this.size; i++) {
-                    this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 3)));
-                    this.obj.add(this.stars[i].obj);
-                }
-                bggroup.add(this.obj);
-            }
-            this.init();
-            this.update = function() {
-                    if (!stopwarp) {
-                        for (var i = 0; i < this.size; i++) {
-                            if (this.stars[i].obj.position.z > 5) {
-                                this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
-                            }
-
-                            // this.stars[i].obj.position.z += this.stars[i].speed;
-                            this.stars[i].obj.position.z += xspeed * 80;
-
-                        }
-
-                    } //if not stopwarp
-                } // update
-        }
-
-        // collide objects
-        function walls() {
-            var wallGeometry = new THREE.CubeGeometry(0.3, 0.3, 0.3);
-
-            var blue = new THREE.MeshLambertMaterial({
-                color: 0xffffff
-            });
-            var green = new THREE.MeshLambertMaterial({
-                color: 0xff0000
-            });
-
-            var wall = new THREE.Mesh(wallGeometry, blue);
-            wall.position.set(-3, 0.5, -3);
-            wall.name = 'blue';
-            bggroup.add(wall);
-            collidableMeshList.push(wall);
-
-            var wall2 = new THREE.Mesh(wallGeometry, green);
-            wall2.position.set(3, 0.5, -3);
-            wall2.name = 'green';
-            bggroup.add(wall2);
-            collidableMeshList.push(wall2);
-
-            // collidableMeshList[0].visible = false;
-            // collidableMeshList[1].visible = false;
-        }
-
-        // HIT function
-        function hit(v) {
-            if (v.length > 0) {
-                if (gpoints > 5 || bpoints > 5) {crash();}
-                car.material = new THREE.MeshPhongMaterial({
-                    color: 0xffffff
-                });
-                // random respawn
-                var num = Math.floor(Math.random() * 5) + 1;
-                num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-                var num2 = Math.floor(Math.random() * 5) + 1;
-                num2 *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-                v[0].object.position.x = num;
-                v[0].object.position.z = num2;
-                v[0].object.scale.y = 10;
-                if (v[0].object.name == 'blue') {
-                    bpoints += 2;
-                    document.getElementById('chkb').innerHTML = bpoints;
-                    flash(document.getElementById('chkb'));
-                    bluehit()
-                    // end point
-
-                }
-                if (v[0].object.name == 'green') {
-                    gpoints += 1;
-                    flash(document.getElementById('chkg'));
-                    document.getElementById('chkg').innerHTML = gpoints;
-                }
-                setTimeout(function() {
-                    car.material = new THREE.MeshPhongMaterial({
-                        color: 0xff0000
-                    });
-                    v[0].object.scale.y = 1;
-                }, 100);
-                // end point
-
-            } //if
-        } // fn hit
-
-
-        // blue hit
-        function bluehit() {
-          carrier_freq = 5000;
-        setTimeout(function() {
-          carrier_freq = 100;
-        }, 300);
-        }
-
-        //crash ship
-      function crash() {
-        mesh.visible = true;
-        car.visible = false;
-        // stopwarp = true;
-        mesh.morphTargetInfluences[0] = 1;          
-                
-        setTimeout(function() {
-          mesh.visible = false;
-          car.visible = true;
-        }, 100);
-
+  document.getElementById('spd').innerHTML = Math.floor(revcounter);
+  requestAnimationFrame( animate );
+  renderer.render(scene, camera);
+  if (!stopgame) {
+    movement();
+    bgupdate();
+    stars.update();
+    if (revcounter>0.1) {source.playbackRate.value = revcounter/200;
+        // engine fail
+        // if ( Math.random() > 0.9) { 
+        // revcounter += ( 1 - revcounter ) * 0.3; }  
+        // revcounter = revcounter;
       }
+  }// if game paused
+
+  controls.update();
+  TWEEN.update();
+  camera.lookAt(0,0,0);
+
+};// loop
+
+// START
+setTimeout(function() {
+stars = new Starfield(20, 9, 9);
+  animate();
+
+setTimeout(function() {
+  camstart();
+   // writethis('argument');
+}, 400);
+
+}, 200);
 
 
-        //flash helper f
-        function flash(argument) {
-            argument.classList = "on";
-            setTimeout(function() {
-                argument.classList = "";
-            }, 100);
-        }
-
-        // animate loop
-        var animate = function() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-            controls.update();
-            TWEEN.update();
-            stars.update();
-
-            if (!stopwarp) {
-// xspeed += (0 ) 
-                groundtex.offset.x -= xspeed * 3;
-                // position lerp
-                mothership.position.x += (hero.position.x - cursor.position.x) * 0.1;
-                mothership.position.z += (hero.position.z - cursor.position.z) * 0.2;
-                // 
-                cursor.position.x = mothership.position.x;
-                cursor.position.z = mothership.position.z;
-                //
-                mothership.rotation.x = (hero.position.z - mothership.position.z) * 0.2; // bank
-                mothership.rotation.z = -(hero.position.x - mothership.position.x) * 0.05; // pitch
-                mothership.rotation.y = (hero.position.z - mothership.position.z) * 0.2; // turn
-
-                // vertical controls
-                if (!horizontal) {
-                    mothership.position.y += (hero.position.y - cursor.position.y) * 0.5;
-                    cursor.position.y = mothership.position.y;
-                    mothership.rotation.z = -(hero.position.y - mothership.position.y) * 0.5; // bank
-                    groundtex.offset.x = 0;
-                    groundtex.offset.y -= xspeed * 3;
-                }
-
-                for (var vertexIndex = 0; vertexIndex < cubicbody.geometry.vertices.length; vertexIndex++) {
-                    var localVertex = cubicbody.geometry.vertices[vertexIndex].clone();
-                    var globalVertex = localVertex.applyMatrix4(cubicbody.matrix);
-                    var directionVector = globalVertex.sub(cubicbody.position);
-
-                    var vray = new THREE.Raycaster(mothership.position, directionVector.normalize());
-                    var collisionResults = vray.intersectObjects(collidableMeshList);
-                    if (collisionResults.length > 0 && collidableMeshList.distance < directionVector.length())
-                        console.log('hit');
-                    hit(collisionResults)
-                }
-
-                // set collectables speed/pos
-                collidableMeshList[0].position.x += xspeed * 22;
-                if (collidableMeshList[0].position.x > 5) {
-                    collidableMeshList[0].position.x = -5;
-                }
-
-                collidableMeshList[1].position.x += xspeed * 12;
-                if (collidableMeshList[1].position.x > 5) {
-                    collidableMeshList[1].position.x = -5;
-                }
-
-            } //if warp is true
-        }; //render loop
-
-        walls();
-        setTimeout(function() {
-            // stars
-            stars = new Starfield(10, 9, 9);
-            var sf = scene.getObjectByProperty('name', 'starfield', false);
-            for (var i = 0; i < sf.children.length; i++) {
-                sf.children[i].scale.z = 0.1;
-            }
-
-            animate();
+function camstart() {
+  new TWEEN.Tween( camera.position ).to( {x: 7, y: 2, z: 0}, 3000 )
+  .easing( TWEEN.Easing.Quadratic.EaseInOut)
+  .start();
+}
 
 
-        }, 200);
+
+// reset title
+function typereset() {
+  document.getElementById("botmsg").innerHTML = '';
+  k = 0;
+}
 
 
-// console.log(xspeed)
-// var carrier_freq = 100;
-// var beat_freq = 3;
-// var isPlaying = false;
-// var left_osc, right_osc;
-// var volume = 0.3;
+// type writer effect
+function typeWriter(ev) {
+  if (ev == 'stop') {return}
 
-// var AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (k < botmsg.length) {
+    document.getElementById("botmsg").innerHTML += botmsg.charAt(k);
+    k++;
+    clicksnd();
+    setTimeout(typeWriter, tyspeed);
+  }
+}
 
-// var cntx = new AudioContext();
+// clear title
+function clrbotmsg(){
+  document.getElementById('botmsg').classList = "clr";
+  setTimeout(function () {
+    document.getElementById('botmsg').innerHTML = "";
+    document.getElementById('botmsg').classList = "";
+  }, 300);
+}
 
-// var merger = cntx.createChannelMerger(2);
+// speak and write this
+function writethis(argument){
+  botmsg = argument;
+  // speakMsg(botmsg);
+  typereset();
+  typeWriter();
+}
 
-// volumeNode = cntx.createGain();
-// volumeNode.gain.value = volume;
 
-// merger.connect(volumeNode);
-// volumeNode.connect(cntx.destination);
-
-// function toggleSound() {
-// if (isPlaying) {
-//   document.body.classList = '';
-//   right_osc.stop();
-
-//   setTimeout(function () {
-//       left_osc.stop();
-//   }, 50);
-
-//   setTimeout(function () {
-//       isPlaying = false;
-//   }, 100);
-
-//     } else {
-//   document.body.classList = 'on';
-//   left_osc = cntx.createOscillator();
-//   right_osc = cntx.createOscillator();
-//   setFreqs();
-//   right_osc.connect(merger, 0, 0);
-//   left_osc.connect(merger, 0, 1);
-//   left_osc.start();
-
-//   setTimeout(function () {
-//       right_osc.start();
-//   }, 50);
-
-//   setTimeout(function () {
-//       isPlaying = true;
-//   }, 100);
-
-//     }// if else
-// }// func
-
-// function setFreqs() {
-//    if (typeof right_osc != "undefined") {
-//      right_osc.frequency.value = carrier_freq;
-//      left_osc.frequency.value = carrier_freq + beat_freq;
-//    }
-// }
-
-// function handleVolumeChange(val) {
-//   var element = document.getElementById("volumeLabel");
-//   // element.innerHTML = val;
-//   volume = Number(val)/100;
-//   volumeNode.gain.value = volume;
-// }
-
-// function handleCarrierChange(val) {
-//   var element = document.getElementById("carrierLabel");
-//   // element.innerHTML = val;
-//   carrier_freq = Number(val);
-//   setFreqs();
-// }
-
-// function handleBeatChange(val) {
-//   var element = document.getElementById("beatLabel");
-//   // element.innerHTML = val;
-//   beat_freq = Number(val);
-//   setFreqs();
-// }
-    </script>
+</script>
 </body>
-
 </html>
