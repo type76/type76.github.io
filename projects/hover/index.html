@@ -25,7 +25,7 @@
       #accl, #cambut {position: absolute; bottom: 0; right:0; opacity: 0.5; font-size: 1em;}
       #cambut {right: auto; left: 0;}
       #cambut span {text-decoration: underline;}
-      .msgdiv {display: block; width: 100%; position: absolute; top: 20%; padding: 1em;}
+      .msgdiv {display: block; position: absolute; top: 80px; padding: 1em;}
       #botmsg {font-size: 1.2em;  font-family: 'glass_tty_vt220medium'; line-height: 1.6em;}
       #menuscreen {margin: 0; position: absolute;
         width: 100%;}
@@ -800,7 +800,7 @@ function intro() {
       introscene.add( gltf.scene );
     gltf.scene.scale.set(3, 3, 3);
     gltf.scene.rotation.set(0,-Math.PI,0);
-    gltf.scene.position.set(0,0,-8);
+    gltf.scene.position.set(3,0,-2);
     // 2=car, 3=claus, 4=gnaike
     console.log(gltf.scene)
     // gltf.scene.children[4].geometry.center();
@@ -867,10 +867,9 @@ function gamestart() {
   function gmstop() {
     stopgame = true;
     revcounter = 0;
-    // source.stop(0);
     document.getElementById('botmsg').style.display = 'block';
     document.getElementById('botmsg').innerHTML = '';
-    if (revcounter>0.1) {source.stop(0);}
+    if (source.length>0) {source.stop(0);}//stop audio
     introscene.visible = true;
     document.getElementById('startgame').innerHTML = '[start game]';
     document.getElementById('spd').style.display = 'none';
