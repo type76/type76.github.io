@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>devlog</title>
+</head>
+<style>
+@font-face {
+	font-family: 'glass_tty_vt220medium';
+	src: url('glass_tty_vt220-webfont.woff2') format('woff2'),
+	url('glass_tty_vt220-webfont.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body { margin: 0; 
+	background: #000; 
+	color: #fff;
+	font-family: 'glass_tty_vt220medium';
+	font-size: 1.2em;
+	padding: 2em;
+}
+.container {display: block; max-width: 800px; margin: 0 auto;}
+
+a {color: red; text-decoration: none;}
+a:hover {text-decoration: underline;}
+h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer; margin-top: 1.4em;}
+.quote {padding: 2em 1em; background: #222; margin: 0.5em;}
+</style>
+<body>
+<div class="container">
+	<h1 id="botmsg" onclick="typeme(this)">Devlog</h1>
+	<span>--</span>
+	<p><a href="https://type76.com/projects/hover/">game</a> | <a href="https://github.com/type76/type76.github.io/tree/master/projects/hover">code</a></p>
+
+	<h2 id="inxf"  onclick="typeme(this)"></h2>
+	<p>This game is made with html, css, javascript and three.js. The game is under 2mb and all code is contained in one index.html file to keep development quick and dirty. I'm a self taught coder, so some of the code isn't optimal. Nor is the font you are looking at. Let me know if you have suggestions. I'll try to do a dev log without any code or nerdy talk. You can click on the headers for a fun distraction. A lot of the concepts here will apply to other development and creative work.</p>
+
+	<h2 id="xth"  onclick="typeme(this)">Three.js</h2>
+	<p><a href="https://threejs.org">Three.js</a> is a 3D library that makes 3D easy to render 'real time' in the browser. It is hard to explain the possibilities of this thing. It combines my loves of art, interaction and animation in one file. The best way of learning it is to play with the code in the <a href="https://threejs.org/examples/?q=ray"> examples</a>.</p>
+
+	<h2 id="bch"  onclick="typeme(this)">Branching Corpses</h2>
+
+	<p>In a game dev discord channel one day, duneworld jeff told me this: 
+	</p>
+
+	<p class="quote">"I heard of this community project called "Branching Corpses", where the idea is that people in the community develop games over 2-3 days (no longer than a week, and not with an extreme effort like a jam) that are based off one of the endings of a previously developed game in the project." 
+	</p>
+
+	<p>I checked the <a href="https://en.m.wikipedia.org/wiki/Exquisite_corpse">wikipedia page</a> on Exquisite Corpses and realised that I just learned the name of something I loved and never knew the name of. This is that monster drawing game. Someone draws the head, folds it, next person draws a body, folds it, last person does the legs and we did a monster.</p>
+
+	<h2 id="cb"  onclick="typeme(this)">A Corpse Was Born</h2>
+
+	<p>First I checked that the community were normal. Then I decided to adapt a previous <a href="https://type76.com/projects/drive/" title="driving experiment">experiment</a> as game for this. I wanted to make another control system, add some objects to collide with, a win/lose scenario and make a 'world' for it to live in. Something between wipeout and space harrier, but no shooting and much less quality. With a bare concept, no actual plan and never having made a game before, I joined the group, asked nicely and got the all clear.</p>
+
+	<h2 id="xc" onclick="typeme(this)">Raycasting</h2>
+	<p>This is a ray that is cast inside the 3D world that gives you information on its collisions. With that information, you can do things. The mouse and ship have rays. The control plane, rocks, bonus and penalties are colliders.</p>
+
+	<p>In our example, the screen mouse position is obtained first. A ray is sent from the browser x and y positions, from the camera lens and into the scene. When the ray hits the ground plane (collider), those x, y and z positions are used. An object can be sent to that ray end point every mouse move and now we have a cursor in 3D space. Pixel perfect 2D to 3D collision detection with very little code. [line 636]</p>
+
+	<p>If we play to three.js strengths, we get good results on mobile phones and computers. Being economical with things helps. We should use few items, re-use and not destroy the things we make. Every rock is the same rock, just rotated and scaled differently. [line 780://rocks logic].</p>
+
+	<h2 id="lrp"  onclick="typeme(this)">The Lerp</h2>
+
+	<p>The mouse position is too fast and jerky and I attemted many ways to smooth it. I had known of the technique of <a href="https://www.reddit.com/r/gamedev/comments/6dubqz/heres_a_compreensive_guide_on_lerp/">lerping</a> from one value to another by manually tweening values in a function fixed to time. An algorithm that had fame even. This was a perfect case and when I tried, it fit. To achieve this I have a 3D cursor and ship object. The ship always lerps to the cursors position, so we have this lovely natural movement. Not moving the thing directly, but changing conditions that affect the thing. Like moving a magnet under a surface to control a ball bearing. Here's a bare bones working <a href="https://type76.com/projects/hover/lerp.html">example</a> with a box that works nicely. I'm sure the thing has been done before, but I was intoxicated with the power of human progress in the moments of making this.</p>
+
+
+	<h2 id="ctr"  onclick="typeme(this)">2D and 3D Control</h2>
+	<p>In my plan, I had the control plane flip from laying on the ground horizontal to being vertical in your face. Dynamic and synergy. This happened in a nice fluid motion so I wanted it to be part of the game. You drive, then you fly. Here's an <a href="https://type76.com/projects/hover/index2.html">example</a>. Press space to flip. In re-assesing priorities, I decided to not do the mechanic as something the player controls as it brought complications and it's not simple for a simple game.</p>
+
+	<p>There was an older user interface then too. A little svg keyboard in the corner. I liked that and may use the technique again in future.</p>
+
+
+
+</div><!-- container -->
+
+
+
+
+<script>
+	var tyspeed = 50;
+	document.getElementById('botmsg').innerHTML='';
+      
+
+	// start
+	setTimeout(function() {
+	writethis('Devlog');
+	}, 250);
+
+// write this
+function writethis(argument){
+	botmsg = argument;
+	typereset();
+	typeWriter();
+}
+
+// reset title
+function typereset() {
+	document.getElementById("botmsg").innerHTML = '';
+	k = 0;
+}
+
+
+// type writer effect
+function typeWriter() {
+		if (k < botmsg.length) {
+			document.getElementById("botmsg").innerHTML += botmsg.charAt(k);
+			k++;
+			setTimeout(typeWriter, tyspeed);
+		}
+	}
+
+
+// type writer effect
+function typeW2() {
+		if (k < botmsg.length) {
+			clicksnd();
+			whatthis.innerHTML += botmsg.charAt(k);
+			k++;
+			setTimeout(typeW2, tyspeed);
+		}
+	}
+
+
+var whatthis;
+var oldtxt = '';
+// write this
+function typeme(el){
+	k = 0;
+	whatthis = document.getElementById(el.id);
+	oldtxt  = whatthis.innerHTML;
+	whatthis.innerHTML = '';	
+
+	setTimeout(function() {
+	botmsg = oldtxt;
+	typeW2(oldtxt);
+	}, 50);
+
+}
+
+
+// click press sound
+function clicksnd() {
+  new Audio("3click.wav").play();
+}
+
+</script>
+</body>
+</html>
