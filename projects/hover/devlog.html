@@ -33,10 +33,12 @@ h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer;
 	<p><a href="https://type76.com/projects/hover/">game</a> | <a href="https://github.com/type76/type76.github.io/tree/master/projects/hover">code</a></p>
 
 	<h2 id="inxf"  onclick="typeme(this)"></h2>
-	<p>This game is made with html, css, javascript and three.js. The game is under 2mb and all code is contained in one index.html file to keep development quick and dirty. I'm a self taught coder, so some of the code isn't optimal. Nor is the font you are looking at. Let me know if you have suggestions. I'll try to do a dev log without any code or nerdy talk. You can click on the headers for a fun distraction. A lot of the concepts here will apply to other development and creative work.</p>
+	<p>This game is made with html, css, javascript and three.js. The game is under 2mb and all code is contained in one index.html file to keep development quick and dirty. I'm a self taught coder, so some of the code isn't optimal. Nor is the font you are looking at. Let me know if you have suggestions. I'll try to do a devlog without any code or nerdy talk that explains concepts in general. You can click on the headers for a fun distraction. A lot of the concepts here will apply to other development, game dev and creative work.</p>
 
 	<h2 id="xth"  onclick="typeme(this)">Three.js</h2>
-	<p><a href="https://threejs.org">Three.js</a> is a 3D library that makes 3D easy to render 'real time' in the browser. It is hard to explain the possibilities of this thing. It combines my loves of art, interaction and animation in one file. The best way of learning it is to play with the code in the <a href="https://threejs.org/examples/?q=ray"> examples</a>.</p>
+	<p><a href="https://threejs.org">Three.js</a> is a 3D library that makes 3D easy to render 'real time' in the browser. Even on mobile, it's perfect. Its hard to explain the possibilities of this thing. It combines my loves of art, interaction and animation in one file. It has me as excited as flash did in the past. The best way of learning it is to play with the code in the <a href="https://threejs.org/examples/?q=ray"> examples</a>.</p>
+
+	<p>It has at it's heart a render loop. Something important in games and interactive software. This is a function that plays (or renders) once every frame or tick. Maximum is 60fps for a browser, but you can tick at any speed. In making this game I learned that real power comes from doing the thing in the render loop. Being crafty and non linear got results and feelings.</p>
 
 	<h2 id="bch"  onclick="typeme(this)">Branching Corpses</h2>
 
@@ -52,12 +54,13 @@ h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer;
 
 	<p>First I checked that the community were normal. Then I decided to adapt a previous <a href="https://type76.com/projects/drive/" title="driving experiment">experiment</a> as game for this. I wanted to make another control system, add some objects to collide with, a win/lose scenario and make a 'world' for it to live in. Something between wipeout and space harrier, but no shooting and much less quality. With a bare concept, no actual plan and never having made a game before, I joined the group, asked nicely and got the all clear.</p>
 
+	<p>I was surprised that there were no 3D or plain js game devs in the community. My game was to be both. If we play to three.js strengths, we get good results. Being economical with things helps. We should use few items, re-use and not destroy the things we make. Common sense in life. Here, every rock is the same rock, just rotated, positioned and scaled differently. [line 780://rocks logic].</p>
+
 	<h2 id="xc" onclick="typeme(this)">Raycasting</h2>
-	<p>This is a ray that is cast inside the 3D world that gives you information on its collisions. With that information, you can do things. The mouse and ship have rays. The control plane, rocks, bonus and penalties are colliders.</p>
+	<p>This is a ray that is cast inside the 3D world that gives you information on its collisions. With that information, you can do things. The mouse and ship have rays. The control plane, rocks, bonus and penalties are colliders. Here is an <a href="https://type76.com/projects/hover/control-ray.html"> example</a>.</p>
 
-	<p>In our example, the screen mouse position is obtained first. A ray is sent from the browser x and y positions, from the camera lens and into the scene. When the ray hits the ground plane (collider), those x, y and z positions are used. An object can be sent to that ray end point every mouse move and now we have a cursor in 3D space. Pixel perfect 2D to 3D collision detection with very little code. [line 636]</p>
+	<p>Here the screen mouse position is obtained first. A ray is sent from the browser x and y positions, from the camera lens and into the scene. When the ray hits the ground plane (collider), those x, y and z positions are used. An object can be sent to that ray end point every mouse move and now we have a cursor in 3D space. Pixel perfect 2D to 3D collision detection with very little code. [line 636]</p>
 
-	<p>If we play to three.js strengths, we get good results on mobile phones and computers. Being economical with things helps. We should use few items, re-use and not destroy the things we make. Every rock is the same rock, just rotated and scaled differently. [line 780://rocks logic].</p>
 
 	<h2 id="lrp"  onclick="typeme(this)">The Lerp</h2>
 
@@ -68,6 +71,18 @@ h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer;
 	<p>In my plan, I had the control plane flip from laying on the ground horizontal to being vertical in your face. Dynamic and synergy. This happened in a nice fluid motion so I wanted it to be part of the game. You drive, then you fly. Here's an <a href="https://type76.com/projects/hover/index2.html">example</a>. Press space to flip. In re-assesing priorities, I decided to not do the mechanic as something the player controls as it brought complications and it's not simple for a simple game.</p>
 
 	<p>There was an older user interface then too. A little svg keyboard in the corner. I liked that and may use the technique again in future.</p>
+
+
+	<h2 id="rev"  onclick="typeme(this)">The Revcounter</h2>
+
+	<p>A go faster button is easy right? The accelerator was on/off in the very early days of this concept. You press go and it goes to that speed immediately with no gradual acceleration. Obviously not good. I wanted a nice gradual speed increase on press and gradual decrease to zero on press down. This should also be linked to time and therefore be in the render loop. This took ages, but I found the solution in a combination of solutions: <a href="https://type76.com/projects/hover/press-timer.html">press-timer</a> and <a href="https://type76.com/projects/hover/press-hold.html">press-hold</a>. One going up and one going down. That complicated little series of variable changes and loops make it behave like it has weight. It's still not perfect, but it works and feels right as is. I hook other things to this speed variable to drive the game, like the engine sound and background movement. I'm sure this acceleration system can be re-used in other projects and I hope you make use of it too. Works in all javascript situations, not just three.js.</p>
+
+
+	<h2 id="xst"  onclick="typeme(this)">The story</h2>
+
+	<p>I know story is important, but I wasn't doing it. Here, I was making a pick up and play casual game. I was determined not to draw at all in the making of this, so I found a nice <a href="https://sketchfab.com/3d-models/low-poly-male-base-mesh-7b9411ff0c624321baf4caac014bc0bd">low poly base model</a> (credit: decodigo), pushed some polygons in lightwave 3D and made <a href="https://type76.com/projects/hover/guys.html">this</a>.</p>
+
+	<p>This scene portrays the heroes of our story, waiting for the ships computer to finish it's program. I originally made Claus a kid and G'naike a muscle man. Thanks Adriene for the fixes in keeping continuity there.</p>
 
 
 
