@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+	body, input {margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden;}
+	#hud {position: absolute; color: #fff; padding: 1em; }
+	#hud span { font-size: 2em; font-family: monospace; display: block; width:100vw; margin: 0 auto; text-align: center; padding: 12px 0 0 0;}
+	#hud input {background: transparent; border:none; outline: none; color: #fff;}
+</style>
+</head>
+<body>
+
+	<div id="hud">
+	<span>blue: <input type="text" id="chkb" disabled value="b" />
+		green: <input type="text" id="chkg" disabled value="g" /> <button>hi</button></span>
+	</div>
+
+	<script type="text/javascript" src="three.min.js"></script>
+	<script type="text/javascript" src="tween.min.js"></script>
+
+	<script type="text/javascript">
+	let bpoints = 0;
+	let gpoints = 0;
+	let stopwarp = true;
+var collidableMeshList = [];
+let chk = document.getElementById('chk');
+
+// update touch
+	let updateTouchCoordinates = function(evt) {
+
+	stopwarp = false; 
+	stretch();
+
+
+	mouse.x = ( evt.touches[0].pageX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( evt.touches[0].pageY / window.innerHeight ) * 2 + 1;
+	raycaster.setFromCamera( mouse, camera );
+	let intersects = raycaster.intersectObject( plane );
+	if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z-2); }
+};
+
+
+// update mouse
+let updateMouseCoordinates = function(evt) {
+	evt.preventDefault();
+
+	mouse.x = ( evt.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
+	raycaster.setFromCamera( mouse, camera );
+	let intersects = raycaster.intersectObject( plane );
+	if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z-2); }
+
+};
+
+
+function movehero(x, y) {
+
+       
+		hero.position.x = x;
+		hero.position.z = y;
+}
+
+
+window.addEventListener('touchstart', updateTouchCoordinates);
+window.addEventListener('touchmove', updateTouchCoordinates);
+window.addEventListener('touchend', offoff);
+
+window.addEventListener( 'mousedown', gogo, false );	
+window.addEventListener( 'mousemove', updateMouseCoordinates, false );
+window.addEventListener( 'mouseup', offoff, false );
+
+
+// THREE
+let scene = new THREE.Scene();
+
+let camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+
+
+//raycaster
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+let isDragging = false;
+
+//plane geometry
+let geometry = new THREE.PlaneBufferGeometry( 10, 10, 10, 10 );
+
+//plane material
+let material = new THREE.MeshBasicMaterial( { 
+// wireframe:true
+color: 0xff0000, transparent:true,
+opacity:0.2
+} );
+
+//plane object3D
+let plane = new THREE.Mesh( geometry, material );
+plane.name = 'plane';
+plane.rotation.set(-Math.PI/2,0,0);
+plane.position.set(0,0,2);
+plane.name = 'plane';
+scene.add( plane );
+
+//
+let size = 10;
+let divisions = 10;
+
+let gridHelper = new THREE.GridHelper( size, divisions );
+// gridHelper.position.set(0,0,0)
+scene.add( gridHelper );
+//
+
+
+hero = new THREE.Group();
+// hero.applyMatrix( new THREE.Matrix4().makeTranslation(0, 0.25, 0) );
+scene.add( hero );
+
+bg = new THREE.Group();
+bg.position.z = 50;
+scene.add( bg );
+
+
+stars = new Starfield(50, 150, 150);
+
+
+// hero
+let bgeometry = new THREE.BoxGeometry( 0.5, 0.5, 0.5 );
+let mmaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+let cube = new THREE.Mesh( bgeometry, mmaterial );
+hero.add( cube );
+
+walls() 
+
+
+camera.position.y = 13;
+camera.rotation.z = Math.PI/2;
+camera.lookAt(0,0,0)
+
+let animate = function () {
+	TWEEN.update();
+	stars.update();
+	requestAnimationFrame( animate );
+	renderer.render(scene, camera);
+
+		var originPoint = hero.position.clone();
+
+	for (var vertexIndex = 0; vertexIndex < cube.geometry.vertices.length; vertexIndex++)
+	{		
+		var localVertex = cube.geometry.vertices[vertexIndex].clone();
+		var globalVertex = localVertex.applyMatrix4( cube.matrix );
+		var directionVector = globalVertex.sub( cube.position );
+		
+		var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+		var collisionResults = ray.intersectObjects( collidableMeshList );
+		if ( collisionResults.length > 0 && collidableMeshList.distance < directionVector.length() ) 
+			console.log('hit');
+		// console.log(collisionResults)
+		hit(collisionResults)
+	}	
+
+};
+
+
+// resize
+window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+}, false);
+
+
+
+// HIT function
+function hit (v) {
+if ( v.length > 0) {
+var num = Math.floor(Math.random()*5) + 1;
+num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+var num2 = Math.floor(Math.random()*5) + 1;
+num2 *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+v[0].object.position.x = num;
+v[0].object.position.z = num2;
+v[0].object.scale.y = 10;
+if (v[0].object.name == 'blue') {bpoints+=1; chkb.value = bpoints;}
+if (v[0].object.name == 'green') {gpoints+=1; chkg.value = gpoints;}
+setTimeout(function() {
+v[0].object.scale.y = 1;
+// new TWEEN.Tween( v[0].object.scale.y ).to( 1, 200 ).start();
+}, 100);
+}//if
+}// fn hit
+
+// randomise
+function randomFloat(a, b){
+	let r =  (Math.random() * (b - a) + a);
+	return r;
+}
+
+// make single star
+function Star(material, x, y, size){
+	this.size = size;
+
+	this.obj = new THREE.Geometry();
+	this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
+	this.obj.vertices.push(new THREE.Vector3(0, -size, 0));
+	this.obj = new THREE.Line(this.obj, material);
+
+	this.speed = randomFloat(1, 20);
+
+	this.refresh = function(x, y){
+		this.obj.position.z = randomFloat(0, -1000);
+		this.obj.position.x = x;
+		this.obj.position.y = y;
+	}
+	this.refresh(x, y);
+}
+
+// make/update star field
+function Starfield(size, width, height){
+	this.stars = [];
+	this.obj = new THREE.Group();
+	this.size = size;
+	this.width = width;
+	this.height = height;
+	this.material = new THREE.LineBasicMaterial({color: 0xffffff});
+	this.init = function(){
+		for(let i = 0; i < this.size; i++){
+			this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(5, 100)));
+			this.obj.add(this.stars[i].obj);
+		}
+		bg.add(this.obj);
+	}
+	this.init();
+	this.update = function(){
+		if (!stopwarp) {
+			for(let i = 0; i < this.size; i++){
+				if(this.stars[i].obj.position.y > 50){
+					this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
+				}
+
+				this.stars[i].obj.position.y += this.stars[i].speed;
+			}
+
+}//if not stopwarp
+}// update
+}
+
+
+// start flying
+function gogo() {
+	stopwarp = false; 
+	stretch();
+}
+
+// stop flying
+function offoff() {
+	stopwarp = true; 
+	squash();
+}
+
+
+
+// start squashed
+function squash() {
+	for ( let i = 0; i < bg.children.length; i ++ ) {
+		new TWEEN.Tween( bg.children[i].scale ).to( {x: 1, y: -0.001, z: 1}, 400 ).start();
+}//for
+// new TWEEN.Tween( hero.scale ).to( {x: 1, y: 1, z: 1}, 400 ).start();
+}
+
+
+function stretch() {
+	for ( let i = 0; i < bg.children.length; i ++ ) {
+		new TWEEN.Tween( bg.children[i].scale ).to( {x: 1, y: 1, z: 1}, 400 ).start();
+}//for
+// new TWEEN.Tween( hero.scale ).to( {x: 1, y: 10, z: 1}, 400 ).start();
+
+}
+
+squash();
+animate();
+
+
+function walls() {
+	var wallGeometry = new THREE.CubeGeometry( 0.3, 0.3, 0.3 );
+	// wallGeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.3, 0, 0) );
+
+	var blue = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+	var green = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+
+	var wall = new THREE.Mesh(wallGeometry, blue);
+	wall.position.set(-5, 0, -5);
+	wall.name = 'blue';
+	scene.add(wall);
+	collidableMeshList.push(wall);
+
+	
+	var wall2 = new THREE.Mesh(wallGeometry, green);
+	wall2.position.set(5, 0, -5);
+	wall2.name = 'green';
+	scene.add(wall2);
+	collidableMeshList.push(wall2);
+}
+
+
+// // once
+// function once(fn, context) { 
+// 	var result;
+
+// 	return function() { 
+// 		if(fn) {
+// 			result = fn.apply(context || this, arguments);
+// 			fn = null;
+// 		}
+
+// 		return result;
+// 	};
+// }
+
+
+// var canOnlyFireOnce = once(function() {
+// 	console.log('Fired!');
+// });
+
+// canOnlyFireOnce(); // "Fired!"
+// canOnlyFireOnce(); // nada
+</script>
+</body>
+</html>
