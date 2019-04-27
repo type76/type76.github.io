@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <title>Press and Hold</title>
+  <style>
+
+    #item {
+      --scale-value: 1;
+ 
+      width: 100px;
+      height: 100px;
+      background-color: #FFF;
+      border: 10px solid #0066CC;
+      border-radius: 50%;
+      transform: scale3d(var(--scale-value), var(--scale-value), 1);
+      transition: transform cubic-bezier(0.175, 0.885, 0.32, 1.275) .2s;
+    }
+    #item:active {
+      border-color: #003A75;
+      background-color: #F2F5EA;
+    }
+    #item:hover {
+      cursor: pointer;
+    }
+  </style>
+</head>
+ 
+<body>
+ 
+  <div id="container">
+    <button id="item">press</button>
+  </div>
+ 
+  <script>
+    var item = document.querySelector("#item");
+ 
+    var timerID;
+    var counter = 0;
+    var pressHoldEvent = new CustomEvent("pressHold");
+    var pressHoldDuration = 100;
+ 
+    // Listener
+    item.addEventListener("mousedown", pressingDown, false);
+    item.addEventListener("mouseup", notPressingDown, false);
+    item.addEventListener("mouseleave", notPressingDown, false);
+ 
+    item.addEventListener("touchstart", pressingDown, false);
+    item.addEventListener("touchend", notPressingDown, false);
+ 
+    // Listening for our custom pressHold event
+    item.addEventListener("pressHold", doSomething, false);
+ 
+    function pressingDown(e) {
+      // Start the timer
+      requestAnimationFrame(timer);
+ 
+      e.preventDefault();
+ 
+      console.log("Pressing!");
+    }
+ 
+    function notPressingDown(e) {
+      cancelAnimationFrame(timerID);
+      counter = 0;
+      item.style.setProperty("--scale-value", 1);
+      console.log("Not pressing!");
+    }
+ 
+
+
+    function timer() {
+      console.log("Timer tick!");
+ 
+      if (counter < pressHoldDuration) {
+        timerID = requestAnimationFrame(timer);
+        counter++;
+        item.style.setProperty("--scale-value", 1 + counter / 50);
+        item.innerHTML = counter; 
+      } else {
+        console.log("Press threshold reached!");
+        item.dispatchEvent(pressHoldEvent);
+      }
+    }
+ 
+    function doSomething(e) {
+      console.log("pressHold event fired!");
+    }
+ 
+    var scale = 1 + counter / 50;
+    // item.style.transform = "scale3d(" + scale + ", " + scale + ", 1)";
+ 
+  </script>
+</body>
+ 
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>press</title>
+	<style type="text/css">
+button {
+    background: red;
+    padding: 100px;
+}
+
+.longpress {
+    -webkit-animation: 1s longpress;
+            animation: 1s longpress;
+}
+
+@-webkit-keyframes longpress {
+    0%, 20% { background: red; }
+    100% { background: yellow; }
+}
+
+@keyframes longpress {
+    0%, 20% { background: red; }
+    100% { background: yellow; }
+}
+
+
+	</style>
+</head>
+<body>
+<button></button>
+<script type="text/javascript">
+var node = document.getElementsByTagName("button")[0];
+var longpress = false;
+var presstimer = null;
+var longtarget = null;
+
+var cancel = function(e) {
+    if (presstimer !== null) {
+        clearTimeout(presstimer);
+        presstimer = null;
+    }
+    
+    this.classList.remove("longpress");
+};
+
+var click = function(e) {
+    if (presstimer !== null) {
+        clearTimeout(presstimer);
+        presstimer = null;
+    }
+    
+    this.classList.remove("longpress");
+    
+    if (longpress) {
+        return false;
+    }
+    
+    alert("press");
+};
+
+var start = function(e) {
+    console.log(e);
+    
+    if (e.type === "click" && e.button !== 0) {
+        return;
+    }
+    
+    longpress = false;
+    
+    this.classList.add("longpress");
+    
+    presstimer = setTimeout(function() {
+        // alert("long click");
+        longpress = true;
+    }, 1000);
+    
+    return false;
+};
+
+node.addEventListener("mousedown", start);
+node.addEventListener("touchstart", start);
+node.addEventListener("click", click);
+node.addEventListener("mouseout", cancel);
+node.addEventListener("touchend", cancel);
+node.addEventListener("touchleave", cancel);
+node.addEventListener("touchcancel", cancel);
+</script>
+</body>
+</html>
