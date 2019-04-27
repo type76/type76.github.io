@@ -1,0 +1,180 @@
+<html>
+	<head>
+		<title>Lerp</title>
+		<style>
+			body { margin: 0; 
+				background: #000; 
+				color: #fff;
+        font-family: monospace;
+			}
+		</style>
+	</head>
+	<body>
+	
+<script src="../js/three.min.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+
+
+
+<script>
+var xspeed = 0;
+var stopwarp = true;
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.8, 1000 );
+var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+document.body.appendChild( renderer.domElement );
+
+scene.position.set(0,0,0);
+
+// lights
+var light = new THREE.PointLight( 0xffffff, 1, 40 );
+light.position.set( 10, 10, 10 );
+scene.add( light );
+
+camera.position.x = 5;
+camera.position.y = 2;
+camera.position.z = 0;
+camera.lookAt(0,0,0)
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI*0.45;
+controls.enableDamping = true;
+controls.dampingFactor = 0.4;
+controls.maxDistance = 15;
+controls.minDistance = 2;
+controls.enablePan = false;
+
+// grid
+var size = 10;
+var divisions = 1;
+var gridHelper = new THREE.GridHelper( size, divisions );
+scene.add( gridHelper );
+
+// ambient
+var light = new THREE.AmbientLight( 0x666666 );
+light.intensity = 0.3;
+scene.add( light );
+
+// resize
+window.addEventListener( 'resize', onWindowResize, false );
+function onWindowResize() {
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+
+selection = new THREE.Group();
+scene.add( selection );
+
+cursor = new THREE.Group();
+scene.add( cursor );
+
+
+// disc
+var curve = new THREE.EllipseCurve(
+  0,  0,            // ax, aY
+  0.5, 0.5,           // xRadius, yRadius
+  0,  2 * Math.PI,  // aStartAngle, aEndAngle
+  false,            // aClockwise
+  0                 // aRotation
+);
+
+var points = curve.getPoints( 60 );
+var dgeometry = new THREE.BufferGeometry().setFromPoints( points );
+var dmaterial = new THREE.LineBasicMaterial( { color : 0x666666
+ } );
+
+var seldisc = new THREE.Line( dgeometry, dmaterial );
+seldisc.rotation.x = Math.PI/2;
+cursor.add(seldisc);
+
+// update touch
+  let updateTouchCoordinates = function(evt) {
+  stopwarp = false; 
+  stretch();
+  mouse.x = ( evt.touches[0].pageX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( evt.touches[0].pageY / window.innerHeight ) * 2 + 1;
+  raycaster.setFromCamera( mouse, camera );
+  let intersects = raycaster.intersectObject( plane );
+  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
+};
+
+
+// update mouse
+let updateMouseCoordinates = function(evt) {
+  evt.preventDefault();
+
+  mouse.x = ( evt.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
+  raycaster.setFromCamera( mouse, camera );
+  let intersects = raycaster.intersectObject( plane );
+  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
+};
+
+
+function movehero(x, y) {
+    cursor.position.x = x;
+    cursor.position.z = y;
+}
+
+
+window.addEventListener('touchstart', updateTouchCoordinates);
+window.addEventListener('touchmove', updateTouchCoordinates);
+window.addEventListener( 'mousemove', updateMouseCoordinates, false );
+
+//raycaster
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+
+//plane geometry
+let plgeometry = new THREE.PlaneBufferGeometry( 10, 10, 10, 10 );
+
+//plane material
+let plmaterial = new THREE.MeshBasicMaterial( { 
+wireframe:true,
+transparent:true,
+opacity:0
+} );
+
+//plane object3D
+let plane = new THREE.Mesh( plgeometry, plmaterial );
+plane.name = 'plane';
+plane.rotation.set(-Math.PI/2,0,0);
+plane.name = 'plane';
+scene.add( plane );
+
+// hero
+let bgeometry = new THREE.BoxGeometry( 0.8, 0.1, 0.8 );
+let mmaterial = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
+let cube = new THREE.Mesh( bgeometry, mmaterial );
+// cube.position.set(0,0.4,0);
+selection.add( cube );
+
+// animate loop
+var animate = function () {
+    if (!stopwarp) {
+  
+  }
+requestAnimationFrame( animate );
+renderer.render(scene, camera);
+// selection lerp position to cursor
+selection.position.x += (cursor.position.x - selection.position.x)*0.2;
+selection.position.z += (cursor.position.z - selection.position.z)*0.2;
+// selection lerp rotation to cursor
+if (selection.position.distanceTo( cursor.position)> 7)  {console.log(selection.position.distanceTo( cursor.position ));}
+selection.rotation.x = (cursor.position.z - selection.position.z) * 0.3;
+selection.rotation.z = -(cursor.position.x - selection.position.x) * 0.3;
+// selection.rotation.y = (cursor.position.z - selection.position.z) * 0.3; //on if driving
+
+};
+
+animate();
+
+
+		</script>
+	</body>
+</html>
