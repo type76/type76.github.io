@@ -25,6 +25,7 @@ a {color: red; text-decoration: none;}
 a:hover {text-decoration: underline;}
 h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer; margin-top: 1.4em;}
 .quote {padding: 2em 1em; background: #222; margin: 0.5em;}
+p b {text-decoration: underline;}
 </style>
 <body>
 <div class="container">
@@ -32,15 +33,15 @@ h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer;
 	<span>--</span>
 	<p><a href="https://type76.com/projects/hover/">game</a> | <a href="https://github.com/type76/type76.github.io/tree/master/projects/hover">code</a></p>
 
-	<h2 id="inxf"  onclick="typeme(this)"></h2>
-	<p>This game is made with html, css, javascript and three.js. The game is under 2mb and all code is contained in one index.html file to keep development quick and dirty. I'm a self taught coder, so some of the code isn't optimal. Nor is the font you are looking at. Let me know if you have suggestions. I'll try to do a devlog without any code or nerdy talk that explains concepts in general. You can click on the headers for a fun distraction. A lot of the concepts here will apply to other development, game dev and creative work.</p>
+	<p>TL:DR.</p>
+<ul>
+	<li>Put it in the render loop</li>
+	<li>Don't move it, affect it</li>
+	<li>Lerp more</li>
+</ul>
 
-	<h2 id="xth"  onclick="typeme(this)">Three.js</h2>
-	<p><a href="https://threejs.org">Three.js</a> is a 3D library that makes 3D easy to render 'real time' in the browser. Even on mobile, it's perfect. Its hard to explain the possibilities of this thing. It combines my loves of art, interaction and animation in one file. It has me as excited as flash did in the past. The best way of learning it is to play with the code in the <a href="https://threejs.org/examples/?q=ray"> examples</a>.</p>
+	<h2 id="cb"  onclick="typeme(this)">Start game</h2>
 
-	<p>It has at it's heart a render loop. Something important in games and interactive software. This is a function that plays (or renders) once every frame or tick. Maximum is 60fps for a browser, but you can tick at any speed. In making this game I learned that real power comes from doing the thing in the render loop. Being crafty and non linear got results and feelings.</p>
-
-	<h2 id="bch"  onclick="typeme(this)">Branching Corpses</h2>
 
 	<p>In a game dev discord channel one day, duneworld jeff told me this: 
 	</p>
@@ -52,25 +53,44 @@ h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer;
 
 	<h2 id="cb"  onclick="typeme(this)">A Corpse Was Born</h2>
 
-	<p>First I checked that the community were normal. Then I decided to adapt a previous <a href="https://type76.com/projects/drive/" title="driving experiment">experiment</a> as game for this. I wanted to make another control system, add some objects to collide with, a win/lose scenario and make a 'world' for it to live in. Something between wipeout and space harrier, but no shooting and much less quality. With a bare concept, no actual plan and never having made a game before, I joined the group, asked nicely and got the all clear.</p>
+	<p>I decided to adapt a previous <a href="https://type76.com/projects/drive/" title="driving experiment">experiment</a> as a game for this project. I needed to make another control system, add some objects to collide with, a win/lose scenario and make a 'world' for it to live in. With a bare concept, no actual plan and never having made a game before, I joined the group, asked nicely and got the all clear.</p>
 
-	<p>I was surprised that there were no 3D or plain js game devs in the community. My game was to be both. If we play to three.js strengths, we get good results. Being economical with things helps. We should use few items, re-use and not destroy the things we make. Common sense in life. Here, every rock is the same rock, just rotated, positioned and scaled differently. [line 780://rocks logic].</p>
+	<h2 id="inxf"  onclick="typeme(this)"></h2>
+	<p>The rules are <a href="https://branching-corpses.fandom.com/wiki/Branching_Corpses_Wiki">here</a>. I also set my own rules:</p>
+
+<ul>
+<li>make an arcade style racer</li>
+<li>use only three.js</li>
+<li>all code is in <a href="https://github.com/type76/type76.github.io/blob/master/projects/hover/index.html">one file</a></li>
+<li>keep size under 2mb</li>
+<li>don't draw</li>
+</ul>
+
+	<p>
+	All code is contained in one file to keep development quick and dirty. The code isn't optimal. Nor is the font you are looking at. Let me know if you have suggestions. I'll try to do a devlog without any code and explain these concepts in general. Things here will apply to other development and creative work regardless of the software/engine/language.</p>
+
+	<h2 id="xth"  onclick="typeme(this)">Three.js</h2>
+	<p><a href="https://threejs.org">Three.js</a> is a 3D library that makes 3D easy to render 'real time' in the browser with javascript. Even on mobile, it runs perfectly. Its hard to explain the possibilities of this thing. It combines my loves of art, interaction and animation in one file. It has me as excited as flash did in the past. The best way of learning it is to play with the code in the <a href="https://threejs.org/examples/?q=ray"> examples</a>.</p>
+
+	<p>Three.js has at it's heart a render loop (requestAnimationFrame). This is a function that plays (or renders) once every frame or tick. Maximum is 60fps for a browser, but you can tick at any speed. This is where the magic happens.</p>
+
+	<p>If we play to three.js strengths, we get good results. Being economical with things helps. We should use few items, re-use and not destroy the things we make. Here, every rock is the same rock, just rotated, positioned and scaled differently.</p>
 
 	<h2 id="xc" onclick="typeme(this)">Raycasting</h2>
 	<p>This is a ray that is cast inside the 3D world that gives you information on its collisions. With that information, you can do things. The mouse and ship have rays. The control plane, rocks, bonus and penalties are colliders. Here is an <a href="https://type76.com/projects/hover/control-ray.html"> example</a>.</p>
 
-	<p>Here the screen mouse position is obtained first. A ray is sent from the browser x and y positions, from the camera lens and into the scene. When the ray hits the ground plane (collider), those x, y and z positions are used. An object can be sent to that ray end point every mouse move and now we have a cursor in 3D space. Pixel perfect 2D to 3D collision detection with very little code. [line 636]</p>
+	<p>Here the 2D screen mouse position is obtained first. A ray is sent from the browser x and y positions, from the camera lens and into the scene. When the ray hits the ground plane (collider), those x, y and z positions are used. An object can be sent to that ray end point every mouse move and now we have a cursor in 3D space. Pixel perfect 2D to 3D collision detection with very little code. [line 636]</p>
 
 
 	<h2 id="lrp"  onclick="typeme(this)">The Lerp</h2>
 
-	<p>The mouse position is too fast and jerky and I attemted many ways to smooth it. I had known of the technique of <a href="https://www.reddit.com/r/gamedev/comments/6dubqz/heres_a_compreensive_guide_on_lerp/">lerping</a> from one value to another by manually tweening values in a function fixed to time. An algorithm that had fame even. This was a perfect case and when I tried, it fit. To achieve this I have a 3D cursor and ship object. The ship always lerps to the cursors position, so we have this lovely natural movement. Not moving the thing directly, but changing conditions that affect the thing. Like moving a magnet under a surface to control a ball bearing. Here's a bare bones working <a href="https://type76.com/projects/hover/lerp.html">example</a> with a box that works nicely. I'm sure the thing has been done before, but I was intoxicated with the power of human progress in the moments of making this.</p>
+	<p>The mouse position is too fast and jerky and I attemted many ways to smooth it. I had known of the technique of <a href="https://lunarlabs.pt/blog/post/the-art-of-lerp">linear interpolation</a> (or Lerp) from one value to another by manually tweening values in an algorithm fixed to time. An algorithm that had fame even. This was a perfect case and when I tried, it fit. To achieve this I have a 3D cursor and ship object. The ship always lerps to the cursors position, so we have this delayed follow movement. Not moving the thing directly, but changing conditions that affect the thing. Like moving a magnet under a surface to control a ball bearing. Here's a bare bones working <a href="https://type76.com/projects/hover/lerp.html">example</a> with a box that rotates nicely.</p>
 
 
 	<h2 id="ctr"  onclick="typeme(this)">2D and 3D Control</h2>
-	<p>In my plan, I had the control plane flip from laying on the ground horizontal to being vertical in your face. Dynamic and synergy. This happened in a nice fluid motion so I wanted it to be part of the game. You drive, then you fly. Here's an <a href="https://type76.com/projects/hover/index2.html">example</a>. Press space to flip. In re-assesing priorities, I decided to not do the mechanic as something the player controls as it brought complications and it's not simple for a simple game.</p>
+	<p>In my plan, I had the control plane flip from laying on the ground horizontal to being vertical in your face. Dynamic! This happened in a nice fluid motion when the spacebar is pressed. I wanted it to be part of the game. You drive, then you fly. Here's an <a href="https://type76.com/projects/hover/index2.html">example</a>. In re-assesing priorities, I decided to not do the mechanic as something the player controls as it brought complications and it's not simple for a simple game. It's a lot of fun though.</p>
 
-	<p>There was an older user interface then too. A little svg keyboard in the corner. I liked that and may use the technique again in future.</p>
+	<p>There was an older user interface then too. A little svg keyboard in the corner. I liked that and may use the technique again in future. Also too complex for this project.</p>
 
 
 	<h2 id="rev"  onclick="typeme(this)">The Revcounter</h2>
@@ -80,12 +100,17 @@ h1, h2, h3, h4 {display: block; line-height: 2em; height: 30px; cursor: pointer;
 
 	<h2 id="xst"  onclick="typeme(this)">The story</h2>
 
-	<p>I know story is important, but I wasn't doing it. Here, I was making a pick up and play casual game. I was determined not to draw at all in the making of this, so I found a nice <a href="https://sketchfab.com/3d-models/low-poly-male-base-mesh-7b9411ff0c624321baf4caac014bc0bd">low poly base model</a> (credit: decodigo), pushed some polygons in lightwave 3D and made <a href="https://type76.com/projects/hover/guys.html">this</a>.</p>
+	<p>I'm trying not to draw at all in the making of this, so I found a nice <a href="https://sketchfab.com/3d-models/low-poly-male-base-mesh-7b9411ff0c624321baf4caac014bc0bd">low poly base model</a> (credit: decodigo), pushed some polygons in lightwave 3D and made <a href="https://type76.com/projects/hover/guys.html">this</a>.</p>
 
-	<p>This scene portrays the heroes of our story, waiting for the ships computer to finish it's program. I originally made Claus a kid and G'naike a muscle man. Thanks Adriene for the fixes in keeping continuity there.</p>
+	<p>This scene portrays the heroes of our story, waiting for the ships computer to finish it's program. I originally made Claus a kid and G'naike a muscle man. Thanks Adrien for the fixes in keeping continuity there.</p>
 
 
+	<h2 id="xc" onclick="typeme(this)">Lessons Learned</h2>
+		<p>The solution to many problems runs <b>inside the render loop</b>. It might be because it introduces the <b>time</b> variable that became the big hook to hang everything from. The other lesson was in using affectors and lerp.</p>
 
+<h2>to be continued..</h2>
+
+<p><a href="io76.com">work</a> | <a href="type76.com">projects</a> | contact@io76.com</p>
 </div><!-- container -->
 
 
