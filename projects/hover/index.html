@@ -1,131 +1,114 @@
 <html>
+
 <head>
-  <title>corpse</title>
-  <style>
-  @font-face {
+<title>hovercar</title>
+<style>
+@font-face {
     font-family: 'glass_tty_vt220medium';
-    src: url('glass_tty_vt220-webfont.woff2') format('woff2'),
-    url('glass_tty_vt220-webfont.woff') format('woff');
+    src: url('glass_tty_vt220-webfont.woff2') format('woff2'), url('glass_tty_vt220-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-  }
+}
 
-  body { margin: 0; 
-    background: #000; 
+body {
+    margin: 0;
+    background: #000;
     color: #fff;
     font-family: 'glass_tty_vt220medium';
     overflow: hidden;
     font-size: 1.2em;
-  }
-  button {font-size: 1em; padding: 12px;
-    outline: none; border:0; background: transparent; color: #fff; cursor: pointer !important;
-    font-family: 'glass_tty_vt220medium';}
-    #spd {color:#fff; padding: 12px;
-       position: absolute; top: 0; right:0; padding: 12px;}
-      .on, button:hover {color: red !important; opacity: 1;}
-      /*#startgame {font-size: 1.2em;}*/
-      #accl, #cambut {position: absolute; bottom: 0; right:0; opacity: 0.5; }
-      #cambut {right: auto; left: 0;}
-      #cambut span {text-decoration: underline;}
-      #msgdiv {display: block; position: absolute; top: 80px; padding: 1em;}
-      #botmsg {font-family: 'glass_tty_vt220medium'; line-height: 1.6em;}
-      #menuscreen {margin: 0; position: absolute;
-        width: 100%;}
-        #menuscreen ul {margin: 0; padding: 0;}
-        #menuscreen li {list-style: none; line-height: 1.2em;}
-        #menuscreen li:before {content: '.';}
-        #menuscreen li span {color: red;}
-        button {cursor: pointer;}
-        #nav {display: block; margin: 5px;}
-      
-      </style>
-    </head>
-    <body>
-      <button id="startgame" onclick="gamestart()">[start game]</button>
-
-      <div id="menuscreen">
-        <span id="nav">
-          <button onclick="mgoal()" id="bgoal">goal</button> | <button onclick="controlkeys()" id="bcontrol">controls</button> | <button onclick="showstory()" id="bstory">story</button>
-        </span>
-
-        <ul id="mkeys" style="display: none;">
-          <li><span>mouse</span> : hover to control</li>
-          <li><span>up/w/z</span> : go</li>
-          <li><span>down/s</span> : stop</li>
-          <li><span>c</span> : camera mode</li>
-          <li><span>escape</span> : quit</li>
-        </ul>
-      </div><!-- menuscreen -->
-
-
-      <div id="msgdiv"><pre id="botmsg"></pre></div>
-
-      <span id="spd" title="go">0</span>
-
-      <button id="accl" title="go" onclick="go()">go</button>
-
-      <button id="cambut" title="camera mode" onclick="camreset()"><span>c</span>amera [free]</button>
-
-
-      <script src="../js/three.min.js"></script>
-      <script src="../js/OrbitControls.min.js"></script>
-      <script src="../js/GLTFLoader.js"></script>
-      <script src="../js/tween.js"></script>
-
-      <script type="text/javascript">
-      function clrscr() {
-        document.getElementById('botmsg').innerHTML = '';
-        document.getElementById('mkeys').style.display = 'none';
-        document.getElementById('botmsg').classList = '';
-        document.getElementById('bgoal').classList = '';
-        document.getElementById('bstory').classList = '';
-        document.getElementById('bcontrol').classList = '';
-      }
-
-      function controlkeys() {
-        clrscr();
-        writethis(
-          'mouse: control' +
-          "\n" +
-          'up/w/z: go' +
-          "\n" +
-          'down/s: stop' +
-          "\n" +
-          'c: camera' +
-          "\n" +
-          'esc: quit' );
-          document.getElementById('bcontrol').classList = 'on';
-      }
-
-      function mgoal() {
-        clrscr();
-        writethis('Reach 1000mph to warp speed');
-        document.getElementById('bgoal').classList = 'on';
-      }
-
-      function showstory() {
-clrscr();
-document.getElementById('bstory').classList = 'on';
-document.getElementById('botmsg').classList = 'story';
-writethis(
-  "Warning." +
-  "\n" +
-  'Abnormal object detected inside hull' +
-  "\n" +
-  'Does not compute.' );
-
-
-// document.getElementById('botmsg').appendChild('<button>continue</button>' );
-
 }
 
+canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    cursor: crosshair;
+}
 
-</script>
+button {
+    font-size: 1em;
+    padding: 12px;
+    outline: none;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    cursor: pointer !important;
+    font-family: 'glass_tty_vt220medium';
+}
+
+#spd {
+    color: #fff;
+    padding: 12px;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 12px;
+}
+
+.on,
+button:hover {
+    color: red !important;
+    opacity: 1;
+}
+
+#accl {background: red; opacity: 1 !important;}
+#accl:hover {color: #fff !important; background: transparent;}
+#accl.on {background: transparent !important;}
+
+
+#accl, #cambut {
+    position: absolute;
+    z-index: 2;
+    bottom: 0;
+    right: 0;
+    opacity: 0.5;
+}
+#cambut {right: auto; left: 0;}
+#cambut span {text-decoration: underline;}
+#spd:after {content: 'mph'}
+#lives {line-height: 6px; position: absolute; top: 20px; list-style: none; margin: 0; padding: 0 12px; color: red; z-index: 3;}
+#lives li {float: left; padding: 4px; }
+#lives li.dead {display: none;}
+#again:hover {background: #111;}
+#centerit {position: absolute; display: block; width: 100%; left:0; top:10%; text-align: center; z-index: 3;}
+#centerit p {text-shadow: 0 0 4px #000;}
+#centerit button {font-size: 1em;}
+.gmov {font-size: 2em;}
+#bestspeed:after {content: 'mph';}
+</style>
+</head>
+
+<body>
+<div id="centerit" style="display: none;">
+<p class="gmov" >game over</p>
+<!-- <p id="xbest" >best speed: <span id="bestspeed">0</span></p> -->
+<button id="again" onclick="goagain()">start again</button>
+</div>
+
+
+<ul id="lives" title="lives">
+<li id="life1">m<br>v</li>
+<li id="life2">m<br>v</li>
+<li id="life3">m<br>v</li>
+</ul>
+
+<span id="spd" title="speedometer">0</span>
+<button id="cambut" title="camera mode [free/locked]" onclick="camreset()"><span>c</span>amera</button>
+
+<button id="accl" title="go" onclick="go()">go</button>
+<script src="../js/three.min.js"></script>
+<script src="../js/GLTFLoader.js"></script>
+<script src="../js/OrbitControls.min.js"></script>
+<script src="../js/tween.js"></script>
 
 
 <script id="vertex-shader" type="x-shader/x-fragment">
 // source : https://codepen.io/ma77os/pen/WYwRmV
-
 vec3 mod289(vec3 x)
 {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -405,285 +388,165 @@ void main() {
 </script> 
 
 <script>
-
-function go() {
-  if (stopgame) {return} 
-
-    document.getElementById("accl").classList.toggle('on');
-  if (document.getElementById("accl").classList != "on") {
-    decelerate();
-    document.getElementById("accl").innerHTML = 'go';
-  } else {
-    accelerate();
-    document.getElementById("accl").innerHTML = 'stop';
-  }
-}
-
-
-
-//keys [keypress]
-document.onkeydown = function(evt) {
-  evt = evt || window.event;
-// console.log(evt)
-if (stopgame && evt.keyCode != 67) {return}
-
-if (evt.keyCode == 38) { // up
-  evt.preventDefault();
-  accelerate();
-  document.getElementById("accl").innerHTML = 'stop';
-  clicksnd();
-}
-if (evt.keyCode == 40) { // down
-  evt.preventDefault();
-  decelerate();
-  document.getElementById("accl").innerHTML = 'go';
-  clicksnd();
-}
-if (evt.keyCode == 67) { // c
-  evt.preventDefault();
-  camreset();
-  clicksnd();
-}
-if (evt.keyCode == 90) { // z
-  evt.preventDefault();
-  accelerate()
-  clicksnd();
-}
-if (evt.keyCode == 87) { // w
-  evt.preventDefault();
-  accelerate()
-  clicksnd();
-}
-if (evt.keyCode == 83) { // s
-  evt.preventDefault();
-  decelerate()
-  clicksnd();
-}
-if (evt.keyCode == 27) { // escape
-  evt.preventDefault();
-  gamestart();
-}
-
-} // keys
-
 // variables
-var tyspeed = 50;
-var curves = [];
-var increment = 0;
-var slowdown = false;
+var collidableMeshList = [];
+var stationary = true;
+var horizontal = true;
 var stopgame = false;
-var timerID;
 var revcounter = 0;
 var topspeed = 100;
+// var myspeed = [];
+var fail = false;
 var xspeed = 0;
-var stationary = true;
-var collidableMeshList = [];
-
-// three.js
+var mixer;
+var prevTime = Date.now();
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.8, 1000 );
-var renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
-renderer.setSize( window.innerWidth, window.innerHeight );
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.8, 1000);
+var renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: true
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
-document.body.appendChild( renderer.domElement );
+document.body.appendChild(renderer.domElement);
 
-// root scene position
-scene.position.set(0,-0.5,0);
-camera.position.x = 25;
-camera.position.y = 2;
+// scene settings
+scene.position.set(0, 0, 0);
+camera.position.x = 10;
+camera.position.y = 1;
 camera.position.z = 0;
-camera.lookAt(0,0,0);
+camera.lookAt(0, 0, 0)
+scene.fog = new THREE.FogExp2( 0x000000, 0.06 );
+
+// lights
+var light = new THREE.PointLight(0xffffff, 1, 40);
+light.position.set(10, 10, 10);
+scene.add(light);
 
 // controls
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.maxPolarAngle = Math.PI*0.48;
+controls.maxPolarAngle = Math.PI * 0.46;
 controls.enableDamping = true;
 controls.dampingFactor = 0.4;
-controls.maxDistance = 25;
+controls.maxDistance = 10;
 controls.minDistance = 1;
 controls.enablePan = false;
 controls.enabled = false;
 
-// ambient
-var amblight = new THREE.AmbientLight( 0x333333 );
-amblight.intensity = 1;
-scene.add( amblight );
-
-scene.fog = new THREE.FogExp2( 0x000000, 0.020 );
-
-
-// resize
-window.addEventListener( 'resize', onWindowResize, false );
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize( window.innerWidth, window.innerHeight );
-}
-
-// groups
-
-// mouse position in 3D space
-selection = new THREE.Group();
-scene.add( selection );
-// lerped cursor
-cursor = new THREE.Group();
-scene.add( cursor );
-// car
-mothership = new THREE.Group();
-selection.add( mothership );
-// intro scene objects
-introscene = new THREE.Group();
-scene.add( introscene );
-// track objects
-track = new THREE.Group();
-scene.add( track );
-// background objects
-bggroup = new THREE.Group();
-scene.add( bggroup );
-bggroup.visible = false;
-
-// scene light
-var light = new THREE.PointLight( 0xffffff, 1, 150 );
-light.position.set( 0, 100, 0 );
-scene.add( light );
-
-// update touch
-let updateTouchCoordinates = function(evt) {
-  stationary = false; 
-  stretch();
-  mouse.x = ( evt.touches[0].pageX / window.innerWidth ) * 2 - 1;
-  mouse.y = - ( evt.touches[0].pageY / window.innerHeight ) * 2 + 1;
-  raycaster.setFromCamera( mouse, camera );
-  let intersects = raycaster.intersectObject( cplane );
-  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
-};
-
-// update mouse
-let updateMouseCoordinates = function(evt) {
-  evt.preventDefault();
-
-  mouse.x = ( evt.clientX / window.innerWidth ) * 2 - 1;
-  mouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
-  raycaster.setFromCamera( mouse, camera );
-  let intersects = raycaster.intersectObject( cplane );
-  if (intersects.length > 0) { movehero(intersects[ 0 ].point.x, intersects[ 0 ].point.z); }
-};
-
-
-// move ship function
-function movehero(x, y) {
-  cursor.position.x = x;
-  cursor.position.z = y;
-}
-
-// touch events
-window.addEventListener('touchstart', updateTouchCoordinates);
-window.addEventListener('touchmove', updateTouchCoordinates);
-window.addEventListener( 'mousemove', updateMouseCoordinates, false );
-
-//raycaster
-let raycaster = new THREE.Raycaster();
-let mouse = new THREE.Vector2();
-
-// control-plane geometry
-let plgeometry = new THREE.PlaneBufferGeometry( 10, 10, 1, 1 );
-
-//control-plane material
-let plmaterial = new THREE.MeshPhongMaterial( { 
-  color:0x222222
-} );
-
-//control-plane object3D
-let cplane = new THREE.Mesh( plgeometry, plmaterial );
-cplane.name = 'plane';
-cplane.rotation.set(-Math.PI/2,0,0);
-cplane.position.set(0,0.1,0);
-cplane.name = 'cplane';
-scene.add( cplane );
-
-// // road
-// road = cplane.clone();
-// road.scale.set( 11, 1, 1 );
-// scene.add( road );
-
-
 // grid
 var size = 10;
 var divisions = 1;
-var gridHelper = new THREE.GridHelper(size, divisions, 0xff0000, 0x33333);
-gridHelper.position.set( 0, 0.2, 0 );
-// gridHelper.scale.set( 200, 1, 1 );
-track.add(gridHelper)
+var gridHelper = new THREE.GridHelper(size, divisions);
+scene.add(gridHelper)
+
+// ambient
+var ambient = new THREE.AmbientLight(0x660000);
+ambient.intensity = 0.4;
+scene.add(ambient);
+
+// resize
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
 // hero
-// let bgeometry = new THREE.BoxGeometry( 0.8, 0.1, 0.8 );
-// let mmaterial = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
-// let cube = new THREE.Mesh( bgeometry, mmaterial );
-// cube.position.set(0,0.2,0);
-// mothership.add( cube );
+hero = new THREE.Group();
+scene.add(hero);
 
+cursor = new THREE.Group();
+scene.add(cursor);
 
-// ship shadow object 
-let egeometry = new THREE.PlaneGeometry(1.5, 0.6, 1);
-let ematerial = new THREE.MeshBasicMaterial({
-  color: 0x000000,
-  transparent: true, opacity: 0.2
+mothership = new THREE.Group();
+scene.add(mothership);
+
+cube = new THREE.Group();
+mothership.add(cube);
+
+// hero hitbox cube
+let bgeometry = new THREE.BoxGeometry(0.9, 0.6, 0.3);
+let mmaterial = new THREE.MeshLambertMaterial({
+    color: 0xcc0000,
+    wireframe: true
 });
-let shdw = new THREE.Mesh(egeometry, ematerial);
-// shdw.position.set(0, 0.01, 0);
-shdw.position.set(0.05, 0.2, 0);
-
-shdw.rotation.set(-Math.PI / 2, 0, 0)
-mothership.add(shdw);
+let cubicbody = new THREE.Mesh(bgeometry, mmaterial);
+cubicbody.position.set(0, 0.5, 0);
+mothership.add(cubicbody);
+cubicbody.visible = false;
 
 
 var loader = new THREE.GLTFLoader();
-
 // vehicle
 var filepath = "car1.glb";
 loader.load(filepath, function(gltf) {
 
   gltf.scene.traverse(function(node) {
-    if (node.isMesh) mesh = node;
+    if (node.isMesh) car = node;
   });
 
-  mesh.material = new THREE.MeshLambertMaterial({
+  car.material = new THREE.MeshLambertMaterial({
     color: 0xff0000,
     morphTargets: true
   });
-  mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
-// mesh.position.set(0, 1, 0);
-mesh.scale.set(0.4, 0.4, 0.4);
-mothership.add(mesh);
+  car.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
+  car.position.set(0, 0.2, 0);
+  car.scale.set(0.4, 0.4, 0.4);
+  car.name = 'car';
+  mothership.add(car);
+  car.morphTargetInfluences[0] = 0;
+  // console.log(car);
 
-// car -light
-var light = new THREE.PointLight( 0xffffff, 1, 0.9 );
-light.position.set( 0, 0, 1.15 );
-mesh.add( light );
-
-
-//   // line on back (health?)
-// var geometry = new THREE.Geometry();
-// geometry.vertices.push(new THREE.Vector3(0.79, 0.26, -0.27));
-// geometry.vertices.push(new THREE.Vector3(0.79, 0.26, 0.27));
-// var material = new THREE.LineBasicMaterial({
-//   color: 0xffffff
-// });
-
-// var line = new THREE.Line(geometry, material);
-// line.rotation.set(0, Math.PI/2, 0);
-// // line.scale.z = 0.000001;
-// mesh.add(line);
-//   // mesh.visible = false;
 }); // vehicle gltf
 
+
+
+// // car 3D model
+var loader = new THREE.BufferGeometryLoader();
+
+loader.load(
+  'hcar.json',
+  function(geometry) {
+    var bnscarmat = new THREE.MeshBasicMaterial({
+      color: 0xffffff
+    });
+
+    bnscar = new THREE.Mesh(geometry, bnscarmat);
+    bnscar.name = "bnscar"
+    bnscar.position.set(0, 0.3, 0);
+    bnscar.rotation.set(0, Math.PI / 2, 0);
+    bnscar.scale.set(0.42, 0.42, 0.42);
+    mothership.add(bnscar);
+    bnscar.visible = false;
+
+},
+function(xhr) {},
+function(xhr) {
+  console.log('An error happened');
+}
+); // end load ship
+
+
+
+
+// shadow 
+let egeometry = new THREE.PlaneGeometry(1.5, 0.6, 1);
+let ematerial = new THREE.MeshLambertMaterial({
+    color: 0x111111,
+});
+let shdw = new THREE.Mesh(egeometry, ematerial);
+shdw.position.set(0.05, 0.2, 0);
+shdw.rotation.set(-Math.PI / 2, 0, 0)
+cursor.add(shdw);
 
 // // trail
 var loader = new THREE.TextureLoader();
 loader.load( 'xgrad.png', function ( texture ) {
-  var trgeometry = new THREE.PlaneBufferGeometry( 0.8, 0.55, 1 );
-  trgeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.4, 0, 0.36) );
+  var trgeometry = new THREE.PlaneBufferGeometry( 0.8, 0.45, 1 );
+  trgeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0.4, 0, 0.33) );
 
   var trmaterial = new THREE.MeshBasicMaterial( {
     color:0xff0000, map: texture, transparent: true, opacity: 0.7, side: THREE.DoubleSide
@@ -691,76 +554,61 @@ loader.load( 'xgrad.png', function ( texture ) {
   trail = new THREE.Mesh( trgeometry, trmaterial );
   trail.name = "trail";
   trail.rotation.set(-Math.PI/2,0,0)
-  selection.add(trail);
+  trail.position.set(0.7,0,0)
+  mothership.add(trail);
 
 } );
 
-
 // base floor circle 
+let bsematerial = new THREE.MeshPhongMaterial( { 
+  color:0x220000
+  // , transparent: true, opacity: 0.2
+} );
 var geometry = new THREE.CircleBufferGeometry( 100, 32 );
-var circle = new THREE.Mesh( geometry, plmaterial );
+var circle = new THREE.Mesh( geometry, bsematerial );
 circle.rotation.set(-Math.PI / 2, 0, 0);
+circle.position.set(0, -0.01, 0);
 scene.add( circle );
 
-
-// background update
-function bgupdate() {
-  rocks.position.x += increment * 11;
-// mountains texture speed
-bgmesh.material.uniforms.time.value += increment*1.5;
-
-// rocks logic
-if (rocks.position.x > 5) {
-  rocks.position.x = -40;
-// random respawn
-var num = Math.floor(Math.random() * 5) + 1;
-num *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-rocks.position.z = num;
-var sc = Math.random();
-rocks.scale.set(sc,sc,sc);
-rocks.rotation.z = Math.PI*Math.random();
-}
-}// bgupdate
-
-function movement() {
-  var selposx = (cursor.position.x - selection.position.x)*revcounter/500;
-  revcounter += 0.000001;
-// selection lerp position to cursor
-selection.position.x += selposx;
-selection.position.z += (cursor.position.z - selection.position.z)*revcounter/500;
+// bonus circle 
+let bonmat = new THREE.MeshBasicMaterial( { 
+  color:0xffffff
+} );
+var geometry = new THREE.CircleBufferGeometry( 0.1, 32 );
+var bonuscirc = new THREE.Mesh( geometry, bonmat );
+bonuscirc.rotation.set(-Math.PI / 2, 0, 0);
+bonuscirc.position.set(0, 0.12, 0);
+cursor.add( bonuscirc );
+bonuscirc.visible = false;
 
 
-// selection lerp rotation to cursor
-selection.rotation.x = (cursor.position.z - selection.position.z) * revcounter/500;
-mothership.rotation.z = -(cursor.position.x - selection.position.x) * revcounter/500;
+//raycaster - ship
+let shipray = new THREE.Raycaster();
 
-// rotate on turn
-if (revcounter>0) {
-  mothership.rotation.y = (cursor.position.z - selection.position.z) * revcounter/400;
-// trail.rotation.z = (cursor.position.z - selection.position.z) * revcounter/900;
-}
-trail.scale.x = 1+(increment*200);
-// lift on drive
-if (revcounter<50) {
-  mesh.position.y = 0.2+increment*10;
-  trail.position.y = increment*10;
-}
-} // movement
+//raycaster - mouse
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+let isDragging = false;
 
-// -background
-bg();
-function bg() {
-  var rockmaterial = new THREE.MeshLambertMaterial({
-    color: 0xcccccc
-// color: 0x5F5F5F
-// , wireframe:true
+//plane geometry
+let plgeometry = new THREE.PlaneBufferGeometry(10, 10, 1);
+
+//plane material
+let plmaterial = new THREE.MeshBasicMaterial({
+    // color:0x220000,
+    side: THREE.DoubleSide,
+    wireframe: true,
+    transparent: true,
+    opacity: 0
 });
 
-  rocks = new THREE.Mesh(new THREE.SphereGeometry( 0.2, 2, 1, 0, 3 ), rockmaterial);
-  rocks.rotation.x = -Math.PI/2;
-  rocks.position.set(-12, 0.5, 3);
-  rocks.name = 'rocks';
-  track.add(rocks);
+//raycast plane object3D
+let plane = new THREE.Mesh(plgeometry, plmaterial);
+plane.name = 'plane';
+plane.rotation.set(-Math.PI / 2, 0, 0);
+plane.name = 'plane';
+scene.add(plane);
+
 
 // mountain bg groundplane
 var geometry = new THREE.PlaneBufferGeometry(50, 50, 50, 50);
@@ -791,177 +639,399 @@ bgmesh.position.set(0,-1.7,0);
 bgmesh.scale.set(2,4,0.2);
 scene.add(bgmesh);
 
-}//bg
+// end three objects
 
-intro()
-function intro() {
-  stopgame = true;
-  var loader = new THREE.GLTFLoader();
-  loader.load(
-    'guys.glb',
-    function ( gltf ) {
-      introscene.add( gltf.scene );
-      gltf.scene.scale.set(3, 3, 3);
-      gltf.scene.rotation.set(0,-Math.PI,0);
-      gltf.scene.position.set(3,0,-2);
-// 2=car, 3=claus, 4=gnaike
-},
-function ( xhr ) {
-  console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-},
-function ( error ) {
-  console.log( 'An error happened' );
-}
-);
+// update touch
+let updateTouchCoordinates = function(evt) {
+    stationary = false;
+    mouse.x = (evt.touches[0].pageX / window.innerWidth) * 2 - 1;
+    mouse.y = -(evt.touches[0].pageY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    let intersects = raycaster.intersectObject(plane);
+    if (intersects.length > 0) {
+        movehero(intersects[0].point.x, intersects[0].point.z);
+    }
+};
 
-// introscene rocks
-for ( var i = 0; i < 19; i ++ ) {
-  var material = new THREE.MeshLambertMaterial( {color: 0xff0000} );
-  var geometry = new THREE.SphereGeometry( 0.1, 2, 1, 0, 3 );
-  var mesh = new THREE.Mesh( geometry, material );
-  mesh.rotation.x = -Math.PI/2;
-  mesh.rotation.z = Math.PI*Math.random();
-  var sc = Math.random()*0.5;
-  console.log(sc)
-  mesh.scale.set(sc, sc, sc);
+// update mouse
+let updateMouseCoordinates = function(evt) {
+    evt.preventDefault();
+    mouse.x = (evt.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(evt.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    let intersects = raycaster.intersectObject(plane);
+    if (intersects.length > 0) {
+        movehero(intersects[0].point.x, intersects[0].point.z, intersects[0].point.y);
+    }
 
-  mesh.position.x = ( Math.random() - 0.5 ) * 15;
-  mesh.position.z = ( Math.random() - 0.5 ) * 15;
-  mesh.updateMatrix();
-  mesh.matrixAutoUpdate = false;
-  introscene.add( mesh );
+};
 
+function movehero(x, y, z) {
+    hero.position.x = x;
+    hero.position.z = y;
+    hero.position.y = z;
 }
 
-// intro light
-// amblight.intensity = 2;
-document.getElementById('spd').style.display = 'none';
-document.getElementById('accl').style.display = 'none';
-mothership.visible = false;
-selection.visible = false;
-cursor.visible = false;
-cplane.visible = false;
-bggroup.visible = false;
-track.visible = false;
-bgmesh.scale.x = 6;
-// camreset();
-}// intro
+window.addEventListener('mousemove', updateMouseCoordinates, false);
 
+//keys
+//esc
+document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    // console.log(evt)
 
+    if (evt.keyCode == 38) { // up
+        evt.preventDefault();
+        accelerate();
+        document.getElementById("accl").innerHTML = 'stop';
+        document.getElementById("accl").classList='on';
+        clicksnd();
+    }
+    if (evt.keyCode == 40) { // down
+        if (typeof timerID !== 'undefined') {
+            evt.preventDefault();
+            decelerate();
+            document.getElementById("accl").innerHTML = 'go';
+        document.getElementById("accl").classList='';
+            clicksnd();
+        }
+    }
 
-// start game button toggle
-function gamestart() {
-  document.getElementById('botmsg').style.display = 'none';
-  document.getElementById("startgame").classList.toggle('on');
-  if (document.getElementById("startgame").classList != "on") {
-    gmstop();
-    document.getElementById('menuscreen').style.display = 'block';
-  } else {
-    camstart();
-    gmstart();
-    document.getElementById('menuscreen').style.display = 'none';
-  }
-
-
-// stop game
-function gmstop() {
-  stopgame = true;
-  revcounter = 0;
-  document.getElementById('botmsg').style.display = 'block';
-  document.getElementById('botmsg').innerHTML = '';
-if (typeof source !== 'undefined') {source.stop(0);}//stop audio
-introscene.visible = true;
-document.getElementById('startgame').innerHTML = '[start game]';
-document.getElementById('spd').style.display = 'none';
-document.getElementById('accl').style.display = 'none';
-bgmesh.scale.x = 10;
-mothership.visible = false;
-selection.visible = false;
-cursor.visible = false;
-cplane.visible = false;
-bggroup.visible = false;
-track.visible = false;
-}// game end
-
-
-// start game
-function gmstart() {
-  stopgame = false;
-  introscene.visible = false;
-  document.getElementById('startgame').innerHTML = 'quit';
-  document.getElementById('spd').style.display = 'block';
-  document.getElementById('accl').style.display = 'block';
-  bgmesh.scale.x = 2;
-  mothership.visible = true;
-  selection.visible = true;
-  cursor.visible = true;
-  cplane.visible = true;
-  bggroup.visible = true;
-  track.visible = true;
+if (evt.keyCode == 67) { // c
+  evt.preventDefault();
+  camreset();
+  clicksnd();
 }
 
-}// game start
+};
+
+// randomise
+function randomFloat(a, b) {
+    var r = (Math.random() * (b - a) + a);
+    return r;
+}
+
+// make single star
+function Star(material, x, y, size) {
+    this.size = size;
+
+    this.obj = new THREE.Geometry();
+    this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
+    this.obj.vertices.push(new THREE.Vector3(0, 0, -size));
+    this.obj = new THREE.Line(this.obj, material);
+
+    this.speed = randomFloat(1, 10);
+
+    this.refresh = function(x, y) {
+        this.obj.position.z = randomFloat(0, -100);
+        this.obj.position.x = x;
+        this.obj.position.y = y;
+    }
+    this.refresh(x, y);
+}
+
+// make/update star field
+function Starfield(size, width, height) {
+    this.stars = [];
+    this.obj = new THREE.Group();
+    this.obj.name = "starfield";
+    // this.obj.visible = false;
+    this.obj.rotation.set(0, Math.PI / 2, 0);
+    this.obj.position.set(0, 5, 0);
+    this.size = size;
+    this.width = width;
+    this.height = height;
+    this.material = new THREE.MeshBasicMaterial({
+        color: 0xffffff
+    });
+    this.init = function() {
+        for (var i = 0; i < this.size; i++) {
+            this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 3)));
+            this.obj.add(this.stars[i].obj);
+        }
+        scene.add(this.obj);
+    }
+    this.init();
+    this.update = function() {
+            for (var i = 0; i < this.size; i++) {
+                if (this.stars[i].obj.position.z > 5) {
+                    this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
+                }
+
+                this.stars[i].obj.scale.z = revcounter / 500;
+                this.stars[i].obj.position.z += revcounter / 500;
+
+            }
+        } // update
+}
+
+// collide objects
+function colliders() {
+    var collidergeo = new THREE.CubeGeometry(0.3, 0.3, 0.3);
+    var badgeo = new THREE.CubeGeometry(0.5, 0.5, 0.5);
+
+    var goodcol = new THREE.MeshBasicMaterial({
+        color: 0xffffff
+    });
+    var badcol = new THREE.MeshPhongMaterial({
+        color: 0xff0000
+        ,wireframe: true, transparent:true, opacity:0
+    });
+
+    var cgood = new THREE.Mesh(collidergeo, goodcol);
+    cgood.position.set(-5, 0.5, 3);
+    cgood.name = 'good';
+    scene.add(cgood);
+    // cgood.visible = false;
+    collidableMeshList.push(cgood);
+// bonus light
+    var light = new THREE.PointLight( 0xffffff, 1, 15 );
+    light.position.set( 0, 10, 0 );
+    cgood.add( light );
+// bonus sphere
+    var geometry = new THREE.SphereBufferGeometry( 0.3, 20, 20 );
+
+    var sphere = new THREE.Mesh( geometry, goodcol );
+    cgood.add( sphere );
+
+// bad collider
+    var cbad = new THREE.Mesh(badgeo, badcol);
+    cbad.position.set(-5, 0.5, -3);
+    cbad.name = 'bad';
+    scene.add(cbad);
+    collidableMeshList.push(cbad);
+
+// baddie star object
+var loader = new THREE.BufferGeometryLoader();
+
+loader.load(
+  'baddie.json',
+  function(geometry) {
+    var badcol = new THREE.MeshPhongMaterial({
+      color: 0xff0000
+    });
+    baddie = new THREE.Mesh(geometry, badcol);
+    baddie.scale.set(0.42, 0.42, 0.42);
+    cbad.add(baddie);
+    baddie.name = 'baddie';
+
+}
+); // end load baddie
 
 
-// // star length
-// function starlength() {
-// var sf = scene.getObjectByProperty('name', 'starfield', false);
 
-//   for (var i = 0; i < sf.children.length; i++) {
-//     new TWEEN.Tween(sf.children[i].scale).to({
-//       x: 1,
-//       y: 1,
-//       z: 0.01
-//     }, 400).onComplete(function() {
-//       // sf.visible = false;
-//     }).start();
-// } //for
-// }
+}//cbad
+
+
+
+
+
+
+// HIT function
+function hit(v) {
+    if (v.length > 0) {
+        var num2 = Math.floor(Math.random() * 5) + 1;
+        num2 *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+        v[0].object.position.x = -30;
+        v[0].object.position.z = num2;
+
+        if (v[0].object.name == 'good') {
+            goodhit();
+        }
+        if (v[0].object.name == 'bad') {
+            badhit();
+        }
+
+
+    } //if
+} // fn hit
+
+//flash helper f
+function flash(argument) {
+    argument.classList = "on";
+    setTimeout(function() {
+        argument.classList = "";
+    }, 100);
+}
+
+// good hit
+function goodhit() {
+    fail = false;
+    revcounter += 50; 
+    // myspeed.push(revcounter)
+    // console.log(JSON.stringify(myspeed))
+    bnscar.visible = true;
+    bonustween();
+    setTimeout(function() {
+    bnscar.visible = false;
+     }, 200);
+}
+
+var lives = 3;
+var life1 = document.getElementById('life1');
+var life2 = document.getElementById('life2');
+var life3 = document.getElementById('life3');
+// bad hit
+function badhit() {
+    // revcounter -= 50;
+    lives = lives-1;
+    if (lives<1) {gameover(); life1.classList = 'dead';}    
+    if (lives==1) { life2.classList = 'dead'; }
+    if (lives==2) { life3.classList = 'dead';}
+
+    revcounter = revcounter/2;
+    fail = true;
+    // show crashed car morph shape
+    car.morphTargetInfluences[0] = 1;
+    setTimeout(function() {
+    car.morphTargetInfluences[0] = 0;
+     }, 200);
+}
+
+//gameover
+function gameover(){
+gameoversnd();
+if (typeof source !== 'undefined') {source.stop(0);}
+document.getElementById('centerit').style.display = 'block';
+// document.getElementById('bestspeed').innerHTML = Math.max(myspeed);
+camreset();
+car.morphTargetInfluences[0] = 1;
+revcounter=0.000000001; 
+}
+
+//move
+function movement() {
+
+    if (!stopgame) {
+bgmesh.material.uniforms.time.value += (revcounter/50)/300;
+
+    // position lerp
+    mothership.position.x += (hero.position.x - cursor.position.x) * 0.1;
+    mothership.position.z += (hero.position.z - cursor.position.z) * 0.2;
+    // 
+    cursor.position.x = mothership.position.x;
+    cursor.position.z = mothership.position.z;
+    //
+    mothership.rotation.x = (hero.position.z - mothership.position.z) * 0.2; // bank
+    mothership.rotation.z = -(hero.position.x - mothership.position.x) * 0.05; // pitch
+
+// lift on start
+if (revcounter<100) {car.position.y = 0.2+revcounter/900;}
+    
+        // trail length
+        if (revcounter>100) {trail.scale.x = 1+(revcounter/100);} else {trail.scale.x = 0.0001;}
+
+// turn
+if (revcounter>0 && revcounter<1000) {
+mothership.rotation.y = (hero.position.z - mothership.position.z) * 0.2;
+}
+if (revcounter>1000 && revcounter<2000) {
+mothership.rotation.y = (hero.position.z - mothership.position.z) * 0.05;
+}
+
+    // ship hitbox
+    for (var vertexIndex = 0; vertexIndex < cubicbody.geometry.vertices.length; vertexIndex++) {
+        var localVertex = cubicbody.geometry.vertices[vertexIndex].clone();
+        var globalVertex = localVertex.applyMatrix4(cubicbody.matrix);
+        var directionVector = globalVertex.sub(cubicbody.position);
+
+        var vray = new THREE.Raycaster(mothership.position, directionVector.normalize());
+        var collisionResults = vray.intersectObjects(collidableMeshList);
+        if (collisionResults.length > 0 && collidableMeshList.distance < directionVector.length())
+            console.log('hit');
+        hit(collisionResults)
+    }
+
+    // set collectables speed/pos
+    collidableMeshList[0].position.x += (revcounter/50) / 34;
+    if (collidableMeshList[0].position.x > 20) {
+        collidableMeshList[0].position.x = -20;
+    }
+    // set bad
+    collidableMeshList[1].position.x += (revcounter/50) / 34;
+    if (collidableMeshList[1].position.x > 20) {
+        collidableMeshList[1].position.x = -20;
+    }
+
+    }//if warp is true
+}// bgupdate
+
+
+// 
+function go() {
+    if (stopgame) {
+        return
+    }
+
+    document.getElementById("accl").classList.toggle('on');
+    if (document.getElementById("accl").classList != "on") {
+        decelerate();
+        document.getElementById("accl").innerHTML = 'go';
+    } else {
+        accelerate();
+        document.getElementById("accl").innerHTML = 'stop';
+    }
+}
 
 // RAF events for throttle
 // start speed up
 function accelerate() {
-  slowdown = false;
-  if (revcounter<0.1) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    source = audioCtx.createBufferSource();
-    getData();
-    source.start(0);
-  }  else {  
-  }
+    slowdown = false;
+    if (revcounter < 0.1) {
+        audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+        source = audioCtx.createBufferSource();
+        getData();
+        source.start(0);
 
-  timerID = cancelAnimationFrame(slowtimer);
-  timerID = requestAnimationFrame(timer);
+    }
+
+    timerID = cancelAnimationFrame(slowtimer);
+    timerID = requestAnimationFrame(timer);
 }
 // start slowdown
 function decelerate() {
-  slowdown = true;
-  timerID = cancelAnimationFrame(timerID);
-  timerID = requestAnimationFrame(slowtimer);
+    slowdown = true;
+    timerID = cancelAnimationFrame(timerID);
+    timerID = requestAnimationFrame(slowtimer);
 }
-
 
 // slow down
 function slowtimer() {
-  revcounter--;
-  if (revcounter<0.1) {
-    revcounter=0; 
-    cancelAnimationFrame(slowtimer); 
-    if (revcounter>0.1) {source.stop(0);}
-    return;
-  } else {
-    requestAnimationFrame(slowtimer);
-  }
+    revcounter--;
+    if (revcounter < 0.1) {
+        revcounter = 0;
+        cancelAnimationFrame(slowtimer);
+        // if (revcounter>0.1) {source.stop(0);}
+        if (typeof source !== 'undefined') {
+            source.stop(0);
+        }
+        return;
+    } else {
+        requestAnimationFrame(slowtimer);
+    }
 }
 
 // speed up
-function timer() { 
-  if (revcounter < topspeed || slowdown == true) {
-    timerID = requestAnimationFrame(timer);
-    if (revcounter<topspeed+1) { 
-      revcounter++; }
+function timer() {
+    if (revcounter < topspeed || slowdown == true) {
+        timerID = requestAnimationFrame(timer);
+        if (revcounter < topspeed + 1) {
+            revcounter++;
+        }
     }
-  }
+}
+
+//bonus tween
+function bonustween(){
+    bonuscirc.visible = true;
+    new TWEEN.Tween( bonuscirc.scale ).to( {x: 10, y: 10, z: 10}, 150 )
+    .easing( TWEEN.Easing.Quadratic.EaseInOut)
+    .onComplete(function() {
+        bonuscirc.scale.set(1,1,1);
+        bonuscirc.visible = false;
+    })
+    .start();
+}
 
 // camera reset position
 function camreset() {
@@ -974,202 +1044,121 @@ function camreset() {
     new TWEEN.Tween( camera.rotation ).to( {x: 0, y: 0, z: 0}, 1000 )
     .easing( TWEEN.Easing.Quadratic.EaseInOut)
     .start();
-    document.getElementById("cambut").innerHTML = '<span>c</span>amera [free]';
+    document.getElementById("cambut").innerHTML = '<span>c</span>am';
   } else {
     controls.enabled = true;
-    document.getElementById("cambut").innerHTML = '<span>c</span>amera [fixed]';
+    new TWEEN.Tween( camera.position ).to( {x: 0.1, y: 7, z: 0}, 1000 )
+    .easing( TWEEN.Easing.Quadratic.EaseInOut)
+    .start();
+    new TWEEN.Tween( camera.rotation ).to( {x: 0, y: 0, z: 0}, 1000 )
+    document.getElementById("cambut").innerHTML = '<span>c</span>am [2]';
   }
 
 }
 
+// AUDIO
+// click press sound
+function clicksnd() {
+    new Audio("3click.wav").play();
+}
 
-
-
+// game over sound
+function gameoversnd() {
+    new Audio("gameover.wav").play();
+}
 
 //audio
 function getData() {
-  source = audioCtx.createBufferSource();
-  request = new XMLHttpRequest();
+    source = audioCtx.createBufferSource();
+    request = new XMLHttpRequest();
 
-  request.open('GET', 'motor.wav', true);
+    request.open('GET', 'ngin.wav', true);
 
-  request.responseType = 'arraybuffer';
-  request.onload = function() {
-    var audioData = request.response;
+    request.responseType = 'arraybuffer';
+    request.onload = function() {
+        var audioData = request.response;
 
-    audioCtx.decodeAudioData(audioData, function(buffer) {
-      myBuffer = buffer;
-      songLength = buffer.duration;
-      source.buffer = myBuffer;
-      source.playbackRate.value = revcounter/10;
-      source.loop = true;
+        audioCtx.decodeAudioData(audioData, function(buffer) {
+                myBuffer = buffer;
+                songLength = buffer.duration;
+                source.buffer = myBuffer;
+                source.playbackRate.value = revcounter / 10;
+                source.loop = true;
 
-      var gainNode = audioCtx.createGain()
-gainNode.gain.value = 0.2 // 10% volume
-gainNode.connect(audioCtx.destination)
-source.connect(gainNode)
+                var gainNode = audioCtx.createGain()
+                gainNode.gain.value = 0.2 // 10% volume
+                gainNode.connect(audioCtx.destination)
+                source.connect(gainNode)
 
-},
+            },
 
-function(e){"Error with decoding audio data" + e.error});
+            function(e) {
+                "Error with decoding audio data" + e.error
+            });
 
-  }
-
-  request.send();
-}
-
-
-
-// randomise
-function randomFloat(a, b) {
-  var r = (Math.random() * (b - a) + a);
-  return r;
-}
-
-// make single star
-function Star(material, x, y, size) {
-  this.size = size;
-
-  this.obj = new THREE.Geometry();
-  this.obj.vertices.push(new THREE.Vector3(0, 0, 0));
-  this.obj.vertices.push(new THREE.Vector3(0, 0, -size));
-  this.obj = new THREE.Line(this.obj, material);
-
-  this.speed = randomFloat(1, 10);
-
-  this.refresh = function(x, y) {
-    this.obj.position.z = randomFloat(0, -100);
-    this.obj.position.x = x;
-    this.obj.position.y = y;
-  }
-  this.refresh(x, y);
-}
-
-// make/update star field
-function Starfield(size, width, height) {
-  this.stars = [];
-  this.obj = new THREE.Group();
-  this.obj.name = "starfield";
-// this.obj.visible = false;
-this.obj.rotation.set(0, Math.PI / 2, 0);
-this.obj.position.set(0, 6, 0);
-this.size = size;
-this.width = width;
-this.height = height;
-this.material = new THREE.MeshBasicMaterial({
-  color: 0xffffff
-});
-this.init = function() {
-  for (var i = 0; i < this.size; i++) {
-    this.stars.push(new Star(this.material, randomFloat(-this.width, this.width), randomFloat(-this.width, this.width), randomFloat(0.1, 3)));
-    this.obj.add(this.stars[i].obj);
-  }
-  bggroup.add(this.obj);
-}
-this.init();
-this.update = function() {
-// if (!slowdown) {
-  for (var i = 0; i < this.size; i++) {
-    if (this.stars[i].obj.position.z > 5) {
-      this.stars[i].refresh(randomFloat(-this.width, this.width), randomFloat(-this.width, this.width));
     }
 
-    this.stars[i].obj.scale.z = revcounter/500;
-    this.stars[i].obj.position.z += revcounter/500;
-// }
-
-} //if not slowdown
-} // update
-}
-
-// click press sound
-function clicksnd() {
-  new Audio("3click.wav").play();
+    request.send();
 }
 
 
-// render loop
-var animate = function () {
-  increment = revcounter/5000;
-
-  document.getElementById('spd').innerHTML = Math.floor(revcounter);
-  requestAnimationFrame( animate );
-  renderer.render(scene, camera);
-  if (!stopgame) {
-    movement();
-    bgupdate();
-    stars.update();
-    if (revcounter>0.1) {source.playbackRate.value = revcounter/200;
-// engine fail
-// if ( Math.random() > 0.9) { 
-// revcounter += ( 1 - revcounter ) * 0.3; }  
-// revcounter = revcounter;
+// go again
+function goagain(){
+lives = 3;
+life1.classList='';
+life2.classList='';
+life3.classList='';
+document.getElementById('centerit').style.display = 'none';
+car.morphTargetInfluences[0] = 0;
+camreset();
 }
-}// if game paused
-
-controls.update();
-TWEEN.update();
-camera.lookAt(0,0,0);
-
-};// loop
 
 // START
-setTimeout(function() {
-  stars = new Starfield(20, 9, 9);
-  animate();
 
-  setTimeout(function() {
-    camstart();
-// writethis('argument');
-}, 400);
+colliders();
+setTimeout(function() {
+    // init stars
+    stars = new Starfield(20, 20, 5);
+    var sf = scene.getObjectByProperty('name', 'starfield', false);
+    for (var i = 0; i < sf.children.length; i++) {
+        sf.children[i].scale.z = 0.1;
+    }
+    // move camera in
+    new TWEEN.Tween( camera.position ).to( {x: 7, y: 1, z: 0}, 1500 )
+    .easing( TWEEN.Easing.Quadratic.EaseInOut)
+    .start();
+    //
+
+    // start Loop
+    animate();
 
 }, 200);
 
+// animate loop
+var animate = function() {
+    // if (!stopgame) {
+    // rotate spikey baddie
+    scene.getObjectByProperty('name', 'baddie', false).rotation.y += 0.01;
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+    controls.update();
+    TWEEN.update();
+    camera.lookAt(0,0,0);
 
-function camstart() {
-  new TWEEN.Tween( camera.position ).to( {x: 7, y: 2, z: 0}, 3000 )
-  .easing( TWEEN.Easing.Quadratic.EaseInOut)
-  .start();
-}
+    if (revcounter > 0.01) {
+        source.playbackRate.value = revcounter / 1000;
+        movement();
+        stars.update();
+        document.getElementById('spd').innerHTML = Math.floor(revcounter);
+        if (Math.floor(revcounter) == 1) {
+            document.getElementById('spd').innerHTML = 0;
+        }
+    } // rev>0
+        // if (stopgame = true) {revcounter=0; return}
 
-
-
-// reset title
-function typereset() {
-  document.getElementById("botmsg").innerHTML = '';
-  k = 0;
-}
-
-
-// type writer effect
-function typeWriter(ev) {
-  if (ev == 'stop') {return}
-
-    if (k < botmsg.length) {
-      document.getElementById("botmsg").innerHTML += botmsg.charAt(k);
-      k++;
-      clicksnd();
-      setTimeout(typeWriter, tyspeed);
-    }
-  }
-
-// clear title
-function clrbotmsg(){
-  document.getElementById('botmsg').classList = "clr";
-  setTimeout(function () {
-    document.getElementById('botmsg').innerHTML = "";
-    document.getElementById('botmsg').classList = "";
-  }, 300);
-}
-
-// speak and write this
-function writethis(argument){
-botmsg = argument;
-typereset();
-typeWriter();
-}
-
+}; //render loop
 
 </script>
 </body>
+
 </html>
