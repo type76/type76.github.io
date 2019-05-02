@@ -635,7 +635,7 @@ let mouse = new THREE.Vector2();
 let isDragging = false;
 
 //plane geometry
-let plgeometry = new THREE.PlaneBufferGeometry(10, 10, 1);
+let plgeometry = new THREE.PlaneBufferGeometry(30, 30, 1);
 
 //plane material
 let plmaterial = new THREE.MeshBasicMaterial({
@@ -1384,11 +1384,12 @@ collidableMeshList[2].visible = true;
 
 }
 
+// starting bot message
 function startmsg() {
   setTimeout(function() {
-    document.getElementById('botmsg').classList = 'on';
     botmsg = '< WARNING >' +"\n"+'abnormal readings detected inside hull' +"\n"
-    + 'threat_lvl: high';    ;
+    + 'threat_lvl: high'+"\n"
+    +'sensor_3cf malfunction'+"\n"+'is someone wearing perfume?';
     typereset();
     typeWQuiet();
   }, 200);
@@ -1398,11 +1399,10 @@ document.getElementById('nextbut').style.display = 'block';
 }
 
 
-
+// the story
 function story(ev) {
 if (ev=='one') {
 document.getElementById('botmsg').classList = '';
-
     writethis('Computing ...');
 
     setTimeout(function() {
@@ -1420,6 +1420,7 @@ document.getElementById('botmsg').classList = '';
 
 
 if (ev=='two') {
+document.getElementById('botmsg').classList = '';
 writethis( 'This game is part of Branching Corpses.' + "\n \n" +
   'A community-made game series' +"\n"+ 'where anyone can extend on the ' +"\n"+ 'multiple endings of previous games.' + "\n" +
   'We strongly recommend you click ' +"\n"+ 'the link in the description ' +"\n"+ 'to begin the story from the start' );
