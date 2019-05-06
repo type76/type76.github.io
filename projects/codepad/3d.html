@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>codepad | 3D</title>
+    <meta charset=utf-8>
+    <script src=codemirror.js></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            overflow: hidden;
+        }
+        
+        .CodeMirror {
+            line-height: 1.4em;
+            font-family: Inconsolata, Droid Sans, Courier, monospace;
+        }
+        
+        .CodeMirror-scroll {
+            overflow: auto;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .CodeMirror-gutter {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 10;
+            min-width: 2em;
+            height: 100%;
+        }
+        
+        .CodeMirror-gutter-text {
+            color: #aaa;
+            text-align: left;
+            padding: .4em .2em .4em .4em;
+            white-space: pre !important;
+            /*opacity: 0;*/
+            display: none;
+        }
+        
+        .CodeMirror-lines {
+            padding: .4em;
+            padding-bottom: 4em;
+        }
+        
+        .CodeMirror pre {
+            -moz-border-radius: 0;
+            -webkit-border-radius: 0;
+            -o-border-radius: 0;
+            border-radius: 0;
+            border-width: 0;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            padding: 0;
+            margin: 0;
+            white-space: pre;
+            word-wrap: normal;
+        }
+        
+        .CodeMirror-wrap pre {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        
+        .CodeMirror-wrap .CodeMirror-scroll {
+            overflow-x: hidden;
+        }
+        
+        .CodeMirror textarea {
+            outline: none !important;
+        }
+        
+        .CodeMirror pre.CodeMirror-cursor {
+            z-index: 10;
+            position: absolute;
+            visibility: hidden;
+            border-right: none;
+            background-color: yellow;
+            width: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .CodeMirror-gutter-text {
+            background-color: rgba(50, 50, 50, 0.3);
+            height: 100%;
+        }
+        
+        .CodeMirror-focused pre.CodeMirror-cursor {
+            visibility: visible;
+        }
+        
+        div.CodeMirror-selected {
+            background: #d9d9d9;
+        }
+        
+        .CodeMirror-focused div.CodeMirror-selected {
+            background: #d7d4f0;
+        }
+        
+        .resizable {
+            height: 200px;
+            width: 100%;
+            background: #222;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            position: relative;
+            z-index: 99;
+            min-height: 30px;
+            border-bottom: rgba(50,50,50,0.5) 1px solid;
+        }
+        
+        .resizer,
+        #hide {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            cursor: se-resize;
+            text-align: center;
+            line-height: 30px;
+            transform: rotate(90deg);
+            font-size: 80%;
+            user-select: none;
+        }
+        
+        .resizer:hover,
+        #hide:hover {
+            color: red;
+        }
+        
+        #hide {
+            right: 40px;
+            transform: none;
+            border: none;
+            color: #fff;
+            background: transparent;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        textarea {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            /*padding: 1em;*/
+        }
+        
+        #preview {
+            display: block;
+            width: 100%;
+            min-height: 1em;
+            background-color: #ccc;
+            border: none;
+            position: absolute;
+            top: 200px;
+            height: 100%;
+            z-index: 1;
+            /*padding: 2em;*/
+        }
+        
+        .CodeMirror-lines pre:hover {
+            background-color: rgba(50, 50, 50, 1);
+        }
+        #editor {padding-top: 30px;}
+    </style>
+</head>
+
+<body>
+
+    <div class="resizable" id="editor">
+
+<textarea id="hello" name="hello">
+<div id="canvas"></div>
+<style>
+    body { margin: 0; }
+    canvas { width: 100%; height: 100%; }
+</style>
+
+<script src="three.js"></script>
+
+<script>
+    var split = 200;
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/(window.innerHeight-split), 0.1, 1000 );
+
+    var container = document.getElementById( 'canvas' );
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, (window.innerHeight-split+30) );
+
+         container.appendChild(renderer.domElement);
+
+    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    var cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
+
+    camera.position.z = 5;
+
+    var animate = function () {
+        requestAnimationFrame( animate );
+
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+    };
+
+    animate();
+
+  window.addEventListener("resize", resize);
+
+function resize() {
+  camera.aspect = window.innerWidth / (window.innerHeight-split);
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  updatePreview();
+}
+
+
+
+
+
+
+</script>
+</textarea>
+
+        <button id="hide" onclick="hideeditor()" title="miminise">-</button>
+        <div class='resizer' title="resize">&lt; &gt;</div>
+
+    </div>
+    <!-- resizable -->
+
+    <iframe id="preview"></iframe>
+
+    <script>
+        var preview = document.getElementById('preview');
+        // hide
+        function hideeditor() {
+            document.getElementById("hide").classList.toggle('on');
+            if (document.getElementById("hide").classList != "on") {
+                resizable.style.height = '200px';
+                preview.style.top = '200px';
+
+            } else {
+                resizable.style.height = '30px';
+                preview.style.top = '30px';
+            }
+        }
+
+        // drag divs
+        var resizable = document.querySelector('.resizable'),
+            resizer = document.querySelector('.resizer'),
+            startY, startWidth, startHeight;
+
+        resizer.addEventListener('mousedown', initDrag, false);
+
+        function initDrag(e) {
+            startY = e.clientY;
+            startWidth = parseInt(document.defaultView.getComputedStyle(resizable).width, 10);
+            startHeight = parseInt(document.defaultView.getComputedStyle(resizable).height, 10);
+            document.documentElement.addEventListener('mousemove', doDrag, false);
+            document.documentElement.addEventListener('mouseup', stopDrag, false);
+        }
+
+        function doDrag(e) {
+            var vv = (startHeight + e.clientY - startY);
+            split = vv;
+            resizable.style.height = vv + 'px';
+            // min editor height is 30px
+            if (vv < 31) {return}
+            document.getElementById('preview').style.top = vv + 'px';
+        }
+
+        function stopDrag(e) {
+            document.documentElement.removeEventListener('mousemove', doDrag, false);
+            document.documentElement.removeEventListener('mouseup', stopDrag, false);
+        }
+
+        // codemirror
+        var delay;
+
+        var editor = CodeMirror.fromTextArea(document.getElementById('hello'), {
+            lineNumbers: true,
+            gutter: true,
+            id: 'hello',
+            lineWrapping: true,
+            scrollbarStyle: "null",
+            mode: 'text/html',
+            tabMode: 'indent',
+            onChange: function() {
+                clearTimeout(delay);
+                delay = setTimeout(updatePreview, 300);
+            }
+        });
+
+        function updatePreview() {
+            var previewFrame = document.getElementById('preview');
+            var preview = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            preview.open();
+            preview.write(editor.getValue());
+            preview.close();
+        }
+        setTimeout(updatePreview, 300);
+    </script>
+</body>
+
+</html>
